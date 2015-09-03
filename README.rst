@@ -16,12 +16,17 @@ Sample pillars
         bind:
           address: 0.0.0.0
           port: 4352
-        inputs:
-        ...
-        outputs:
-          engine: elasticsearch
-          host: localhost
-          port: 9200
+        output:
+          elasticsearch01:
+            engine: elasticsearch
+            host: localhost
+            port: 9200
+        input:
+          rabbitmq:
+            engine: amqp
+            host: localhost
+            user: guest
+            password: guest
 
 
 Read more

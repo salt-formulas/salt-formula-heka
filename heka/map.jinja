@@ -1,0 +1,15 @@
+
+{% set router = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ["heka"],
+        'service': 'heka',
+        'input': {},
+        'output': {}
+    },
+    'RedHat': {
+        'pkgs': ["heka"],
+        'service': 'heka',
+        'input': {},
+        'output': {}
+    },
+}, merge=salt['pillar.get']('heka:router')) %}

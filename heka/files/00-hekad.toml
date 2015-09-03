@@ -1,0 +1,54 @@
+{%- from "heka/map.jinja" import router with context -%}
+
+[hekad]
+maxprocs = 2
+
+[RstEncoder]
+
+[DashboardOutput]
+ticker_interval = 120
+
+[ESJsonEncoder]
+index = "logfile-%{%Y.%m.%d}"
+type_name = "syslog-%{Hostname}"
+    [ESJsonEncoder.field_mappings]
+    timestamp = "@timestamp"
+    Severity = "level"
+
+{%- for output_name, output in router.output.iteritems() %}
+
+{%- if output.engine == "elasticsearch" -%}
+
+[ElasticSearchOutput]
+message_matcher = "TRUE"
+server = "http://{{ output.host }}:{{ output.port }}"
+flush_interval = 5000
+flush_count = 10
+encoder = "ESJsonEncoder"
+#encoder = "ESLogstashV0Encoder"
+#encoder = "es_payload"
+
+[ElasticSearchOutput.buffering]
+max_file_size = 268435456
+
+{%- endif -%}
+
+{%- endfor -%}
+
+{%- for input_name, input in router.input.iteritems() %}
+
+
+{%- if input.engine == "amqp" -%}
+
+[AMQPInput]
+type = "AMQPInput"
+url = "amqp://{{ input.user }}:{{ input.password }}@{{ input.host }}/"
+exchange = "logs"
+exchange_type = "fanout"
+prefetch_count = 20
+decoder = "ProtobufDecoder"
+splitter = "HekaFramingSplitter"
+
+{%- endif -%}
+
+{%- endfor -%}

@@ -1,0 +1,25 @@
+applications:
+- heka
+_param:
+  heka_router_output_host: localhost
+  heka_router_input_host: localhost
+  heka_router_input_user: guest
+  heka_router_input_password: guest
+parameters:
+  heka:
+    router:
+      enabled: true
+    bind:
+      address: 0.0.0.0
+      port: 4352
+    output:
+      elasticsearch01:
+        engine: elasticsearch
+        host: ${_param:heka_router_output_host}
+        port: 9200
+    input:
+      rabbitmq:
+        engine: amqp
+        host: ${_param:heka_router_input_host}
+        user: ${_param:heka_router_input_user}
+        password: ${_param:heka_router_input_password}

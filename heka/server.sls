@@ -35,7 +35,9 @@ heka_user:
   - template: jinja
   - mode: 640
   - require:
-    - file: /etc/heka/conf.d/00-hekad.toml 
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - defaults:
+      name: {{ name }}
 
 {%- endfor %}
 

@@ -35,7 +35,7 @@ From every message there is one amqp message and it's also logged to  heka's log
             engine: rsyslog
             template: %TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\n
             hostname_keep: TRUE
-            tz = Europe/Prague
+            tz: Europe/Prague
         output:
           rabbitmq:
             engine: amqp

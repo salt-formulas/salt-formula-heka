@@ -27,11 +27,11 @@ heka_user:
   - require:
     - pkg: heka_packages
 
-{%- for name,output in server.input.iteritems() %}
+{%- for name,values in server.input.iteritems() %}
 
-/etc/heka/conf.d/10-input-{{ name }}-{{ output['engine'] }}.toml:
+/etc/heka/conf.d/10-input-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
-  - source: salt://heka/files/input/{{ name }}.toml
+  - source: salt://heka/files/input/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
   - require:

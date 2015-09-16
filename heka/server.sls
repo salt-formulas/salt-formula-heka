@@ -1,5 +1,5 @@
 {%- from "heka/map.jinja" import server with context %}
-{%- if server.enabled %}
+{#%- if server.enabled %}
 
 heka_packages:
   pkg.installed:
@@ -39,5 +39,5 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml 
 
 {%- endfor %#}                                                                                                                                                                                          
-{%- endif %}
+{%- endif %#}
 

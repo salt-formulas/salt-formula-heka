@@ -2,11 +2,11 @@
 
 [{#% server.name %#}_logstreamer]
 type = "LogstreamerInput"
-log_directory = "{% @log_directory %}"
-file_match = '{% @file_match %}'
-{% if @differentiator -%}
-differentiator = {% @differentiator %}
+log_directory = "{#% log_directory %#}"
+file_match = '{% file_match %}'
+{% if differentiator -%}
+differentiator = {% differentiator %}
 {% end -%}
 decoder = "{% @decoder %}_decoder"
-splitter = "{% @splitter ? "#{ @splitter }_splitter" : "TokenSplitter" %}"
+splitter = "{% @splitter ? "#{ splitter }_splitter" : "TokenSplitter" %}"
 

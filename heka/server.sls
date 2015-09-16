@@ -27,7 +27,7 @@ heka_user:
   - require:
     - pkg: heka_packages
 
-{#%- for name,engine in server.input.iteritems() %}
+{%- for name,engine in server.input.iteritems() %}
 
 /etc/heka/conf.d/10-input-{{ name }}.toml:
   file.managed:
@@ -37,6 +37,7 @@ heka_user:
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml 
 
-{%- endfor %#}                                                                                                                                                                                          
+{%- endfor %}
+
 {%- endif %}
 

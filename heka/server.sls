@@ -29,7 +29,7 @@ heka_user:
 
 {%- for name,output in server.input.iteritems() %}
 
-/etc/heka/conf.d/10-input-{{ name }}.{{ server.input.engine }}.toml:
+/etc/heka/conf.d/10-input-{{ name }}.{{ output['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/input/{{ name }}.toml
   - template: jinja

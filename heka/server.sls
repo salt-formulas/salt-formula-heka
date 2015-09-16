@@ -12,8 +12,6 @@ heka_packages:
   - mode: 755
   - require:
     - pkg: heka_packages
-  - watch_in:
-    - service: heka_service
 
 heka_service:
   service.running:

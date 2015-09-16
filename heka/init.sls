@@ -1,5 +1,5 @@
 include:
-{% if pillar.server is defined %}
+{% if pillar.heka.server is defined %}
 - heka.server
 {% endif %}
 

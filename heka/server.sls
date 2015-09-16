@@ -27,9 +27,9 @@ heka_user:
   - require:
     - pkg: heka_packages
 
-{%- for name,engine in server.input.iteritems() %}
+{%- for name,output in server.input.iteritems() %}
 
-/etc/heka/conf.d/10-input-{{ name }}-{{ engine }}.toml:
+/etc/heka/conf.d/10-input-{{ name }}.{{ server.input.engine }}.toml:
   file.managed:
   - source: salt://heka/files/input/{{ name }}.toml
   - template: jinja

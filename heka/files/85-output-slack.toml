@@ -1,0 +1,22 @@
+#[LogAggregator]
+#type = "SandboxFilter"
+#message_matcher = "TRUE"
+#filename = "lua_decoders/log_aggregator.lua"
+#ticker_interval = 15
+#can_exit = false
+
+#[SlackEncoder]
+#type = "SandboxEncoder"
+#script_type = "lua"
+#filename = "lua_encoders/slack_encoder.lua"
+
+#  [SlackEncoder.config]
+#  username = "heka"
+#  channel = "monitoring"
+#  icon_emoji = ""
+
+#[HttpOutput]
+#  address = "https://hooks.slack.com/services/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"
+#  message_matcher = "TRUE"
+#  encoder = "SlackEncoder"
+

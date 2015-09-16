@@ -1,5 +1,5 @@
-
 include:
-{% if pillar.heka.router is defined %}
-- heka.router
+{% if pillar.heka.server is defined %}
+- heka.server
 {% endif %}
+

@@ -4,9 +4,9 @@
 type = "LogstreamerInput"
 log_directory = "{#% log_directory %#}"
 file_match = '{#% file_match %#}'
-{% if differentiator -%}
+{#% if differentiator -%}
 differentiator = {#% differentiator %#}
-{% end -%}
+{% end -%#}
 decoder = "{#% decoder %#}_decoder"
 splitter = "{#% splitter ? "#{ splitter }_splitter" : "TokenSplitter" %#}"
 

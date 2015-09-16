@@ -3,7 +3,7 @@
 
 heka_packages:
   pkg.installed:
-  - names: {{ heka.pkgs }}
+  - names: {{ server.pkgs }}
 
 /etc/heka/conf.d/00-hekad.toml:
   file.managed:
@@ -18,13 +18,13 @@ heka_packages:
 heka_service:
   service.running:
   - enable: true
-  - name: {{ heka.service }}
+  - name: {{ server.service }}
 
 heka_user:
   user.present:
   - name: heka
   - shell: /bin/false
-  - groups: {{ heka.groups }}
+  - groups: {{ server.groups }}
   - require:
     - pkg: heka_packages
 

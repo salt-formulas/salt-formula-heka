@@ -1,15 +1,16 @@
+{%- load_yaml as server_defaults %}
+Debian:
+  pkgs:
+  - heka
+  user:
+  - heka
+  groups:
+  - adm
+  - syslog
+RedHat:
+  groups:
+  - adm
+{%- endload %}
 
-{% set router = salt['grains.filter_by']({
-    'Debian': {
-        'pkgs': ["heka"],
-        'service': 'heka',
-        'input': {},
-        'output': {}
-    },
-    'RedHat': {
-        'pkgs': ["heka"],
-        'service': 'heka',
-        'input': {},
-        'output': {}
-    },
-}, merge=salt['pillar.get']('heka:router')) %}
+{%- set server = salt['grains.filter_by'](server__defaults, merge=salt['pillar.get']('heka:server')) %}
+

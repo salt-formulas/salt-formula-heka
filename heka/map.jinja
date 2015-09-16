@@ -1,4 +1,4 @@
-{%- load_yaml as server %}
+{%- load_yaml as server_defaults %}
 Debian:
   pkgs:
   - heka
@@ -12,5 +12,5 @@ RedHat:
   - adm
 {%- endload %}
 
-{%- set server = salt['grains.filter_by'](server, merge=salt['pillar.get']('heka:server')) %}
+{%- set server = salt['grains.filter_by'](server_defaults, merge=salt['pillar.get']('heka:server')) %}
 

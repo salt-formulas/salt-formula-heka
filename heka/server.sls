@@ -9,7 +9,7 @@ heka_packages:
   file.managed:
   - source: salt://heka/files/00-hekad.toml
   - template: jinja
-  - mode: 755
+  - mode: 640
   - require:
     - pkg: heka_packages
 
@@ -33,7 +33,7 @@ heka_user:
   file.managed:
   - source: salt://heka/files/input/{{ engine }}.toml
   - template: jinja
-  - mode: 755
+  - mode: 640
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml 
 

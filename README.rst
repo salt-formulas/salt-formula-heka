@@ -94,7 +94,7 @@ Messages are consumed from amqp and sent to elasticsearch server.
             engine: rsyslog
             template: %TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\n
             hostname_keep: TRUE
-            tz = Europe/Prague
+            tz: Europe/Prague
         output:
           elasticsearch01:
             engine: elasticsearch

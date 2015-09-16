@@ -16,7 +16,8 @@ heka_packages:
 heka_service:
   service.running:
   - enable: true
-  - name: {{ server.service }}
+  - name: heka
+  {#{ server.service }#}
 
 heka_user:
   user.present:

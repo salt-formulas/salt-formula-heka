@@ -31,7 +31,7 @@ heka_user:
 
 /etc/heka/conf.d/10-input-{{ name }}.toml:
   file.managed:
-  - source: salt://heka/files/input/{{ engine }}.toml
+  - source: salt://heka/files/input/{{ name }}.toml
   - template: jinja
   - mode: 640
   - require:

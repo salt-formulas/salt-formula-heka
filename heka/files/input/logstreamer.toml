@@ -1,6 +1,6 @@
 {%- from "heka/map.jinja" import server with context %}
 
-[{%- input.name %}_logstreamer]
+[{%- name %}_logstreamer]
 type = "LogstreamerInput"
 log_directory = "{% @log_directory %}"
 file_match = '{% @file_match %}'

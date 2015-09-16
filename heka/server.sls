@@ -13,7 +13,7 @@ heka_packages:
   - require:
     - pkg: heka_packages
   - watch_in:
-    - service: heka_service
+    - service: heka
 
 heka_service:
   service.running:

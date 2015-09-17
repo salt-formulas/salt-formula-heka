@@ -13,6 +13,6 @@ max_delay = "30s"
 delay = "250ms"
 max_retries = 5
 
-{% set exchange = "server.output.".{{ name }}.".exchange" %}
-{{ exchange }}
+{% set server.ouput.name = {{ name }} %}
+{{ server.output.name.exchange }}
 

@@ -1,3 +1,4 @@
+{%- from "heka/map.jinja" import server with context -%}
 [AMQPOutput_{{ name }}]
 type = "AMQPOutput"
 url = "amqp://guest:guest@10.0.102.11/"

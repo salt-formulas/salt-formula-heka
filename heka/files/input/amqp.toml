@@ -1,4 +1,4 @@
-[<%= @title %>_amqp]
+[{{ name }}_amqp]
 type = "AMQPInput"
 url = "amqp://<%= @user %>:<%= @password %>@<%= @host %>:<%= @port %>/"
 exchange = "<%= @exchange %>"

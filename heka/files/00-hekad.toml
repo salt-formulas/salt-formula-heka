@@ -1,6 +1,5 @@
 {%- from "heka/map.jinja" import router with context -%}
 
 [hekad]
-# replace me with grains.items.num_cpus
-maxprocs = 2
+maxprocs = {% salt['grains.get']('num_cpus', '2') %}
 

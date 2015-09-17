@@ -56,7 +56,6 @@ heka_user:
 {%- endfor %}
 
 
-{%- if server.filter|length > 0 %}
 {%- for name,values in server.filter.iteritems() %}
  
 /etc/heka/conf.d/10-filter-{{ name }}-{{ values['engine'] }}.toml:
@@ -70,7 +69,6 @@ heka_user:
       name: {{ name }}
  
 {%- endfor %}
-{%- endif %}
 
 {%- for name,values in server.splitter.iteritems() %}
  

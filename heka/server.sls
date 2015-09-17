@@ -41,5 +41,77 @@ heka_user:
 
 {%- endfor %}
 
+{%- for name,values in server.output.iteritems() %}
+ 
+/etc/heka/conf.d/10-output-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/output/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - defaults:
+      name: {{ name }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.filter.iteritems() %}
+ 
+/etc/heka/conf.d/10-filter-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/filter/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - defaults:
+      name: {{ name }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.splitter.iteritems() %}
+ 
+/etc/heka/conf.d/10-splitter-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/splitter/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - defaults:
+      name: {{ name }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.encoder.iteritems() %}
+ 
+/etc/heka/conf.d/10-encoder-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/encoder/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - defaults:
+      name: {{ name }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.decoder.iteritems() %}
+ 
+/etc/heka/conf.d/10-decoder-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/decoder/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - defaults:
+      name: {{ name }}
+ 
+{%- endfor %}
+
+
+
 {%- endif %}
 

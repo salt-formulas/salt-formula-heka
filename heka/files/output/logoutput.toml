@@ -1,0 +1,4 @@
+[LogOutput]
+encoder = "RstEncoder"
+message_matcher = "TRUE"
+

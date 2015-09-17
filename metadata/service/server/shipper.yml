@@ -49,4 +49,5 @@ parameters:
         heka-logfile:
           engine: RstEncoder
       filter: {}
+      splitter: {}
 

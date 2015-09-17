@@ -48,5 +48,5 @@ parameters:
       encoder:
         heka-logfile:
           engine: RstEncoder
-      filter:
+      filter: {}
 

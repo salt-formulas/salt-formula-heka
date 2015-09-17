@@ -13,5 +13,5 @@ max_delay = "30s"
 delay = "250ms"
 max_retries = 5
 
-{{ server.output.[{{ name}}].exchange }}
+{{ server.output.{{ name }} }}
 

@@ -1,11 +1,9 @@
-{%- from "heka/map.jinja" import server with context %}
-
-[{#% server.name %#}_logstreamer]
+[logstreamer_{{ name }}]
 type = "LogstreamerInput"
-log_directory = "{#% log_directory %#}"
-file_match = '{#% file_match %#}'
-{#% if differentiator -%#}
-differentiator = {#% differentiator %#}
+log_directory = "{{ values['log_directory'] }}"
+file_match = '{{ values['file_match'] }}'
+{% if values['differentiator'] -%}
+differentiator = {{ values['differentiator'] }}
 {#% end -%#}
 decoder = "{#% decoder %#}_decoder"
 splitter = "{#% splitter ? "#{ splitter }_splitter" : "TokenSplitter" %#}"

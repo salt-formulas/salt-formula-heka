@@ -8,8 +8,14 @@ exchange_type = "{{ values.exchange_type }}"
 exchange_durability = "{{ values.exchange_durability }}"
 {% endif %}
 
+{% if values.exchange_auto_delete is defined %}
 exchange_auto_delete = "{{ values.exchange_auto_delete }}"
+{% endif %}
+
+{% if values.queue_auto_delete is defined %}
 queue_auto_delete = {{ values.queue_auto_delete }}
+{% endif %}
+
 queue = "{{ values.queue }}"
 routing_key = "{{ values.routing_key }}"
 decoder = "{{ values.decoder }}"

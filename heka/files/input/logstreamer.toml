@@ -2,7 +2,9 @@
 type = "LogstreamerInput"
 log_directory = "{{ values['log_directory'] }}"
 file_match = '{{ values['file_match'] }}'
-differentiator = {{ values['differentiator'] }}
+file_match = '{{ values.file_match }}'
+
+
 decoder = "{{ values['decoder'] }}_decoder"
 splitter = "{{ values['splitter'] }}"
 

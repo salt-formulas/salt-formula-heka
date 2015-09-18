@@ -38,7 +38,7 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml
   - defaults:
       name: {{ name }}
-      values: {{ values['engine'] }}
+      values: {{ values }}
 
 {%- endfor %}
 
@@ -53,7 +53,7 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml
   - defaults:
       name: {{ name }}
-      values: {{ values['engine'] }}
+      values: {{ values }}
  
 {%- endfor %}
 
@@ -69,7 +69,7 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml
   - defaults:
       name: {{ name }}
-      values: {{ values['engine'] }}
+      values: {{ values }}
  
 {%- endfor %}
 
@@ -84,7 +84,7 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml
   - defaults:
       name: {{ name }}
-      values: {{ values['engine'] }}
+      values: {{ values }}
  
 {%- endfor %}
 
@@ -99,7 +99,7 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml
   - defaults:
       name: {{ name }}
-      values: {{ values['engine'] }}
+      values: {{ values }}
  
 {%- endfor %}
 
@@ -114,7 +114,7 @@ heka_user:
     - file: /etc/heka/conf.d/00-hekad.toml
   - defaults:
       name: {{ name }}
-      values: {{ values['engine'] }}
+      values: {{ values }}
  
 {%- endfor %}
 

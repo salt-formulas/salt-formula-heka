@@ -1,12 +1,6 @@
 applications:
 - heka
 _param:
-  heka_shipper_output_host: localhost
-  heka_shipper_input_host: localhost
-  heka_shipper_input_user: guest
-  heka_shipper_input_password: guest
-  heka_shipper_input_vhost: logs
-  heka_shipper_input_exchange: logs
 parameters:
   heka:
     server:

@@ -10,6 +10,7 @@ heka_packages:
   - source: salt://heka/files/00-hekad.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - pkg: heka_packages
 
@@ -35,6 +36,7 @@ heka_user:
   - source: salt://heka/files/input/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
   - watch_in:
@@ -52,6 +54,7 @@ heka_user:
   - source: salt://heka/files/output/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
   - watch_in:
@@ -70,6 +73,7 @@ heka_user:
   - source: salt://heka/files/filter/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
   - watch_in:
@@ -87,10 +91,11 @@ heka_user:
   - source: salt://heka/files/splitter/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
   - watch_in:
-        - service: heka_service
+    - service: heka_service
   - defaults:
       name: {{ name }}
       values: {{ values }}
@@ -121,6 +126,7 @@ heka_user:
   - source: salt://heka/files/decoder/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
   - watch_in:

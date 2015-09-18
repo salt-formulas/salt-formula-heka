@@ -20,7 +20,7 @@ queue_auto_delete = {{ values.queue_auto_delete }}
 queue = "{{ values.queue }}"
 {% endif %}
 
-{ if values.routing_key is defined %}
+{% if values.routing_key is defined %}
 routing_key = "{{ values.routing_key }}"
 {% endif %}
 

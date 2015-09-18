@@ -109,6 +109,7 @@ heka_user:
   - source: salt://heka/files/encoder/{{ values['engine'] }}.toml
   - template: jinja
   - mode: 640
+  - group: heka
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
   - watch_in:

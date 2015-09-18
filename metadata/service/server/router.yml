@@ -7,7 +7,6 @@ _param:
   heka_router_input_password: guest
   heka_router_input_vhost: /heka
   heka_router_input_exchange: logs
-
 parameters:
   heka:
     server:
@@ -23,13 +22,13 @@ parameters:
           exchange_type: fanout
           decoder: ProtoBufDecoder
           splitter: HekaFramingSplitter
-        rsyslog-syslog:
+        rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
           file_match: syslog\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
           priority: ["^Index"]
-        rsyslog-auth:
+        rsyslog_auth:
           engine: logstreamer
           log_directory: /var/log
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?

@@ -1,13 +1,13 @@
-[{{ name }}_amqp]
+[input_{{ name }}]
 type = "AMQPInput"
-url = "amqp://<%= @user %>:<%= @password %>@<%= @host %>:<%= @port %>/"
-exchange = "<%= @exchange %>"
-exchange_type = "<%= @exchange_type %>"
-exchange_durability = <%= @exchange_durability %>
-exchange_auto_delete = <%= @exchange_auto_delete %>
-queue_auto_delete = <%= @queue_auto_delete %>
-queue = "<%= @queue %>"
-routing_key = "<%= @routing_key %>"
-decoder = "<%= @decoder %>_decoder"
-splitter = "NullSplitter"
+url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ values.port }}/{{ values.vhost }}"
+exchange = "{{ values.exchange }}"
+exchange_type = "{{ values.exchange_type }}"
+exchange_durability = "{{ values.exchange_durability }}"
+exchange_auto_delete = "{{ values.exchange_auto_delete }}"
+queue_auto_delete = {{ values.queue_auto_delete }}
+queue = "{{ values.queue }}"
+routing_key = "{{ values.routing_key }}"
+decoder = "{{ values.decoder }}"
+splitter = "{{ values.splitter }}"
 

@@ -1,4 +1,4 @@
 [LogOutput]
-encoder = "RstEncoder"
-message_matcher = "TRUE"
+encoder = "{{ values.encoder }}"
+message_matcher = "{{ values.message_filter }}"
 

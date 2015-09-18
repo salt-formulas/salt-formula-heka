@@ -1,11 +1,11 @@
-[<%= @title %>_output]
+[output_{{ name }}]
 type = "ElasticSearchOutput"
-message_matcher = "<%= @message_matcher %>"
-encoder = "<%= @encoder %>_encoder"
+message_matcher = "{{ values.message_matcher }}"
+encoder = "{{ values.encoder }}"
 
 <% # Heka expects milliseconds here -%>
-flush_interval = <%= @flush_interval.to_i() * 1000 %>
-flush_count = <%= @flush_count %>
+#flush_interval = <%= @flush_interval.to_i() * 1000 %>
+#flush_count = <%= @flush_count %>
 
 server = "http://<%= @server %>:<%= @port %>"
 

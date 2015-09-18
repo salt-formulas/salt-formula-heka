@@ -29,6 +29,10 @@ heka_user:
   - require:
     - pkg: heka_packages
 
+{%- for chain in [ "input","output","decoder","encoder","filter","splitter" ] %}
+
+{%- endfor %}
+
 {%- for name,values in server.input.iteritems() %}
 
 /etc/heka/conf.d/10-input-{{ name }}-{{ values['engine'] }}.toml:

@@ -1,12 +1,6 @@
 applications:
 - heka
 _param:
-  heka_router_output_host: localhost
-  heka_router_input_host: localhost
-  heka_router_input_user: guest
-  heka_router_input_password: guest
-  heka_router_input_vhost: /heka
-  heka_router_input_exchange: logs
 parameters:
   heka:
     server:

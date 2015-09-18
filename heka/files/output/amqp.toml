@@ -1,4 +1,4 @@
-{%- from "heka/map.jinja" import server.output with context -%}
+{%- from "heka/map.jinja" import server with context -%}
 [AMQPOutput_{{ name }}]
 type = "AMQPOutput"
 url = "amqp://guest:guest@10.0.102.11/"
@@ -13,5 +13,10 @@ max_delay = "30s"
 delay = "250ms"
 max_retries = 5
 
-{{ server.output }}
+{%- for outputname in server.output.iteritems() %}
+{%- if outputname = {{ name }} %}
+
+wtf
+
+{% endif %}
 

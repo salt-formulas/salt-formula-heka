@@ -15,5 +15,5 @@ max_retries = 5
 
 {{ name }}
 {{ server.output }}
-{{ server.output.name }}
+{{ server.output.{{ name }} }}
 

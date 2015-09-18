@@ -30,7 +30,23 @@ heka_user:
     - pkg: heka_packages
 
 {%- for chain in [ "input","output","decoder","encoder","filter","splitter" ] %}
+{%- for name,values in server.input.iteritems() %}
 
+/etc/heka/conf.d/100-{{ chain }}-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/{{ chain }}/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
+ 
+{%- endfor %}
 {%- endfor %}
 
 {%- for name,values in server.input.iteritems() %}

@@ -41,10 +41,11 @@ parameters:
           exchange_type: fanout
           encoder: ProtobufEncoder
           use_framing: true
+          message_matcher: "TRUE"
         heka-logfile:
           engine: logoutput
           encoder: RstEncoder
-          message_matcher: TRUE
+          message_matcher: "TRUE"
       encoder:
         heka-logfile:
           engine: RstEncoder

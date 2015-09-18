@@ -4,7 +4,7 @@ log_directory = "{{ values['log_directory'] }}"
 file_match = '{{ values['file_match'] }}'
 {% if values['differentiator'] -%}
 differentiator = {{ values['differentiator'] }}
-{#% end -%#}
+{% endif -%}
 decoder = "{#% decoder %#}_decoder"
-splitter = "{#% splitter ? "#{ splitter }_splitter" : "TokenSplitter" %#}"
+splitter = "{{ values['splitter'] }}"
 

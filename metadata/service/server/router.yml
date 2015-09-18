@@ -18,6 +18,7 @@ parameters:
           user: ${_param:heka_router_input_user}
           password: ${_param:heka_router_input_password}
           vhost: ${_param:heka_router_input_vhost}
+          port: 5672
           exchange: ${_param:heka_router_input_exchange}
           exchange_type: fanout
           decoder: ProtoBufDecoder

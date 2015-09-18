@@ -12,13 +12,13 @@ parameters:
     server:
       enabled: true
       input:
-        rsyslog-syslog:
+        rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
           file_match: syslog\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
           priority: '["^Index"]'
-        rsyslog-auth:
+        rsyslog_auth:
           engine: logstreamer
           log_directory: /var/log
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
@@ -42,12 +42,12 @@ parameters:
           encoder: ProtobufEncoder
           use_framing: true
           message_matcher: "TRUE"
-        heka-logfile:
+        heka_logfile:
           engine: logoutput
           encoder: RstEncoder
           message_matcher: "TRUE"
       encoder:
-        heka-logfile:
+        heka_logfile:
           engine: RstEncoder
       filter: {}
       splitter: {}

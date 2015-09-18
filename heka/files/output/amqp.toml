@@ -13,10 +13,5 @@ max_delay = "30s"
 delay = "250ms"
 max_retries = 5
 
-{%- for outputname in server.output.iteritems() %}
-{%- if outputname == {{ name }} %}
-
-wtf
-
-{% endif %}
+{{ output }}
 

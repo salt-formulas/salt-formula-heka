@@ -1,9 +1,7 @@
 [logstreamer_{{ name }}]
 type = "LogstreamerInput"
-log_directory = "{{ values['log_directory'] }}"
-file_match = '{{ values['file_match'] }}'
-
+log_directory = "{{ values.log_director }}"
 file_match = '{{ values.file_match }}'
 
-decoder = "{{ values['decoder'] }}_decoder"
+decoder = "{{ values.decoder }}_decoder"
 

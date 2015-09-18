@@ -4,17 +4,17 @@ url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ value
 exchange = "{{ values.exchange }}"
 exchange_type = "{{ values.exchange_type }}"
 
-{% if values.exchange_durability is defined %}
+{%- if values.exchange_durability is defined -%}
 exchange_durability = "{{ values.exchange_durability }}"
-{% endif %}
+{%- endif -%}
 
-{% if values.exchange_auto_delete is defined %}
+{%- if values.exchange_auto_delete is defined -%}
 exchange_auto_delete = "{{ values.exchange_auto_delete }}"
-{% endif %}
+{%- endif -%}
 
-{% if values.queue_auto_delete is defined %}
+{%- if values.queue_auto_delete is defined -%}
 queue_auto_delete = {{ values.queue_auto_delete }}
-{% endif %}
+{%- endif -%}
 
 {% if values.queue is defined %}
 queue = "{{ values.queue }}"

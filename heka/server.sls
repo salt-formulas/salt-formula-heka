@@ -30,7 +30,7 @@ heka_user:
     - pkg: heka_packages
 
 {%- for chain in [ "input","output","decoder","encoder","filter","splitter" ] %}
-{%- for name,values in server.input.iteritems() %}
+{%- for name,values in server.[{{ chain }}].iteritems() %}
 
 /etc/heka/conf.d/100-{{ chain }}-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:

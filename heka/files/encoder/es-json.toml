@@ -1,5 +1,5 @@
 [encoder_{{ name }}]
 type = "ESJsonEncoder"
 index = "{{ values.index }}"
-es_index_from_timestamp = {{ values.es_index_from_timestamp }}
+es_index_from_timestamp = "{{ values.es_index_from_timestamp }}"
 

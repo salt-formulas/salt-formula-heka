@@ -52,8 +52,9 @@ parameters:
           engine: dashboard
           ticker_interval: 30
       encoder:
-        es-json:
+        es_json:
           engine: es-json
           message_matcher: TRUE
           index: logfile-%{%Y.%m.%d}
+          es_index_from_timestamp: true
 

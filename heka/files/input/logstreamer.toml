@@ -5,3 +5,7 @@ file_match = '{{ values.file_match }}'
 
 decoder = "{{ values.decoder }}_decoder"
 
+{% if values.splitter is defined %}
+splitter = {{ values.splitter }}
+{% endif %}
+

@@ -1,10 +1,10 @@
 {%- from "heka/map.jinja" import server with context -%}
 [AMQPOutput_{{ name }}]
 type = "AMQPOutput"
-url = "amqp://guest:guest@10.0.102.11/"
-exchange = "logs"
+url = "amqp://{{ values['user'] }}:{{ values['password'] }}@{{ values['host'] }}/"
+exchange = {{ values['exchange'] }}
 exchange_type = "fanout"
-message_matcher = "TRUE"
+message_matcher = "{{ values['message_matcher'] }}"
 use_framing = true
 encoder = "ProtobufEncoder"
 
@@ -12,6 +12,4 @@ encoder = "ProtobufEncoder"
 max_delay = "30s"
 delay = "250ms"
 max_retries = 5
-
-{{ values['exchange'] }}
 

@@ -11,13 +11,13 @@ parameters:
           log_directory: /var/log
           file_match: syslog\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
-          priority: '["^Index"]'
+          priority: "^Index"
         rsyslog_auth:
           engine: logstreamer
           log_directory: /var/log
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
-          priority: '["^Index"]'
+          priority: "^Index"
       decoder:
         rsyslog:
           engine: rsyslog

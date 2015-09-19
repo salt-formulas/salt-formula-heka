@@ -1,4 +1,4 @@
 [LogOutput]
 encoder = "{{ values.encoder }}"
-message_matcher = "{{ values.message_filter }}"
+message_matcher = "{{ values.message_matcher }}"
 

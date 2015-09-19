@@ -5,7 +5,7 @@ exchange = "{{ values.exchange }}"
 exchange_type = "fanout"
 message_matcher = "{{ values.message_matcher }}"
 use_framing = true
-encoder = "{{ values.encoder }}
+encoder = "{{ values.encoder }}"
 
 [AMQPOutput.retries]
 max_delay = "30s"

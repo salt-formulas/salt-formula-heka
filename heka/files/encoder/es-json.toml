@@ -2,7 +2,7 @@
 type = "ESJsonEncoder"
 index = "{{ values.index }}"
 
-{% if values.es_index_from_timestamp = 'True' %}
+{% if values.es_index_from_timestamp == 'True' %}
 es_index_from_timestamp = true
 {%- else -%}
 es_index_from_timestamp = false

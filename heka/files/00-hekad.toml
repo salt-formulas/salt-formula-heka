@@ -1,6 +1,4 @@
-{%- from "heka/map.jinja" import router with context -%}
-
 [hekad]
-maxprocs = 2
-{#% salt['grains.get']('num_cpus', '2') %#}
+{%- set workers = grains.num_cpus + 1 %}
+maxprocs = {{ workers }}
 

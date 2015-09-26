@@ -4,7 +4,7 @@ log_directory = "{{ values.log_directory }}"
 file_match = '{{ values.file_match }}'
 priority = {{ values.priority }}
 
-decoder = "{{ values.decoder }}_decoder"
+decoder = "{{ values.decoder }}"
 
 {% if values.splitter is defined %}
 splitter = {{ values.splitter }}

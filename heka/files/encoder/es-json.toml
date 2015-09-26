@@ -1,4 +1,4 @@
-[es-json]
+[es_json]
 type = "ESJsonEncoder"
 index = "{{ values.index }}"
 

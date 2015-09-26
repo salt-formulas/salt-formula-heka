@@ -18,6 +18,11 @@ parameters:
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
           priority: ["^Index"]
+        salt_minion:
+          engine: logstreamer
+          log_directory: /var/log/salt
+          file_match: minion
+          decoder: RsyslogDecoder
       decoder:
         rsyslog:
           engine: rsyslog

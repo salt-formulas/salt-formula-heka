@@ -35,6 +35,8 @@ parameters:
           template: \%TIMESTAMP\% \%HOSTNAME\% \%syslogtag\%\%msg:::sp-if-no-1st-sp\%\%msg:::drop-last-lf\%\n
           hostname_keep: TRUE
           tz: Europe/Prague
+        ProtoBufDecoder:
+          engine: amqp
       output:
         elasticsearch01:
           engine: elasticsearch

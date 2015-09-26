@@ -31,7 +31,7 @@ heka_user:
 
 {%- for name,values in server.input.iteritems() %}
 
-/etc/heka/conf.d/10-input-{{ name }}-{{ values['engine'] }}.toml:
+/etc/heka/conf.d/15-input-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/input/{{ values['engine'] }}.toml
   - template: jinja
@@ -122,7 +122,7 @@ heka_user:
 
 {%- for name,values in server.decoder.iteritems() %}
  
-/etc/heka/conf.d/50-decoder-{{ name }}-{{ values['engine'] }}.toml:
+/etc/heka/conf.d/10-decoder-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/decoder/{{ values['engine'] }}.toml
   - template: jinja

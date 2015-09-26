@@ -5,7 +5,9 @@ file_match = '{{ values.file_match }}'
 {% if values.priority is defined %}
 priority = {{ values.priority }}
 {% endif %}
+{% if values.decoder is defined %}
 decoder = "{{ values.decoder }}"
+{% endif %}
 {% if values.splitter is defined %}
 splitter = {{ values.splitter }}
 {% endif %}

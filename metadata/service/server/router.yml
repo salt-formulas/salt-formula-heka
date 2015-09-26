@@ -36,7 +36,7 @@ parameters:
           hostname_keep: TRUE
           tz: Europe/Prague
         ProtoBufDecoder:
-          engine: amqp
+          engine: protobuf
       output:
         elasticsearch01:
           engine: elasticsearch

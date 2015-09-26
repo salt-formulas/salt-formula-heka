@@ -22,7 +22,6 @@ parameters:
           engine: logstreamer
           log_directory: /var/log/salt
           file_match: minion
-          decoder: RsyslogDecoder
       decoder:
         rsyslog:
           engine: rsyslog

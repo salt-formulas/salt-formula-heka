@@ -46,13 +46,6 @@ parameters:
           encoder: ProtobufEncoder
           use_framing: true
           message_matcher: "TRUE"
-        heka_logfile:
-          engine: logoutput
-          encoder: RstEncoder
-          message_matcher: "TRUE"
-      encoder:
-        heka_logfile:
-          engine: RstEncoder
       filter: {}
       splitter: {}
 

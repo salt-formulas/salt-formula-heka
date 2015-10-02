@@ -5,6 +5,11 @@ heka_packages:
   pkg.installed:
   - names: {{ server.pkgs }}
 
+purge-heka-conf-dir:
+  file.directory:
+  - name: /etc/heka/conf.d/
+  - clean: True
+
 /etc/heka/conf.d/00-hekad.toml:
   file.managed:
   - source: salt://heka/files/00-hekad.toml
@@ -13,6 +18,7 @@ heka_packages:
   - group: heka
   - require:
     - pkg: heka_packages
+    - file: purge-heka-conf-dir
 
 heka_service:
   service.running:

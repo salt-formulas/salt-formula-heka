@@ -26,22 +26,28 @@ parameters:
           priority: ["^Index"]
         nova_compute:
           engine: logstreamer
-          log_directory: /var/log
+          log_directory: /var/log/nova
           file_match: nova-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
           priority: ["^Index"]
           decoder: openstack
         cinder_volume:
           engine: logstreamer
-          log_directory: /var/log
+          log_directory: /var/log/cinder
           file_match: cinder-volume\.log\\.?(?P<Index>\\d+)?(.gz)?
           priority: ["^Index"]
           decoder: openstack
         ceilometer_agent:
           engine: logstreamer
-          log_directory: /var/log
+          log_directory: /var/log/ceilometer
           file_match: ceilometer-agent-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
           priority: ['^Index']
           decoder: openstack
+        libvirtd:
+          engine: logstreamer
+          log_directory: /var/log/libvirt
+          file_match: libvirtd\.log\\.?(?P<Index>\\d+)?(.gz)?
+          priority: ['^Index']
+          decoder: libvirtd
       decoder:
         rsyslog:
           engine: rsyslog
@@ -61,6 +67,19 @@ parameters:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>TRACE)\s(?P<programname>.\S+)\s(?P<payload>.*)
           timestamp_layout: 2015-10-06 11:34:37.243
+        libvirtd:
+          engine: multidecoder
+          subs: [ 'libvirtcommon', 'libvirtaudit' ]
+          cascade_strategy: firts-wins
+          log_sub_errors: false
+        libvirtcommon:
+          engine: payloadregex
+          match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3}\+\d{4}):\s+(?P<pid>\d+):\s+(?P<severity>\w+)\s+:\s+(?P<qemutrace>\w+:\d+)\s+:\s+(?P<payload>.*)
+          timestamp_layout: 2015-09-01 15:56:14.675+0000
+        libvirtaudit:
+          engine: payloadregex
+          match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3}\+\d{4}):\s+(?P<pid>\d+):\s+(?P<severity>\w+)\s+:\s+(?P<message>.+):\s(?P<payload>.+)
+          timestamp_layout: 2015-09-01 15:56:14.675+0000
       output:
         rabbitmq:
           engine: amqp

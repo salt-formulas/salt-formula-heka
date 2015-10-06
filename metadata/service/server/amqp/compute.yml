@@ -1,0 +1,78 @@
+applications:
+- heka
+_param:
+parameters:
+  heka:
+    server:
+      enabled: true
+      input:
+        rsyslog_syslog:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: syslog\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+        rsyslog_auth:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+        rsyslog_kern:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+        nova_compute:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: nova-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
+          priority: ["^Index"]
+          decoder: openstack
+        cinder_volume:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: cinder-volume\.log\\.?(?P<Index>\\d+)?(.gz)?
+          priority: ["^Index"]
+          decoder: openstack
+        ceilometer_agent:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: ceilometer-agent-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
+          priority: ['^Index']
+          decoder: openstack
+      decoder:
+        rsyslog:
+          engine: rsyslog
+          template: \%TIMESTAMP\% \%HOSTNAME\% \%syslogtag\%\%msg:::sp-if-no-1st-sp\%\%msg:::drop-last-lf\%\n
+          hostname_keep: TRUE
+          tz: Europe/Prague
+        openstack:
+          engine: multidecoder
+          subs: [ 'OpenStackLog','OpenStackLogTrace' ]
+          cascade_strategy: first-wins
+          log_sub_errors: false
+        OpenStackLog:
+          engine: payloadregex
+          match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>\w+)\s(?P<programname>\D+)\s\[(?P<id>.+)\]\s(?P<payload>.*)
+          timestamp_layout: 2015-10-06 11:34:37.243
+        OpenStackLogTrace:
+          engine: payloadregex
+          match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>TRACE)\s(?P<programname>.\S+)\s(?P<payload>.*)
+          timestamp_layout: 2015-10-06 11:34:37.243
+      output:
+        rabbitmq:
+          engine: amqp
+          host: ${_param:heka_shipper_output_host}
+          user: ${_param:heka_shipper_output_user}
+          password: ${_param:heka_shipper_output_password}
+          vhost: ${_param:heka_shipper_output_vhost}
+          exchange: ${_param:heka_shipper_output_exchange}
+          exchange_type: fanout
+          encoder: ProtobufEncoder
+          use_framing: true
+          message_matcher: "TRUE"
+      filter: {}
+      splitter: {}
+

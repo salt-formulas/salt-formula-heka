@@ -1,0 +1,23 @@
+[ESJsonEncoder]
+#index = "%{Type}-%{%Y.%m.%d}"
+index = "logfile-%{%Y.%m.%d}"
+# es_index_from_timestamp = true
+#type_name = "%{Type}"
+type_name = "%{Type}-%{Hostname}"
+    [ESJsonEncoder.field_mappings]
+    timestamp = "@timestamp"
+    Severity = "level"
+
+[ElasticSearchOutput]
+# message_matcher = "TRUE"
+# message_matcher = "Type != 'heka.*'"
+message_matcher = "Type != 'heka.memstat' && Type != 'heka.all-report'"
+server = "http://10.0.151.204:9200"
+flush_interval = 2500
+# flush_interval = 5000
+flush_count = 10
+encoder = "ESJsonEncoder"
+
+[ElasticSearchOutput.buffering]
+max_file_size = 268435456
+

@@ -1,0 +1,9 @@
+[output_{{ name }}]
+type = "ElasticSearchOutput"
+message_matcher = "{{ values.message_matcher }}"
+encoder = "{{ values.encoder }}"
+server = "http://{{ values.host }}:{{ values.port }}"
+
+[output_{{ name }}.buffering]
+max_file_size = 268435456
+

@@ -1,0 +1,15 @@
+Source: salt-formula-heka
+Maintainer: Jan Kaufman <jan.kaufman@tcpcloud.eu>
+Section: admin
+Priority: optional
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+Homepage: http://www.tcpcloud.eu
+Vcs-Browser: https://github.com/tcpcloud/salt-formula-heka
+Vcs-Git: https://github.com/tcpcloud/salt-formula-heka.git
+
+Package: salt-formula-heka
+Architecture: all
+Depends: ${misc:Depends}, salt-master, reclass
+Description: Heka Salt formula
+ Install and configure Heka server and client.

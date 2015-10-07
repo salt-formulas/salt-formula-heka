@@ -1,0 +1,23 @@
+[input_{{ name }}]
+type = "AMQPInput"
+url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ values.port }}/{{ values.vhost }}"
+exchange = "{{ values.exchange }}"
+exchange_type = "{{ values.exchange_type }}"
+{%- if values.exchange_durability is defined -%}
+exchange_durability = "{{ values.exchange_durability }}"
+{% endif %}
+{%- if values.exchange_auto_delete is defined -%}
+exchange_auto_delete = "{{ values.exchange_auto_delete }}"
+{% endif %}
+{%- if values.queue_auto_delete is defined -%}
+queue_auto_delete = {{ values.queue_auto_delete }}
+{% endif %}
+{%- if values.queue is defined -%}
+queue = "{{ values.queue }}"
+{% endif %}
+{%- if values.routing_key is defined -%}
+routing_key = "{{ values.routing_key }}"
+{% endif %}
+decoder = "{{ values.decoder }}"
+splitter = "{{ values.splitter }}"
+

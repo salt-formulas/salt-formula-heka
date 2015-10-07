@@ -1,0 +1,47 @@
+applications:
+- heka
+_param:
+parameters:
+  heka:
+    server:
+      enabled: true
+      input:
+        rsyslog_syslog:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: syslog\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+        rsyslog_auth:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+        rsyslog_kern:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+      decoder:
+        rsyslog:
+          engine: rsyslog
+          template: \%TIMESTAMP\% \%HOSTNAME\% \%syslogtag\%\%msg:::sp-if-no-1st-sp\%\%msg:::drop-last-lf\%\n
+          hostname_keep: TRUE
+          tz: Europe/Prague
+      output:
+        rabbitmq:
+          engine: amqp
+          host: ${_param:heka_shipper_output_host}
+          user: ${_param:heka_shipper_output_user}
+          password: ${_param:heka_shipper_output_password}
+          vhost: ${_param:heka_shipper_output_vhost}
+          exchange: ${_param:heka_shipper_output_exchange}
+          exchange_type: fanout
+          encoder: ProtobufEncoder
+          use_framing: true
+          message_matcher: "TRUE"
+      filter: {}
+      splitter: {}
+

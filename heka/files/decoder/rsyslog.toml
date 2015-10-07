@@ -1,0 +1,9 @@
+[RsyslogDecoder]
+type = "SandboxDecoder"
+filename = "lua_decoders/rsyslog.lua"
+
+[RsyslogDecoder.config]
+type = "RSYSLOG_TraditionalFileFormat"
+template = '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\n'
+tz = "Europe/Prague"
+

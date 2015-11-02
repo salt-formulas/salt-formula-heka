@@ -1,10 +1,14 @@
-[<%= @title %>_logstreamer]
+[logstreamer_{{ name }}]
 type = "LogstreamerInput"
-log_directory = "<%= @log_directory %>"
-file_match = '<%= @file_match %>'
-<% if @differentiator -%>
-differentiator = <%= @differentiator %>
-<% end -%>
-decoder = "<%= @decoder %>_decoder"
-splitter = "<%= @splitter ? "#{ @splitter }_splitter" : "TokenSplitter" %>"
+log_directory = "{{ values.log_directory }}"
+file_match = '{{ values.file_match }}'
+{% if values.priority is defined %}
+priority = {{ values.priority }}
+{% endif %}
+{% if values.decoder is defined %}
+decoder = "{{ values.decoder }}"
+{% endif %}
+{% if values.splitter is defined %}
+splitter = {{ values.splitter }}
+{% endif %}
 

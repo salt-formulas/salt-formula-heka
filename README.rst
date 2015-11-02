@@ -109,7 +109,7 @@ Messages are consumed from amqp and sent to elasticsearch server.
           es-json:
             engine: es-json
             message_matcher: TRUE
-            index = logfile-%{%Y.%m.%d}
+            index: logfile-%{%Y.%m.%d}
 
 Read more
 =========

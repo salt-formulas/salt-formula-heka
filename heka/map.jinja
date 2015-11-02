@@ -7,10 +7,18 @@ Debian:
   groups:
   - adm
   - syslog
+  service:
+  - heka
+  filter: {}
+  splitter: {}
+  encoder: {}
+  decoder: {}
 RedHat:
   groups:
   - adm
+  service:
+  - heka
 {%- endload %}
 
-{%- set server = salt['grains.filter_by'](server__defaults, merge=salt['pillar.get']('heka:server')) %}
+{%- set server = salt['grains.filter_by'](server_defaults, merge=salt['pillar.get']('heka:server')) %}
 

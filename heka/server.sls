@@ -3,42 +3,148 @@
 
 heka_packages:
   pkg.installed:
-  - names: {{ heka.pkgs }}
+  - names: {{ server.pkgs }}
+
+purge-heka-conf-dir:
+  file.directory:
+  - name: /etc/heka/conf.d/
+  - clean: True
 
 /etc/heka/conf.d/00-hekad.toml:
   file.managed:
   - source: salt://heka/files/00-hekad.toml
   - template: jinja
-  - mode: 755
+  - mode: 640
+  - group: heka
   - require:
     - pkg: heka_packages
-  - watch_in:
-    - service: heka_service
+    - file: purge-heka-conf-dir
 
 heka_service:
   service.running:
   - enable: true
-  - name: {{ heka.service }}
+  - name: heka
+  - watch:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - require:
+    - user: heka_user
 
 heka_user:
   user.present:
   - name: heka
   - shell: /bin/false
-  - groups: {{ heka.groups }}
+  - groups: {{ server.groups }}
   - require:
     - pkg: heka_packages
 
-{%- for name,engine in server.input.iteritems() %}
+{%- for name,values in server.input.iteritems() %}
 
-/etc/heka/conf.d/10-input-{{ name }}.toml:
+/etc/heka/conf.d/15-input-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
-  - source: salt://heka/files/input/{{ engine }}.toml
+  - source: salt://heka/files/input/{{ values['engine'] }}.toml
   - template: jinja
-  - mode: 755
+  - mode: 640
+  - group: heka
   - require:
-    - file: /etc/heka/conf.d/00-hekad.toml 
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
 
-{%- endfor %}                                                                                                                                                                                          
+{%- endfor %}
+
+{%- for name,values in server.output.iteritems() %}
+ 
+/etc/heka/conf.d/60-output-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/output/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
+ 
+{%- endfor %}
+
+
+{%- for name,values in server.filter.iteritems() %}
+ 
+/etc/heka/conf.d/20-filter-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/filter/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.splitter.iteritems() %}
+ 
+/etc/heka/conf.d/30-splitter-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/splitter/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.encoder.iteritems() %}
+ 
+/etc/heka/conf.d/40-encoder-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/encoder/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
+ 
+{%- endfor %}
+
+{%- for name,values in server.decoder.iteritems() %}
+ 
+/etc/heka/conf.d/10-decoder-{{ name }}-{{ values['engine'] }}.toml:
+  file.managed:
+  - source: salt://heka/files/decoder/{{ values['engine'] }}.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+        - service: heka_service
+  - defaults:
+      name: {{ name }}
+      values: {{ values }}
+ 
+{%- endfor %}
 
 {%- endif %}
 

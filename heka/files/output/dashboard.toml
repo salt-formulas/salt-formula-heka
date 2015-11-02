@@ -1,4 +1,6 @@
 [DashboardOutput]
-address = "<%= @dashboard_address %>:<%= @dashboard_port %>"
-ticker_interval = <%= @ticker_interval %>
+{%- if values.dashboard_address is defined %}
+address = "{{ values.dashboard_address }}:{{ values.dashboard_port }}"
+{% endif %}
+ticker_interval = {{ values.ticker_interval }}
 

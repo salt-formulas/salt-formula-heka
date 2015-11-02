@@ -1,27 +1,27 @@
 applications:
 - heka
 _param:
-  heka_shipper_output_host: localhost
-  heka_shipper_input_host: localhost
-  heka_shipper_input_user: guest
-  heka_shipper_input_password: guest
-  heka_shipper_input_vhost: /logs
-  heka_shipper_input_exchange: logs
 parameters:
   heka:
     server:
       enabled: true
       input:
-        rsyslog-syslog:
+        rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
           file_match: syslog\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
           priority: ["^Index"]
-        rsyslog-auth:
+        rsyslog_auth:
           engine: logstreamer
           log_directory: /var/log
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
+        rsyslog_kern:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
           decoder: RsyslogDecoder
           priority: ["^Index"]
       decoder:
@@ -41,11 +41,7 @@ parameters:
           exchange_type: fanout
           encoder: ProtobufEncoder
           use_framing: true
-        heka-logfile:
-          engine: logoutput
-          encoder: RstEncoder
-          message_matcher: TRUE
-      encoder:
-        heka-logfile:
-          engine: RstEncoder
+          message_matcher: "TRUE"
+      filter: {}
+      splitter: {}
 

@@ -1,22 +1,9 @@
-[<%= @title %>_output]
+[output_{{ name }}]
 type = "ElasticSearchOutput"
-message_matcher = "<%= @message_matcher %>"
-encoder = "<%= @encoder %>_encoder"
+message_matcher = "{{ values.message_matcher }}"
+encoder = "{{ values.encoder }}"
+server = "http://{{ values.host }}:{{ values.port }}"
 
-<% # Heka expects milliseconds here -%>
-flush_interval = <%= @flush_interval.to_i() * 1000 %>
-flush_count = <%= @flush_count %>
-
-server = "http://<%= @server %>:<%= @port %>"
-
-use_buffering = <%= @use_buffering %>
-
-<% if @use_buffering -%>
-[<%= @title %>_output.buffering]
-max_buffer_size = <%= @queue_max_buffer_size %>
-<% if @max_file_size != :undef -%>
-max_file_size = <%= @max_file_size %>
-<% end -%>
-full_action = "<%= @queue_full_action %>"
-<% end -%>
+[output_{{ name }}.buffering]
+max_file_size = 268435456
 

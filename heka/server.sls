@@ -26,6 +26,8 @@ heka_service:
   - name: heka
   - watch:
     - file: /etc/heka/conf.d/00-hekad.toml
+  - require:
+    - user: heka_user
 
 heka_user:
   user.present:

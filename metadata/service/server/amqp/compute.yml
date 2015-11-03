@@ -80,7 +80,7 @@ parameters:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3}\+\d{4}):\s+(?P<pid>\d+):\s+(?P<severity>\w+)\s+:\s+(?P<message>.+):\s(?P<payload>.+)
           timestamp_layout: 2015-09-01 15:56:14.675+0000
-     output:
+      output:
         rabbitmq:
           engine: amqp
           host: ${_param:heka_shipper_output_host}

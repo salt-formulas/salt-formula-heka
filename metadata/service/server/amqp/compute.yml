@@ -62,11 +62,11 @@ parameters:
         OpenStackLog:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>\w+)\s(?P<programname>\D+)\s\[(?P<id>.+)\]\s(?P<payload>.*)
-          timestamp_layout: 2015-10-06 11:34:37.243
+          timestamp_layout: "2015-10-06 11:34:37.243"
         OpenStackLogTrace:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>TRACE)\s(?P<programname>.\S+)\s(?P<payload>.*)
-          timestamp_layout: 2015-10-06 11:34:37.243
+          timestamp_layout: "2015-10-06 11:34:37.243"
         libvirtd:
           engine: multidecoder
           subs: [ 'libvirtcommon', 'libvirtaudit' ]

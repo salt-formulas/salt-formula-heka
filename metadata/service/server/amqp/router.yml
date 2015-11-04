@@ -14,6 +14,7 @@ parameters:
           vhost: ${_param:heka_router_input_vhost}
           port: 5672
           exchange: ${_param:heka_router_input_exchange}
+          prefetch_count: ${_param:heka_router_input_prefetch_count}
           exchange_type: fanout
           decoder: ProtoBufDecoder
           splitter: HekaFramingSplitter

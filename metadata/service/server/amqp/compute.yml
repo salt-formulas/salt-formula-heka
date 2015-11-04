@@ -46,7 +46,7 @@ parameters:
           engine: multidecoder
           subs: [ 'Payloadregex_OpenStackLog','Payloadregex_OpenStackLogTrace' ]
           cascade_strategy: first-wins
-          log_sub_errors: false
+          log_sub_errors: "false"
         OpenStackLog:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>\w+)\s(?P<programname>\D+)\s\[(?P<id>.+)\]\s(?P<payload>.*)
@@ -59,7 +59,7 @@ parameters:
           engine: multidecoder
           subs: [ 'Payloadregex_libvirtcommon', 'Payloadregex_libvirtaudit' ]
           cascade_strategy: first-wins
-          log_sub_errors: false
+          log_sub_errors: "false"
         libvirtcommon:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3}\+\d{4}):\s+(?P<pid>\d+):\s+(?P<severity>\w+)\s+:\s+(?P<qemutrace>\w+:\d+)\s+:\s+(?P<payload>.*)

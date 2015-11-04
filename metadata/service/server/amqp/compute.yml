@@ -83,6 +83,7 @@ parameters:
         contrail_vrouter_agent:
           engine: payloadregex
           match_regex: (?P<timestamp>\d{4}-\d{1,2}-\d{1,2}\s\w+\s\d{2}:\d{2}:\d{2}:\d{3}.\d{3})\s\w+\s.+\s\[Thread (\d+), Pid (?<pid>\d+)]:\s(?P<message>.+)
+          timestamp_layout: "2015-09-01 15:56:14.675+0000"
       output:
         rabbitmq:
           engine: amqp

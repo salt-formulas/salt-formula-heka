@@ -29,13 +29,13 @@ parameters:
           log_directory: /var/log/nova
           file_match: nova-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
           priority: ["^Index"]
-          decoder: openstack
+          decoder: multidecoder_openstack
         libvirtd:
           engine: logstreamer
           log_directory: /var/log/libvirt
           file_match: libvirtd\.log\\.?(?P<Index>\\d+)?(.gz)?
           priority: ['^Index']
-          decoder: libvirtd
+          decoder: multidecoder_libvirtd
       decoder:
         rsyslog:
           engine: rsyslog

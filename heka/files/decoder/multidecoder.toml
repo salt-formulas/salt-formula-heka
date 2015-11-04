@@ -1,0 +1,6 @@
+[multidecoder_{{ name }}]
+type = "MultiDecoder"
+subs = {{ values.subs }}
+cascade_strategy = "{{ values.cascade_strategy }}"
+log_sub_errors = {{ values.log_sub_errors }}
+

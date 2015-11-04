@@ -44,7 +44,7 @@ parameters:
           tz: Europe/Prague
         openstack:
           engine: multidecoder
-          subs: [ 'OpenStackLog','OpenStackLogTrace' ]
+          subs: [ 'Payloadregex_OpenStackLog','Payloadregex_OpenStackLogTrace' ]
           cascade_strategy: first-wins
           log_sub_errors: false
         OpenStackLog:
@@ -57,7 +57,7 @@ parameters:
           timestamp_layout: "2015-10-06 11:34:37.243"
         libvirtd:
           engine: multidecoder
-          subs: [ 'libvirtcommon', 'libvirtaudit' ]
+          subs: [ 'Payloadregex_libvirtcommon', 'Payloadregex_libvirtaudit' ]
           cascade_strategy: first-wins
           log_sub_errors: false
         libvirtcommon:

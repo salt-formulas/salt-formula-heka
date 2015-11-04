@@ -30,18 +30,6 @@ parameters:
           file_match: nova-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
           priority: ["^Index"]
           decoder: openstack
-        cinder_volume:
-          engine: logstreamer
-          log_directory: /var/log/cinder
-          file_match: cinder-volume\.log\\.?(?P<Index>\\d+)?(.gz)?
-          priority: ["^Index"]
-          decoder: openstack
-        ceilometer_agent:
-          engine: logstreamer
-          log_directory: /var/log/ceilometer
-          file_match: ceilometer-agent-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
-          priority: ['^Index']
-          decoder: openstack
         libvirtd:
           engine: logstreamer
           log_directory: /var/log/libvirt

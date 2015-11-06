@@ -36,6 +36,12 @@ parameters:
           file_match: libvirtd\.log\.?(?P<Index>\d+)?(.gz)?
           priority: ['^Index']
           decoder: multidecoder_libvirtd
+        contrail_vrouter_agent:
+          engine: logstreamer
+          log_directory: /var/log/contrail
+          file_match: contrail-vrouter-agent\.log\.?(?P<Index>\d+)?(.gz)?
+          priority: ['^Index']
+          decoder: contrail_vrouter_agent
       decoder:
         rsyslog:
           engine: rsyslog

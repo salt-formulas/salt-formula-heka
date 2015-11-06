@@ -27,13 +27,13 @@ parameters:
         nova_compute:
           engine: logstreamer
           log_directory: /var/log/nova
-          file_match: nova-compute\.log\\.?(?P<Index>\\d+)?(.gz)?
+          file_match: nova-compute\.log\.?(?P<Index>\d+)?(.gz)?
           priority: ["^Index"]
           decoder: multidecoder_openstack
         libvirtd:
           engine: logstreamer
           log_directory: /var/log/libvirt
-          file_match: libvirtd\.log\\.?(?P<Index>\\d+)?(.gz)?
+          file_match: libvirtd\.log\.?(?P<Index>\d+)?(.gz)?
           priority: ['^Index']
           decoder: multidecoder_libvirtd
       decoder:
@@ -86,4 +86,3 @@ parameters:
           message_matcher: "TRUE"
       filter: {}
       splitter: {}
-

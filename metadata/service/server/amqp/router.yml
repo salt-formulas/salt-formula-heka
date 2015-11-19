@@ -18,6 +18,12 @@ parameters:
           exchange_type: fanout
           decoder: ProtoBufDecoder
           splitter: HekaFramingSplitter
+        rsyslog_kern:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
+          decoder: RsyslogDecoder
+          priority: ["^Index"]
         rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
@@ -53,4 +59,3 @@ parameters:
           engine: es-json
           index: logfile-%{%Y.%m.%d}
           es_index_from_timestamp: true
-

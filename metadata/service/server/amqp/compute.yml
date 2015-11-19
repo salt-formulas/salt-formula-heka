@@ -10,20 +10,20 @@ parameters:
           engine: logstreamer
           log_directory: /var/log
           file_match: syslog\.?(?P<Index>\d+)?(.gz)?
-          decoder: RsyslogDecoder
           priority: ["^Index"]
+          decoder: RsyslogDecoder
         rsyslog_auth:
           engine: logstreamer
           log_directory: /var/log
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
-          decoder: RsyslogDecoder
           priority: ["^Index"]
+          decoder: RsyslogDecoder
         rsyslog_kern:
           engine: logstreamer
           log_directory: /var/log
           file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
-          decoder: RsyslogDecoder
           priority: ["^Index"]
+          decoder: RsyslogDecoder
         nova_compute:
           engine: logstreamer
           log_directory: /var/log/nova
@@ -61,6 +61,10 @@ parameters:
           engine: payloadregex
           match_regex: ^(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}.\d{3})\s(?P<pid>\d+)\s(?P<severity>TRACE)\s(?P<programname>.\S+)\s(?P<payload>.*)
           timestamp_layout: "2015-10-06 11:34:37.243"
+        openstacksandbox:
+          engine: sandbox
+          file_name: "/etc/heka/plugins.d/decoders/openstack.lua"
+          module_directory: "/etc/heka/plugins.d/common;/usr/share/heka/lua_modules"
         libvirtd:
           engine: multidecoder
           subs: [ 'Payloadregex_libvirtcommon', 'Payloadregex_libvirtaudit' ]

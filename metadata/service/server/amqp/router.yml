@@ -22,20 +22,20 @@ parameters:
           engine: logstreamer
           log_directory: /var/log
           file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
-          decoder: RsyslogDecoder
           priority: ["^Index"]
+          decoder: RsyslogDecoder
         rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
           file_match: syslog\.?(?P<Index>\d+)?(.gz)?
-          decoder: RsyslogDecoder
           priority: ["^Index"]
+          decoder: RsyslogDecoder
         rsyslog_auth:
           engine: logstreamer
           log_directory: /var/log
           file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
-          decoder: RsyslogDecoder
           priority: ["^Index"]
+          decoder: RsyslogDecoder
       decoder:
         rsyslog:
           engine: rsyslog

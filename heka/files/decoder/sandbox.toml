@@ -21,3 +21,10 @@ instruction_limit = "{{ values.instruction_limit }}"
 {% if values.output_limit is defined %}
 output_limit = "{{ values.output_limit }}"
 {%- endif %}
+
+{% if values.config is defined %}
+config = [
+{% for k,v in values.config.iteritems() %}
+{{ k }} = {{ v }} ]
+{%- endfor %}
+{%- endif %}

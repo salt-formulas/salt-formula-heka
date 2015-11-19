@@ -11,4 +11,3 @@ decoder = "{{ values.decoder }}"
 {% if values.splitter is defined %}
 splitter = {{ values.splitter }}
 {% endif %}
-

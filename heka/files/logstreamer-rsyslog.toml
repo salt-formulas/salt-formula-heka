@@ -1,0 +1,38 @@
+[LogstreamerInputSyslog]
+type = "LogstreamerInput"
+log_directory = "/var/log"
+file_match = 'syslog\.?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "RsyslogDecoder"
+
+[LogstreamerInputAuthlog]
+type = "LogstreamerInput"
+log_directory = "/var/log"
+file_match = 'auth\.log\.?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "RsyslogDecoder"
+
+[LogstreamerInputAuthKernlog]
+type = "LogstreamerInput"
+log_directory = "/var/log"
+file_match = 'kern\.log\.?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "RsyslogDecoder"
+
+[LogstreamerInputAuthMaillog]
+type = "LogstreamerInput"
+log_directory = "/var/log"
+file_match = 'mail\.log?(?P<Index>\d+)?(.gz)?|mail\.err?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "RsyslogDecoder"
+
+[RsyslogDecoder]
+type = "SandboxDecoder"
+filename = "lua_decoders/rsyslog.lua"
+
+[RsyslogDecoder.config]
+type = "RSYSLOG_TraditionalFileFormat"
+template = '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\n'
+tz = "Europe/Prague"
+# hostname_keep = 'TRUE'
+

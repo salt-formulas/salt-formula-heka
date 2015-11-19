@@ -1,0 +1,23 @@
+[Sandbox_{{ name }}]
+type = "SandboxDecoder"
+file_name = "{{ values.file_name }}"
+
+{% if values.module_directory is defined %}
+module_directory =  "{{ values.module_directory }}"
+{%- endif %}
+
+{% if values.memory_limit is defined %}
+memory_limit = "{{ values.memory_limit }}"
+{%- endif %}
+
+{% if values.preserve_data is defined %}
+preserve_data = "{{ values.preserve_data }}"
+{%- endif %}
+
+{% if values.instruction_limit is defined %}
+instruction_limit = "{{ values.instruction_limit }}"
+{%- endif %}
+
+{% if values.output_limit is defined %}
+output_limit = "{{ values.output_limit }}"
+{%- endif %}

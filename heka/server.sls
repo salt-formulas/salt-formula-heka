@@ -148,8 +148,8 @@ heka_user:
 
 {%- for service_name, service in pillar.items() %}
 {%- for role_name, role in service.iteritems() %}
-{%- if role.logging is defined %}
-{%- if role.logging.get('heka', {}).get('enabled', False) %}
+{%- if role.logging is defined and role.logging.heka is defined %}
+{%- if role.logging.heka.get('enabled', False) %}
 
 /etc/heka/conf.d/99-{{ service_name }}-{{ role_name }}.toml:
   file.managed:

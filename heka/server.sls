@@ -146,5 +146,24 @@ heka_user:
  
 {%- endfor %}
 
+{%- for service_name, service in pillar.items() %}
+{%- for role_name, role in service.iteritems() %}
+{%- if role.get('logging', {}).get('heka', {}).get('enabled', False) %}
+
+/etc/heka/conf.d/99-{{ service_name }}-{{ role_name }}.toml:
+  file.managed:
+  - source: salt://{{ service_name }}/files/heka.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+  - watch_in:
+    - service: heka_service
+
+{%- endif %}
+{%- endfor %}
+{%- endfor %}
+
 {%- endif %}
 

@@ -1,6 +1,6 @@
 [Sandbox_{{ name }}]
 type = "SandboxDecoder"
-file_name = "{{ values.file_name }}"
+filename = "{{ values.file_name }}"
 
 {% if values.module_directory is defined %}
 module_directory =  "{{ values.module_directory }}"

@@ -18,23 +18,12 @@ parameters:
           decoder: ProtoBufDecoder
           splitter: HekaFramingSplitter
           prefetch_count: 20
-        rsyslog_kern:
-          engine: logstreamer
-          log_directory: /var/log
-          file_match: kern\.log\.?(?P<Index>\d+)?(.gz)?
-          priority: ["^Index"]
-          decoder: RsyslogDecoder
         rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
-          file_match: syslog\.?(?P<Index>\d+)?(.gz)?
+          file_match: "?P<Service>daemon\.log|cron\.log|mail\.log|kern\.log|auth\.log|syslog|messages|debug)\.?(?P<Index>\d+)?(.gz)?"
           priority: ["^Index"]
-          decoder: RsyslogDecoder
-        rsyslog_auth:
-          engine: logstreamer
-          log_directory: /var/log
-          file_match: auth\.log\.?(?P<Index>\d+)?(.gz)?
-          priority: ["^Index"]
+          differentiator: [ "rsyslog-", "Service" ]
           decoder: RsyslogDecoder
       decoder:
         rsyslog:

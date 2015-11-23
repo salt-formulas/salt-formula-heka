@@ -38,8 +38,10 @@ parameters:
           engine: elasticsearch
           host: ${_param:heka_router_output_host}
           port: 9200
-          encoder: es_json
+          encoder: es_payload
           message_matcher: "Logger != 'hekad'"
+          flush_count: 10
+          flush_interval: 1000
         dashboard01:
           engine: dashboard
           ticker_interval: 30

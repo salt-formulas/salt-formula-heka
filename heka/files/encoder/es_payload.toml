@@ -1,0 +1,8 @@
+[es_payload]
+type = "ESJsonEncoder"
+filename = "lua_encoders/es_payload.lua"
+
+    [es_payload.config]
+    es_index_from_timestamp = true
+    index = "%{Logger}-%{%Y.%m.%d}"
+    type_name = "%{Type}-%{Hostname}"

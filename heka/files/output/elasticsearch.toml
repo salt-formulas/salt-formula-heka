@@ -3,6 +3,9 @@ type = "ElasticSearchOutput"
 message_matcher = "{{ values.message_matcher }}"
 encoder = "{{ values.encoder }}"
 server = "http://{{ values.host }}:{{ values.port }}"
+flush_interval = {{ values.flush_interval }}
+flush_count = {{ values.flush_count }}
 
 [output_{{ name }}.buffering]
-max_file_size = 268435456
+max_file_size = 268435456 #256M
+max_buffer_size = 10737418240 #10G

@@ -4,7 +4,7 @@ url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ value
 exchange = "{{ values.exchange }}"
 exchange_type = "{{ values.exchange_type }}"
 
-{%- if values.prefetch_count is defined -%}
+{% if values.prefetch_count is defined -%}
 prefetch_count = {{ values.prefetch_count }}
 {% endif %}
 {%- if values.exchange_durability is defined -%}

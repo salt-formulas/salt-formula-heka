@@ -1,5 +1,5 @@
 [es_payload]
-type = "ESJsonEncoder"
+type = "SandboxEncoder"
 filename = "lua_encoders/es_payload.lua"
 
     [es_payload.config]

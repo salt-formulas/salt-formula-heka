@@ -50,3 +50,5 @@ parameters:
           engine: es-json
           index: logfile-%{%Y.%m.%d}
           es_index_from_timestamp: true
+        es_payload:
+          engine: es-payload

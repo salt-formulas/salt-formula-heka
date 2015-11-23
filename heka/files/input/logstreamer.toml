@@ -1,7 +1,7 @@
 [logstreamer_{{ name }}]
 type = "LogstreamerInput"
 log_directory = "{{ values.log_directory }}"
-file_match = '{{ values.file_match }}'
+file_match = "{{ values.file_match }}"
 {% if values.priority is defined %}
 priority = '{{ values.priority }}'
 {% endif %}

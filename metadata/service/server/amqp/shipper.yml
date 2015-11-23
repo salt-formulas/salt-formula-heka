@@ -9,7 +9,7 @@ parameters:
         rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log
-          file_match: ?P<Service>daemon\.log|cron\.log|mail\.log|kern\.log|auth\.log|syslog|messages|debug)\.?(?P<Index>\d+)?(.gz)?
+          file_match: '(?P<Service>daemon\\.log|cron\\.log|mail\\.log|kern\\.log|auth\\.log|syslog|messages|debug)\\.?(?P<Index>\\d+)?(.gz)?'
           priority: ["^Index"]
           differentiator: [ "rsyslog-", "Service" ]
           decoder: RsyslogDecoder

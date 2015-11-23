@@ -1,7 +1,7 @@
 [logstreamer_{{ name }}]
 type = "LogstreamerInput"
 log_directory = "{{ values.log_directory }}"
-file_match = "{{ values.file_match }}"
+file_match = '{{ values.file_match }}'
 {% if values.priority is defined %}
 priority = '{{ values.priority }}'
 {% endif %}
@@ -9,8 +9,8 @@ priority = '{{ values.priority }}'
 decoder = "{{ values.decoder }}"
 {% endif %}
 {% if values.splitter is defined %}
-splitter = ''{{ values.splitter }}''
+splitter = '{{ values.splitter }}'
 {% endif %}
 {% if values.differentiator is defined %}
-differentiator = '{{ values.differentiator }}'
+differentiator = {{ values.differentiator }}
 {% endif %}

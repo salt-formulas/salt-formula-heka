@@ -1,9 +1,5 @@
 [es_json]
 type = "ESJsonEncoder"
-index = "{{ values.index }}"
-
-{% if values.es_index_from_timestamp == True %}
 es_index_from_timestamp = true
-{%- else -%}
-es_index_from_timestamp = false
-{%- endif -%}
+index = "{% raw %}%{Logger}-%{%Y.%m.%d}{% endraw %}"
+type_name = "{% raw %}%{Type}-%{Hostname}{% endraw %}"

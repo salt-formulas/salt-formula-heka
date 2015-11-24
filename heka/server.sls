@@ -56,7 +56,7 @@ heka_user:
 {%- endfor %}
 
 {%- for name,values in server.output.iteritems() %}
- 
+{%- if values.enabled %}
 /etc/heka/conf.d/60-output-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/output/{{ values['engine'] }}.toml
@@ -70,12 +70,13 @@ heka_user:
   - defaults:
       name: {{ name }}
       values: {{ values }}
- 
+
+{%- endif %}
 {%- endfor %}
 
 
 {%- for name,values in server.filter.iteritems() %}
- 
+
 /etc/heka/conf.d/20-filter-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/filter/{{ values['engine'] }}.toml
@@ -89,11 +90,11 @@ heka_user:
   - defaults:
       name: {{ name }}
       values: {{ values }}
- 
+
 {%- endfor %}
 
 {%- for name,values in server.splitter.iteritems() %}
- 
+
 /etc/heka/conf.d/30-splitter-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/splitter/{{ values['engine'] }}.toml
@@ -107,11 +108,11 @@ heka_user:
   - defaults:
       name: {{ name }}
       values: {{ values }}
- 
+
 {%- endfor %}
 
 {%- for name,values in server.encoder.iteritems() %}
- 
+
 /etc/heka/conf.d/40-encoder-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/encoder/{{ values['engine'] }}.toml
@@ -125,11 +126,11 @@ heka_user:
   - defaults:
       name: {{ name }}
       values: {{ values }}
- 
+
 {%- endfor %}
 
 {%- for name,values in server.decoder.iteritems() %}
- 
+
 /etc/heka/conf.d/10-decoder-{{ name }}-{{ values['engine'] }}.toml:
   file.managed:
   - source: salt://heka/files/decoder/{{ values['engine'] }}.toml
@@ -143,7 +144,7 @@ heka_user:
   - defaults:
       name: {{ name }}
       values: {{ values }}
- 
+
 {%- endfor %}
 
 {%- for service_name, service in pillar.items() %}
@@ -168,4 +169,3 @@ heka_user:
 {%- endfor %}
 
 {%- endif %}
-

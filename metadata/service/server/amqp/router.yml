@@ -42,11 +42,11 @@ parameters:
           message_matcher: "Logger != 'hekad'"
           flush_count: 10
           flush_interval: 1000
-          enable: true
+          enabled: true
         dashboard01:
           engine: dashboard
           ticker_interval: 30
-          enable: true
+          enabled: true
         rabbitmq:
           enabled: false
       encoder:

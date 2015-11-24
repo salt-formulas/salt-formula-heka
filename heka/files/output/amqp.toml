@@ -1,4 +1,3 @@
-{% if not pillar.heka.server.output.rabbitmq.enabled == False %}
 [AMQPOutput_{{ name }}]
 type = "AMQPOutput"
 url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"
@@ -12,4 +11,3 @@ encoder = "{{ values.encoder }}"
 max_delay = "30s"
 delay = "250ms"
 max_retries = 5
-{% endif %}

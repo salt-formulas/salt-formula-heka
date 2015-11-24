@@ -31,5 +31,6 @@ parameters:
           encoder: ProtobufEncoder
           use_framing: true
           message_matcher: "TRUE"
+          enabled: True
       filter: {}
       splitter: {}

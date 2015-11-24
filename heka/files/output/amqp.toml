@@ -1,4 +1,4 @@
-{% if pillar.heka.server.output.amqp = 'true' %}
+{% if not pillar.heka.server.output.rabbitmq == 'false' %}
 [AMQPOutput_{{ name }}]
 type = "AMQPOutput"
 url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"

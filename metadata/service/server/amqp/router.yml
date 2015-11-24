@@ -45,6 +45,8 @@ parameters:
         dashboard01:
           engine: dashboard
           ticker_interval: 30
+        rabbitmq:
+          enable: false
       encoder:
         es_json:
           engine: es-json

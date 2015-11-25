@@ -8,6 +8,6 @@ flush_count = {{ values.flush_count }}
 
 [output_{{ name }}.buffering]
 max_file_size = 16777216 #16M
-max_buffer_size = 134217728 #128M
+max_buffer_size = 67108864 #64M
 full_action = "block"
 cursor_update_count = 100

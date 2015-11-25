@@ -41,7 +41,7 @@ parameters:
           port: 9200
           encoder: es_json
           message_matcher: "Logger != 'hekad'"
-          flush_count: 10
+          flush_count: 1000
           flush_interval: 1000
           enabled: true
         dashboard01:

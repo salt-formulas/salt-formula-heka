@@ -2,7 +2,7 @@
 {%- if server.enabled %}
 
 heka_packages:
-  pkg.installed:
+  pkg.latest:
   - names: {{ server.pkgs }}
 
 purge-heka-conf-dir:

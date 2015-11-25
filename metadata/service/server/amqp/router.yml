@@ -17,7 +17,7 @@ parameters:
           exchange_type: fanout
           decoder: ProtoBufDecoder
           splitter: HekaFramingSplitter
-          prefetch_count: 200
+          prefetch_count: 80
         rsyslog_syslog:
           engine: logstreamer
           log_directory: /var/log

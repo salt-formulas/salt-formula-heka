@@ -2,4 +2,4 @@
 type = "ESJsonEncoder"
 es_index_from_timestamp = true
 index = "{% raw %}%{Type}-%{%Y.%m.%d}{% endraw %}"
-type_name = "{% raw %}%{Logger}-%{Hostname}{% endraw %}"
+type_name = "{% raw %}%{Type}{% endraw %}"

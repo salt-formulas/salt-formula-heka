@@ -14,3 +14,6 @@ splitter = '{{ values.splitter }}'
 {% if values.differentiator is defined %}
 differentiator = {{ values.differentiator }}
 {% endif %}
+{% if values.oldest_duration is defined %}
+oldest_duration = "{{ values.oldest_duration }}"
+{% endif %}

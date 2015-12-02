@@ -25,7 +25,7 @@ parameters:
           priority: '["^Index"]'
           differentiator: '[ "rsyslog-", "Service" ]'
           decoder: RsyslogDecoder
-          oldest_duration: 7d
+          oldest_duration: "168h"
       decoder:
         rsyslog:
           engine: rsyslog

@@ -1,0 +1,9 @@
+doc:
+  name: Heka
+  description: Heka is an open source stream processing software system developed by Mozilla.
+  role:
+  {%- if pillar.heka.server is defined %}
+    server:
+      name: server
+      param: {}
+  {%- endif %}

@@ -1,0 +1,35 @@
+heka:
+  server:
+    enabled: true
+    input:
+      rsyslog_syslog:
+        engine: logstreamer
+        log_directory: /var/log
+        file_match: '(?P<Service>daemon\.log|cron\.log|mail\.log|kern\.log|auth\.log|syslog|messages|debug)\.?(?P<Index>\d+)?(.gz)?'
+        priority: ["^Index"]
+        differentiator: [ "rsyslog-", "Service" ]
+        decoder: RsyslogDecoder
+        oldest_duration: "168h"
+    decoder:
+      rsyslog:
+        engine: rsyslog
+        template: \%TIMESTAMP\% \%HOSTNAME\% \%syslogtag\%\%msg:::sp-if-no-1st-sp\%\%msg:::drop-last-lf\%\n
+        hostname_keep: TRUE
+        tz: Europe/Prague
+        type: rsyslog
+    output:
+      rabbitmq:
+        engine: amqp
+        host: ${_param:heka_shipper_output_host}
+        user: ${_param:heka_shipper_output_user}
+        password: ${_param:heka_shipper_output_password}
+        vhost: ${_param:heka_shipper_output_vhost}
+        exchange: ${_param:heka_shipper_output_exchange}
+        exchange_type: fanout
+        encoder: ProtobufEncoder
+        use_framing: true
+        message_matcher: "TRUE"
+        enabled: True
+    filter: {}
+    splitter: {}
+

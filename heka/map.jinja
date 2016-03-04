@@ -19,6 +19,8 @@ RedHat:
   - adm
   service:
   - heka
+  pkgs:
+  - heka
 {%- endload %}
 
 {%- set server = salt['grains.filter_by'](server_defaults, merge=salt['pillar.get']('heka:server')) %}

@@ -17,6 +17,9 @@ heka:
         hostname_keep: TRUE
         tz: Europe/Prague
         type: rsyslog
+    encoder:
+      protobuf:
+        engine: protobuf
     output:
       rabbitmq:
         engine: amqp

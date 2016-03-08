@@ -9,6 +9,9 @@ purge-heka-conf-dir:
   file.directory:
   - name: /etc/heka/conf.d/
   - clean: True
+  - makedirs: True
+  - require:
+    - pkg: heka_packages
 
 /etc/heka/conf.d/00-hekad.toml:
   file.managed:
@@ -19,6 +22,7 @@ purge-heka-conf-dir:
   - require:
     - pkg: heka_packages
     - file: purge-heka-conf-dir
+    - user: heka_user
 
 {%- if grains.os_family == 'RedHat' %}
 /usr/lib/systemd/system/heka.service:
@@ -26,6 +30,13 @@ purge-heka-conf-dir:
   - source: salt://heka/files/heka.service
   - require:
     - file: /etc/heka/conf.d/00-hekad.toml
+
+/var/cache/hekad:
+  file.directory:
+  - user: heka
+  - require:
+    - user: heka_user
+
 {%- endif %}
 
 heka_service:

@@ -20,6 +20,14 @@ purge-heka-conf-dir:
     - pkg: heka_packages
     - file: purge-heka-conf-dir
 
+{%- if grains.os_family == 'RedHat' %}
+/usr/lib/systemd/system/heka.service:
+  file.managed:
+  - source: salt://heka/files/heka.service
+  - require:
+    - file: /etc/heka/conf.d/00-hekad.toml
+{%- endif %}
+
 heka_service:
   service.running:
   - enable: true

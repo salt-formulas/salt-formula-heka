@@ -51,7 +51,7 @@ heka_service:
 heka_user:
   user.present:
   - name: heka
-  - shell: /bin/false
+  - shell: /bin/nologin
   - groups: {{ server.groups }}
   - require:
     - pkg: heka_packages

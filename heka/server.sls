@@ -168,11 +168,9 @@ heka_user:
 {%- endfor %}
 
 {%- for service_name, service in pillar.items() %}
-{%- for role_name, role in service.iteritems() %}
-{%- if role.logging is defined and role.logging.heka is defined %}
-{%- if role.logging.heka.get('enabled', False) %}
+{%- if service.get('_support', {}).get('heka', {}).get('enabled', False) %}
 
-/etc/heka/conf.d/99-{{ service_name }}-{{ role_name }}.toml:
+/etc/heka/conf.d/99-{{ service_name }}.toml:
   file.managed:
   - source: salt://{{ service_name }}/files/heka.toml
   - template: jinja
@@ -184,8 +182,6 @@ heka_user:
     - service: heka_service
 
 {%- endif %}
-{%- endif %}
-{%- endfor %}
 {%- endfor %}
 
 {%- endif %}

@@ -1,3 +1,4 @@
+{%- from "heka/map.jinja" import server with context -%}
 [RsyslogDecoder]
 type = "SandboxDecoder"
 filename = "lua_decoders/rsyslog.lua"
@@ -5,4 +6,4 @@ filename = "lua_decoders/rsyslog.lua"
 [RsyslogDecoder.config]
 type = "{{ values.type }}"
 template = '%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\n'
-tz = "Europe/Prague"
+tz = "{{ server.decoder.rsyslog.tz }}"

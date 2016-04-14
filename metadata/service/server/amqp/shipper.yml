@@ -19,7 +19,7 @@ parameters:
           engine: rsyslog
           template: \%TIMESTAMP\% \%HOSTNAME\% \%syslogtag\%\%msg:::sp-if-no-1st-sp\%\%msg:::drop-last-lf\%\n
           hostname_keep: TRUE
-          tz: Europe/Prague
+          tz: ${linux:system:timezone}
           type: rsyslog
       encoder:
         protobuf:

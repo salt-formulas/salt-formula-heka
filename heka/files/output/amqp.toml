@@ -8,6 +8,10 @@ use_framing = true
 encoder = "{{ values.encoder }}"
 
 [AMQPOutput_{{ name }}.retries]
-max_delay = "30s"
-delay = "250ms"
-max_retries = 5
+max_delay = "{{ values.get('max_delay', '30s') }}"
+delay = "{{ values.get('delay', '250ms') }}"
+max_retries = {{ values.get('max_retries', '-1') }}
+
+{#-
+vim: syntax=jinja
+-#}

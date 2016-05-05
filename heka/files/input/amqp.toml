@@ -1,6 +1,6 @@
 [input_{{ name }}]
 type = "AMQPInput"
-url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ values.port }}/{{ values.vhost }}"
+url = "amqp{% if values.ssl is defined %}s{% endif %}://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ values.port }}/{{ values.vhost }}"
 exchange = "{{ values.exchange }}"
 exchange_type = "{{ values.exchange_type }}"
 

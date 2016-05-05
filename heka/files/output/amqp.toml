@@ -1,6 +1,6 @@
 [AMQPOutput_{{ name }}]
 type = "AMQPOutput"
-url = "amqp://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"
+url = "amqp{% if values.ssl is defined %}s{% endif %}://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"
 exchange = "{{ values.exchange }}"
 exchange_type = "{{ values.exchange_type }}"
 message_matcher = "{{ values.message_matcher }}"

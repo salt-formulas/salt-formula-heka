@@ -1,6 +1,7 @@
 {%- load_yaml as server_defaults %}
 Debian:
   pkgs:
+  - acl
   - heka
   - heka-lua-scripts
   user:
@@ -20,6 +21,7 @@ RedHat:
   service:
   - heka
   pkgs:
+  - acl
   - heka
 {%- endload %}
 

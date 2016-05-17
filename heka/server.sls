@@ -35,7 +35,7 @@ heka_ssl:
     - user: heka_user
 
 {%- if grains.os_family == 'RedHat' %}
-/usr/lib/systemd/system/heka.service:
+/etc/systemd/system/heka.service:
   file.managed:
   - source: salt://heka/files/heka.service
   - require:
@@ -46,6 +46,11 @@ heka_ssl:
   - user: heka
   - require:
     - user: heka_user
+
+heka_acl_log:
+  cmd.run:
+  - name: "setfacl -R -m g:adm:rx /var/log; setfacl -R -d -m g:adm:rx /var/log"
+  - unless: "getfacl /var/log/|grep default:group:adm"
 
 {%- endif %}
 

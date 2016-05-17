@@ -13,6 +13,16 @@ purge-heka-conf-dir:
   - require:
     - pkg: heka_packages
 
+heka_ssl:
+  file.directory:
+  - name: /etc/heka/ssl
+  - user: root
+  - group: heka
+  - mode: 750
+  - require:
+    - pkg: heka_packages
+    - user: heka_user
+
 /etc/heka/conf.d/00-hekad.toml:
   file.managed:
   - source: salt://heka/files/00-hekad.toml

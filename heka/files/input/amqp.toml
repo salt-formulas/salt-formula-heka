@@ -1,6 +1,6 @@
 [input_{{ name }}]
 type = "AMQPInput"
-url = "amqp{% if values.ssl is defined %}s{% endif %}://{{ values.user }}:{{ values.password }}@{{ values.host }}:{{ values.port }}/{{ values.vhost }}"
+url = "amqp{% if values.ssl is defined and values.ssl.get('enabled', True) %}s{% endif %}://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"
 exchange = "{{ values.exchange }}"
 exchange_type = "{{ values.exchange_type }}"
 
@@ -25,7 +25,7 @@ routing_key = "{{ values.routing_key }}"
 decoder = "{{ values.decoder }}"
 splitter = "{{ values.splitter }}"
 
-{%- if values.ssl is defined %}
+{%- if values.ssl is defined and values.ssl.get('enabled', True) %}
 [input_{{ name }}.tls]
 cert_file = "{{ values.ssl.cert_file }}"
 key_file = "{{ values.ssl.key_file }}"

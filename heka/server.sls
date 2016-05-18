@@ -46,13 +46,12 @@ heka_ssl:
   - user: heka
   - require:
     - user: heka_user
+{%- endif %}
 
 heka_acl_log:
   cmd.run:
   - name: "setfacl -R -m g:adm:rx /var/log; setfacl -R -d -m g:adm:rx /var/log"
   - unless: "getfacl /var/log/|grep default:group:adm"
-
-{%- endif %}
 
 heka_service:
   service.running:

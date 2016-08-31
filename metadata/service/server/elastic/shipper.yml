@@ -1,0 +1,50 @@
+applications:
+- heka
+_param:
+parameters:
+  heka:
+    server:
+      enabled: true
+      input:
+        rsyslog_syslog:
+          engine: logstreamer
+          log_directory: /var/log
+          file_match: '(?P<Service>daemon\.log|cron\.log|mail\.log|kern\.log|auth\.log|syslog|messages|debug)\.?(?P<Index>\d+)?(.gz)?'
+          priority: ["^Index"]
+          differentiator: [ "rsyslog-", "Service" ]
+          decoder: RsyslogDecoder
+          oldest_duration: "168h"
+      decoder:
+        rsyslog:
+          engine: rsyslog
+          template: \%TIMESTAMP\% \%HOSTNAME\% \%syslogtag\%\%msg:::sp-if-no-1st-sp\%\%msg:::drop-last-lf\%\n
+          hostname_keep: TRUE
+          tz: ${linux:system:timezone}
+          type: rsyslog
+        ProtoBufDecoder:
+          engine: protobuf
+      encoder:
+        protobuf:
+          engine: protobuf
+        es_json:
+          engine: es-json
+        es_payload:
+          engine: es-payload
+      output:
+        elasticsearch:
+          engine: elasticsearch
+          host: ${_param:heka_shipper_output_host}
+          port: 9200
+          encoder: es_json
+          message_matcher: "Logger != 'hekad'"
+          flush_count: 50
+          flush_interval: 500
+          enabled: true
+        dashboard01:
+          engine: dashboard
+          ticker_interval: 30
+          enabled: true
+        rabbitmq:
+          enabled: false
+      filter: {}
+      splitter: {}

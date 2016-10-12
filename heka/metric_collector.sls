@@ -1,0 +1,10 @@
+{%- if pillar.heka.metric_collector is defined %}
+
+include:
+- heka._common
+
+{%- include "heka/_service.sls" %}
+
+{%- service_config('metric_collector') %}
+
+{%- endif %}

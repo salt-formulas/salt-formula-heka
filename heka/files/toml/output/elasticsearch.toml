@@ -1,0 +1,13 @@
+[{{ name }}_output]
+type = "ElasticSearchOutput"
+message_matcher = "{{ values.message_matcher }}"
+encoder = "{{ values.encoder }}"
+server = "http://{{ values.host }}:{{ values.port }}"
+flush_interval = {{ values.flush_interval }}
+flush_count = {{ values.flush_count }}
+use_buffering = true
+
+[{{ name }}_output.buffering]
+max_buffer_size = 1073741824
+max_file_size = 134217728
+full_action = "block"

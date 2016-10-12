@@ -1,0 +1,6 @@
+applications:
+- heka
+parameters:
+  heka:
+    aggregator:
+      enabled: true

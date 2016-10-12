@@ -1,0 +1,25 @@
+[{{ decoder_name }}_decoder]
+type = "SandboxDecoder"
+filename = "{{ decoder.module_file }}"
+{%- if decoder.module_directory is defined %}
+module_directory = "{{ decoder.module_dir }}"
+{%- endif %}
+{%- if decoder.memory_limit is defined %}
+memory_limit = "{{ decoder.memory_limit }}"
+{%- endif %}
+{%- if decoder.preserve_data is defined %}
+preserve_data = "{{ decoder.preserve_data }}"
+{%- endif %}
+{%- if decoder.instruction_limit is defined %}
+instruction_limit = "{{ decoder.instruction_limit }}"
+{%- endif %}
+{%- if decoder.output_limit is defined %}
+output_limit = "{{ decoder.output_limit }}"
+{%- endif %}
+
+{%- if decoder.config is defined %}
+[{{ decoder_name }}_decoder.config]
+{%- for config_param, config_value in decoder.config.iteritems() %}
+{{ config_param }} = {% if config_value is string %}"{{ config_value }}"{% else %}{{ config_value }}{% endif %}
+{%- endfor %}
+{%- endif %}

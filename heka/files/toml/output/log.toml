@@ -1,0 +1,3 @@
+[{{ name }}_output]
+encoder = "LogOutput"
+message_matcher = "{{ values.message_matcher }}"

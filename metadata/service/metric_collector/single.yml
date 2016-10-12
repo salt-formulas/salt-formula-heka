@@ -1,0 +1,6 @@
+applications:
+- heka
+parameters:
+  heka:
+    metric_collector:
+      enabled: true

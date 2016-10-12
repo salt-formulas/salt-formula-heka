@@ -1,0 +1,5 @@
+[{{ name }}_encoder]
+type = "ESJsonEncoder"
+index = "{{ values.index }}"
+es_index_from_timestamp = true
+fields = [ "DynamicFields", "Hostname", "Logger", "Payload", "Pid", "Severity", "Timestamp", "Type" ]

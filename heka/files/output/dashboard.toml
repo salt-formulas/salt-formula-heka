@@ -1,5 +1,0 @@
-[DashboardOutput]
-{%- if values.dashboard_address is defined %}
-address = "{{ values.dashboard_address }}:{{ values.dashboard_port }}"
-{% endif %}
-ticker_interval = {{ values.ticker_interval }}

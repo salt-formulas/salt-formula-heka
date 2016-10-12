@@ -1,0 +1,19 @@
+[{{ input_name }}_input]
+type = "LogstreamerInput"
+log_directory = "{{ input.log_directory }}"
+file_match = '{{ input.file_match }}'
+{%- if input.differentiator is defined %}
+differentiator = {{ input.differentiator }}
+{%- endif %}
+{%- if input.priority is defined %}
+priority = {{ input.priority }}
+{%- endif %}
+{%- if input.decoder is defined %}
+decoder = "{{ input.decoder }}"
+{%- endif %}
+{%- if input.splitter is defined %}
+splitter = '{{ input.splitter }}'
+{%- endif %}
+{%- if input.oldest_duration is defined %}
+oldest_duration = "{{ input.oldest_duration }}"
+{%- endif %}

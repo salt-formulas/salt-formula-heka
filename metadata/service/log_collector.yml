@@ -1,0 +1,6 @@
+applications:
+- heka
+_param:
+parameters:
+  heka:
+    log_collector: {}

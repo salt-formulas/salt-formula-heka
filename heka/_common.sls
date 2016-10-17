@@ -26,4 +26,3 @@ heka_service:
   service.dead:
   - name: heka
 
-{%- endif %}

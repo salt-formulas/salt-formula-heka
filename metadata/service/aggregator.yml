@@ -3,4 +3,5 @@ applications:
 _param:
 parameters:
   heka:
-    aggregator: {}
+    aggregator:
+      enabled: true

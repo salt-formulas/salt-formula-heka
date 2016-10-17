@@ -3,4 +3,5 @@ applications:
 _param:
 parameters:
   heka:
-    remote_collector: {}
+    remote_collector:
+      enabled: true

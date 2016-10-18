@@ -1,5 +1,0 @@
-[es_json]
-type = "ESJsonEncoder"
-es_index_from_timestamp = true
-index = "{{ values.get('index', '%{Type}-%{%Y.%m.%d}') }}"
-type_name = "{% raw %}%{Type}{% endraw %}"

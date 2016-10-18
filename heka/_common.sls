@@ -26,4 +26,9 @@ heka_service:
   service.dead:
   - name: heka
 
-{%- endif %}
+heka_grains_dir:
+  file.directory:
+  - name: /etc/salt/grains.d
+  - mode: 700
+  - makedirs: true
+  - user: root

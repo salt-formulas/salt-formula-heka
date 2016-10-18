@@ -1,4 +1,4 @@
-[{{ name }}_output]
+[{{ output_name }}_output]
 type = "AMQPOutput"
 url = "amqp{% if values.ssl is defined and values.ssl.get('enabled', True) %}s{% endif %}://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"
 exchange = "{{ values.exchange }}"
@@ -7,20 +7,16 @@ message_matcher = "{{ values.message_matcher }}"
 use_framing = true
 encoder = "{{ values.encoder }}"
 
-[{{ name }}_output.retries]
+[{{ output_name }}_output.retries]
 max_delay = "{{ values.get('max_delay', '30s') }}"
 delay = "{{ values.get('delay', '250ms') }}"
 max_retries = {{ values.get('max_retries', '-1') }}
 
 {%- if values.ssl is defined and values.ssl.get('enabled', True) %}
-[{{ name }}_output.tls]
+[{{ output_name }}_output.tls]
 cert_file = "{{ values.ssl.cert_file }}"
 key_file = "{{ values.ssl.key_file }}"
 {%- if values.ssl.ca_file is defined %}
 root_cafile = "{{ values.ssl.ca_file }}"
 {%- endif %}
 {%- endif %}
-
-{#-
-vim: syntax=jinja
--#}

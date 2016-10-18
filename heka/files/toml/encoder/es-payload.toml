@@ -1,8 +1,0 @@
-[es_payload]
-type = "SandboxEncoder"
-filename = "lua_encoders/es_payload.lua"
-
-    [es_payload.config]
-    es_index_from_timestamp = true
-    index = "{{ values.get('index', '%{Logger}-%{%Y.%m.%d}') }}"
-    type_name = "{% raw %}%{Type}-%{Hostname}{% endraw %}"

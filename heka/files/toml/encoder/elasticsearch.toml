@@ -1,5 +1,5 @@
-[{{ name }}_encoder]
+[{{ encoder_name }}_encoder]
 type = "ESJsonEncoder"
-index = "{{ values.index }}"
+index = "{{ encoder.get('index', "\%{Type}-\%{\%Y.\%m.\%d}") }}"
 es_index_from_timestamp = true
 fields = [ "DynamicFields", "Hostname", "Logger", "Payload", "Pid", "Severity", "Timestamp", "Type" ]

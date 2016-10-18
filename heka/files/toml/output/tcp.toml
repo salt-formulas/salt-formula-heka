@@ -1,11 +1,11 @@
-[output_{{ name }}]
+[{{ output_name }}_output]
 type="TcpOutput"
-address = "{{ values.host }}:{{ values.port }}"
+address = "{{ output.host }}:{{ output.port }}"
 encoder = "ProtobufEncoder"
-message_matcher = "(Type == 'metric' || Type == 'heka.sandbox.metric' || Type == 'heka.sandbox.bulk_metric')"
-
+message_matcher = "{{ output.message_matcher }}"
 use_buffering = true
-[output_{{ name }}.buffering]
+
+[{{ output_name }}_output.buffering]
 max_buffer_size = 268435456
 max_file_size = 67108864
 full_action = "drop"

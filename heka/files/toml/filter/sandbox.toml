@@ -18,7 +18,7 @@ hostname = "{{ filter.hostname }}"
 {%- endif %}
 
 {%- if filter.config is defined %}
-[{{ filter_name }}_decoder.config]
+[{{ filter_name }}_filter.config]
 {%- for config_param, config_value in filter.config.iteritems() %}
 {{ config_param }} = {% if config_value is string %}"{{ config_value }}"{% else %}{{ config_value }}{% endif %}
 {%- endfor %}

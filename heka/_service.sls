@@ -2,7 +2,7 @@
 
 {%- set server = salt['pillar.get']('heka:'+service_name) %}
 
-{%- if server.enabled %}
+{%- if server is defined and server.enabled %}
 
 heka_{{ service_name }}_log_file:
   file.managed:
@@ -15,7 +15,14 @@ heka_{{ service_name }}_conf_dir:
   file.directory:
   - name: /etc/{{ service_name }}
   - user: root
-  - mode: 750
+  - mode: 755
+  - makedirs: true
+
+heka_{{ service_name }}_cache_dir:
+  file.directory:
+  - name: /var/cache/{{ service_name }}
+  - user: heka
+  - mode: 755
   - makedirs: true
 
 heka_{{ service_name }}_conf_dir_clean:
@@ -34,16 +41,35 @@ heka_{{ service_name }}_service_file:
 
 {%- else %}
 
+heka_{{ service_name }}_service:
+  service.running:
+  - enable: true
+  - name: {{ service_name }}
+  - watch:
+    - file: /etc/{{ service_name }}/global.toml
+  - require:
+    - user: heka_user
+    - file: heka_{{ service_name }}_service_file
+    - file: heka_{{ service_name }}_cache_dir
+
 heka_{{ service_name }}_service_file:
   file.managed:
   - name: /etc/init/{{ service_name }}.conf
+  - source: salt://heka/files/heka.service
+  - defaults:
+    service_name: {{ service_name }}
   - user: root
   - mode: 644
   - template: jinja
+  - require:
+    - file: heka_{{ service_name }}_service_wrapper
 
 heka_{{ service_name }}_service_wrapper:
   file.managed:
-  - name: /usr/local/bin/{{ service_name }}.log
+  - name: /usr/local/bin/{{ service_name }}
+  - source: salt://heka/files/service_wrapper
+  - defaults:
+    service_name: {{ service_name }}
   - user: root
   - mode: 755
   - template: jinja
@@ -54,7 +80,7 @@ heka_{{ service_name }}_service_wrapper:
   file.managed:
   - source: salt://heka/files/toml/global.toml
   - template: jinja
-  - mode: 640
+  - mode: 644
   - group: heka
   - defaults:
     service_name: {{ service_name }}
@@ -185,24 +211,6 @@ heka_{{ service_name }}_service_wrapper:
 
 {%- endfor %}
 
-{%- for service_name, service in pillar.items() %}
-{%- if service.get('_support', {}).get('heka', {}).get('enabled', False) %}
-
-/etc/{{ service_name }}/99-{{ service_name }}.toml:
-  file.managed:
-  - source: salt://{{ service_name }}/files/heka.toml
-  - template: jinja
-  - mode: 640
-  - group: heka
-  - require:
-    - file: heka_{{ service_name }}_conf_dir
-  - require_in:
-    - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
-
-{%- endif %}
-{%- endfor %}
 
 {%- endif %}
 

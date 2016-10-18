@@ -3,8 +3,8 @@
 include:
 - heka._common
 
-{%- include "heka/_service.sls" %}
+{% from "heka/_service.sls" import service_config with context %}
 
-{%- service_config('log_collector') %}
+{{ service_config('log_collector') }}
 
 {%- endif %}

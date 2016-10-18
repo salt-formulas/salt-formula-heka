@@ -1,0 +1,19 @@
+applications:
+- heka
+_param:
+parameters:
+  heka:
+    log_collector:
+      enabled: true
+      input: {}
+      splitter: {}
+      decoder: {}
+      filter: {}
+      output:
+        dashboard:
+          engine: dashboard
+          ticker_interval: 30
+          dashboard_address: 127.0.0.1
+          dashboard_port: 4352
+
+      encoder: {}

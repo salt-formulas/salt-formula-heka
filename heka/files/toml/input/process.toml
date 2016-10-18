@@ -1,29 +1,11 @@
-[<%= @title %>_process]
+[{{ input_name }}_input]
 type="ProcessInput"
-ticker_interval = <%= @ticker_interval %>
-decoder = "<%= @decoder %>_decoder"
-<% if @stdout -%>
-stdout = true
-<% else %>
-stdout = false
-<% end %>
-<% if @stderr -%>
-stderr = true
-<% else %>
-stderr = false
-<% end %>
-
-<% if @splitter -%>
-splitter = "<%= @splitter %>_splitter"
-<% else -%>
-splitter = "NullSplitter"
-<% end -%>
-
-<% @commands.each_with_index do |command, i| -%>
- <% command.each do |cmd, args| -%>
-  [<%= @title %>_process.command.<%= i %>]
-   bin = "<%= cmd %>"
-   args = [ <%= args.collect{ |x| '"%s"' % x }.join(", ") %> ]
- <%end%>
-<% end %>
-
+ticker_interval = {{ input.get('ticker_interval', 30) }}
+{%- if input.decoder is defined %}
+decoder = "{{ input.decoder }}"
+{%- endif %}
+{%- if input.splitter is defined %}
+splitter = "{{ input.get('splitter', 'NullSplitter') }}"
+{%- endif %}
+stdout = {{ input.get('stdout', true)|lower }}
+stderr = {{ input.get('stderr', true)|lower }}

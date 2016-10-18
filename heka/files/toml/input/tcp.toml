@@ -1,0 +1,5 @@
+[{{ input_name }}_input]
+type="TcpInput"
+address = "{{ input.address }}:{{ input.port }}"
+decoder = "{{ input.decoder }}"
+splitter = '{{ input.splitter }}'

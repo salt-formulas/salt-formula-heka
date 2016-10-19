@@ -17,6 +17,13 @@ heka_{{ service_name }}_conf_dir:
   - mode: 750
   - makedirs: true
 
+heka_{{ service_name }}_cache_dir:
+  file.directory:
+  - name: /var/cache/{{ service_name }}
+  - user: heka
+  - mode: 750
+  - makedirs: true
+
 heka_{{ service_name }}_conf_dir_clean:
   file.directory:
   - name: /etc/{{ service_name }}

@@ -8,10 +8,10 @@ module_directory = "{{ filter.module_dir }}"
 message_matcher = "{{ filter.message_matcher }}"
 {%- endif %}
 {%- if filter.preserve_data is defined %}
-preserve_data = "{{ filter.preserve_data }}"
+preserve_data = {{ filter.preserve_data|lower }}
 {%- endif %}
 {%- if filter.ticker_interval is defined %}
-ticker_interval = "{{ filter.ticker_interval }}"
+ticker_interval = {{ filter.ticker_interval }}
 {%- endif %}
 {%- if filter.hostname is defined %}
 hostname = "{{ filter.hostname }}"

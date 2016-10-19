@@ -1,7 +1,7 @@
 [{{ filter_name }}_filter]
 type = "SandboxFilter"
 filename = "{{ filter.module_file }}"
-{%- if filter.module_directory is defined %}
+{%- if filter.module_dir is defined %}
 module_directory = "{{ filter.module_dir }}"
 {%- endif %}
 {%- if filter.message_matcher is defined %}

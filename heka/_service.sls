@@ -107,7 +107,7 @@ heka_{{ service_name }}_service:
 {%- for service_name, service in pillar.iteritems() %}
 {%- if service.get('_support', {}).get('heka', {}).get('enabled', False) %}
 
-{%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file %}{% endmacro %}
+{%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
 
 {%- set grains_fragment_file = service_name+'/meta/heka.yml' %}
 {%- set grains_yaml = load_grains_file(grains_fragment_file)|load_yaml %}

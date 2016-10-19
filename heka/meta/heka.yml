@@ -23,31 +23,31 @@ log_collector:
       ticker_interval: 30
 metric_collector:
   decoder:
-    heka_collectd:
+    collectd:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/collectd.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
         hostname: '{{ grains.fqdn.split('.')[0] }}'
         swap_size: 4294967296
-    heka_http_check:
+    http_check:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/noop.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
         msg_type: lma.http-check
-    heka_metric:
+    metric:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/metric.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
         deserialize_bulk_metric_for_loggers: 'aggregated_http_metrics_filter hdd_errors_counter_filter'
   input:
-    heka_http_chek:
+    heka_http_check:
       engine: http
       address: 127.0.0.1
       port: 5566
-      decoder: http-check_decoder
+      decoder: http_check_decoder
       splitter: NullSplitter
     heka_collectd:
       engine: http
@@ -55,12 +55,6 @@ metric_collector:
       port: 8325
       decoder: collectd_decoder
       splitter: NullSplitter
-    heka_aggregator:
-      engine: tcp
-      address: 0.0.0.0
-      port: 5565
-      decoder: aggregator_decoder
-      splitter: HekaFramingSplitter
     heka_metric:
       engine: tcp
       address: 0.0.0.0

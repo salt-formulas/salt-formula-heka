@@ -1,7 +1,7 @@
 [{{ decoder_name }}_decoder]
 type = "SandboxDecoder"
 filename = "{{ decoder.module_file }}"
-{%- if decoder.module_directory is defined %}
+{%- if decoder.module_dir is defined %}
 module_directory = "{{ decoder.module_dir }}"
 {%- endif %}
 {%- if decoder.memory_limit is defined %}

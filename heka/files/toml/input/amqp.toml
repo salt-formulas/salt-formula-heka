@@ -1,0 +1,34 @@
+[{{ input_name }}_input]
+type = "AMQPInput"
+url = "amqp{% if input.ssl is defined and input.ssl.get('enabled', True) %}s{% endif %}://{{ input.user }}:{{ input.password }}@{{ input.host }}/{{ input.vhost }}"
+exchange = "{{ input.exchange }}"
+exchange_type = "{{ input.exchange_type }}"
+{%- if input.prefetch_count is defined -%}
+prefetch_count = {{ input.prefetch_count }}
+{%- endif %}
+{%- if input.exchange_durability is defined -%}
+exchange_durability = "{{ input.exchange_durability }}"
+{%- endif %}
+{%- if input.exchange_auto_delete is defined -%}
+exchange_auto_delete = "{{ input.exchange_auto_delete }}"
+{%- endif %}
+{%- if input.queue_auto_delete is defined -%}
+queue_auto_delete = {{ input.queue_auto_delete }}
+{%- endif %}
+{%- if input.queue is defined -%}
+queue = "{{ input.queue }}"
+{%- endif %}
+{%- if input.routing_key is defined -%}
+routing_key = "{{ input.routing_key }}"
+{%- endif %}
+decoder = "{{ input.decoder }}"
+splitter = "{{ input.splitter }}"
+
+{%- if input.ssl is defined and input.ssl.get('enabled', True) %}
+[{{ input_name }}_input.tls]
+cert_file = "{{ input.ssl.cert_file }}"
+key_file = "{{ input.ssl.key_file }}"
+{%- if input.ssl.ca_file is defined %}
+root_cafile = "{{ input.ssl.ca_file }}"
+{%- endif %}
+{%- endif %}

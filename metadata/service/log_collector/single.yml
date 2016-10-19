@@ -1,0 +1,8 @@
+applications:
+- heka
+classes:
+- service.heka.support
+parameters:
+  heka:
+    log_collector:
+      enabled: true

@@ -1,0 +1,2 @@
+[{{ decoder_name }}_decoder]
+type = "ProtobufDecoder"

@@ -1,4 +1,4 @@
 [{{ encoder_name }}_encoder]
 type = "PayloadEncoder"
-append_newlines = {{ encoder.get('append_newlines', 'false') }}
-prefix_ts = {{ encoder.get('prefix_ts', 'false') }}
+append_newlines = {{ encoder.get('append_newlines', False)|lower }}
+prefix_ts = {{ encoder.get('prefix_ts', False)|lower }}

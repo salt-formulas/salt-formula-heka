@@ -30,6 +30,8 @@ heka_{{ service_name }}_service_file:
   - source: salt://heka/files/heka.service
   - user: root
   - mode: 644
+  - defaults:
+    service_name: {{ service_name }}
   - template: jinja
 
 {%- else %}

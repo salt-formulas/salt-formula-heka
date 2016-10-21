@@ -19,7 +19,6 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
       metric_collector:
         trigger:
           nova_compute_filesystem_warning:
-            engine: afd
             enabled: True  # implicit
             description: "The nova instance filesystem's root free space is low."
             severity: warning
@@ -31,9 +30,9 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
               window: 60
               periods: 0
               function: min
-              fs: '/var/lib/nova'
+              dimension:
+                fs: '/var/lib/nova'
           nova_compute_filesystem_critical:
-            engine: afd
             enabled: True  # implicit
             description: "The nova instance filesystem's root free space is low."
             severity: warning
@@ -45,23 +44,31 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
               window: 60
               periods: 0
               function: min
-              fs: '/var/lib/nova'
+              dimension:
+                fs: '/var/lib/nova'
         filter:
           nova_compute_service:
             engine: afd
             notifications: False
             alerting: True
-            trigger:
-              vip:
-              - nova_compute_filesystem_warning
-              - nova_compute_filesystem_critical
-              - nova_compute_filesystem_critical
+            dimension:
+              hostname: '$match_by.hostname'
+              node_role: controller
+            match_by:
+            - hostname
+            triggers:
+            - nova_compute_filesystem_warning
+            - nova_compute_filesystem_critical
       aggregator:
         filter:
-          nova_compute: # the service_role format
+          nova_compute_service: # the service_role format
             engine: gse
             policy: highest_severity
             group_by: member
+            match:
+              node_role: compute
+            dimension:
+              cluster: nova-compute-plane
             members:
             - nova_compute_logs
             - nova_compute_service
@@ -71,6 +78,13 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
             - nova_compute_free_mem
             hints:
              - neutron_compute # or contrail_vrouter for contrail nodes
+          nova_compute_plane: # the service_role format
+            engine: gse
+            policy: highest_severity
+            group_by: member
+            match:
+              cluster: nova-compute-plane
+
 
 Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
 
@@ -79,14 +93,9 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
       metric_collector:
         trigger:
           linux_system_cpu_critical:
-            engine: afd
             enabled: True  # implicit
             description: 'The CPU usage is too high.'
             severity: critical
-            label:
-              hostname: '$match_by.hostname'
-              node_role: controller
-            match_by: ['hostname']
             rules:
             - metric: cpu_wait
               relational_operator: >=
@@ -100,14 +109,9 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
               window: 120
               function: avg
           linux_system_cpu_warning:
-            engine: afd
             enabled: True  # implicit
             description: 'The CPU wait times are high.'
             severity: critical
-            label:
-              hostname: '$match_by.hostname'
-              node_role: controller
-            match_by: ['hostname']
             rules:
             - metric: cpu_wait
               relational_operator: >=
@@ -120,10 +124,14 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
             engine: afd
             notifications: False
             alerting: True
-            trigger:
-              vip:
-              - linux_system_cpu_warning # will not render if referenced trigger is disabled
-              - linux_system_cpu_critical
+            triggers:
+            - linux_system_cpu_warning # will not render if referenced trigger is disabled
+            - linux_system_cpu_critical
+            dimension:
+              hostname: '$match_by.hostname'
+              node_role: controller
+            match_by: ['hostname']
+
 
 CPU usage override for compute node, excerpt from `nova/meta/heka.yml`.
 
@@ -132,14 +140,9 @@ CPU usage override for compute node, excerpt from `nova/meta/heka.yml`.
       metric_collector:
         trigger:
           nova_compute_cpu_critical:
-            engine: afd
             enabled: True  # implicit
             description: 'The CPU wait times are too high.'
             severity: critical
-            label:
-              hostname: '$match_by.hostname'
-              node_role: controller
-            match_by: ['hostname']
             rules:
             - metric: cpu_wait
               relational_operator: >=
@@ -181,10 +184,13 @@ Alarm override option 2 - reinitialize:
             engine: afd_alarm
             notifications: False
             alerting: True
-            trigger:
-              vip:
-              - linux_system_cpu_warning # will not render if referenced trigger is disabled
-              - nova_compute_cpu_critical
+            triggers:
+            - linux_system_cpu_warning # will not render if referenced trigger is disabled
+            - nova_compute_cpu_critical
+            dimension:
+              hostname: '$match_by.hostname'
+              node_role: controller
+            match_by: ['hostname']
 
 
 Remote collector service
@@ -198,14 +204,8 @@ Remote API check example, excerpt from `nova/meta/heka.yml`.
       remote_collector:
         trigger:
           nova_control_api_fail:
-            engine: afd
             description: 'Endpoint check for nova-api failed.'
             severity: critical
-            alerting: True
-            label:
-              hostname: '$match_by.hostname'
-              node_role: controller
-            match_by: ['hostname']
             rules:
             - metric: openstack_check_api
               relational_operator: '=='
@@ -219,9 +219,12 @@ Remote API check example, excerpt from `nova/meta/heka.yml`.
             engine: afd
             notifications: False
             alerting: True
-            trigger:
-              vip:
-              - nova_control_api_fail
+            dimension:
+              hostname: '$match_by.hostname'
+              node_role: controller
+            match_by: ['hostname']
+            triggers:
+            - nova_control_api_fail
 
 Corresponding clusters and alarms, excerpt from `nova/meta/heka.yml`.
 
@@ -230,16 +233,27 @@ Corresponding clusters and alarms, excerpt from `nova/meta/heka.yml`.
     heka:
       aggregator:
         filter:
-          nova_compute: # the service_role format
+          nova_control_service: # the service_role format
             engine: gse
             policy: highest_severity
             group_by: member
+            match:
+              node_role: control
+            dimension:
+              cluster: nova-control-plane
             members:
             - nova_control_api
             - nova_control_endpoint
             hints:
              - neutron_control # or contrail_vrouter for contrail nodes
              - keystone_control
+          nova_control_plane: # the service_role format
+            engine: gse
+            policy: highest_severity
+            group_by: member
+            match:
+              cluster: nova-control-plane
+
 
 
 Read more

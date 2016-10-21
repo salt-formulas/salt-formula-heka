@@ -8,34 +8,18 @@ Heka is an open source stream processing software system developed by Mozilla. H
 Sample pillars
 ==============
 
-Log collector service
-
-.. code-block:: yaml
-
-    heka:
-      log_collector:
-        enabled: true
-        output:
-          elasticsearch01:
-            engine: elasticsearch
-            host: localhost
-            port: 9200
-            encoder: es_json
-            message_matcher: TRUE
-
-
 Metric collector service
 ------------------------
 
-Local alarm definition for nova compute role
+Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
 
 .. code-block:: yaml
 
     heka:
       metric_collector:
-        filter:
+        trigger:
           nova_compute_filesystem_warning:
-            engine: afd_trigger
+            engine: afd
             enabled: True  # implicit
             description: "The nova instance filesystem's root free space is low."
             severity: warning
@@ -49,7 +33,7 @@ Local alarm definition for nova compute role
               function: min
               fs: '/var/lib/nova'
           nova_compute_filesystem_critical:
-            engine: afd_trigger
+            engine: afd
             enabled: True  # implicit
             description: "The nova instance filesystem's root free space is low."
             severity: warning
@@ -62,8 +46,9 @@ Local alarm definition for nova compute role
               periods: 0
               function: min
               fs: '/var/lib/nova'
+        filter:
           nova_compute_service:
-            engine: afd_alarm
+            engine: afd
             notifications: False
             alerting: True
             trigger:
@@ -71,38 +56,30 @@ Local alarm definition for nova compute role
               - nova_compute_filesystem_warning
               - nova_compute_filesystem_critical
               - nova_compute_filesystem_critical
+      aggregator:
+        filter:
+          nova_compute: # the service_role format
+            engine: gse
+            policy: highest_severity
+            group_by: member
+            members:
+            - nova_compute_logs
+            - nova_compute_service
+            - nova_compute_instances
+            - nova_compute_libvirt
+            - nova_compute_free_cpu
+            - nova_compute_free_mem
+            hints:
+             - neutron_compute # or contrail_vrouter for contrail nodes
 
-      heka:
-        aggregator:
-          filter:
-            nova_compute_service:
-              engine: gse_cluster
-              policy: highest_severity
-              group_by: member
-              members:
-              - vip
-            nova_compute: # the service_role format
-              engine: gse_alarm
-              policy: highest_severity
-              group_by: member
-              members:
-              - nova_compute_logs
-              - nova_compute_service
-              - nova_compute_instances
-              - nova_compute_libvirt
-              - nova_compute_free_cpu
-              - nova_compute_free_mem
-              hints:
-               - neutron_compute # or contrail_vrouter for contrail nodes
-
-Default CPU usage alarms
+Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
 
 .. code-block:: yaml
 
       metric_collector:
-        filter:
+        trigger:
           linux_system_cpu_critical:
-            engine: afd_trigger
+            engine: afd
             enabled: True  # implicit
             description: 'The CPU usage is too high.'
             severity: critical
@@ -123,7 +100,7 @@ Default CPU usage alarms
               window: 120
               function: avg
           linux_system_cpu_warning:
-            engine: afd_trigger
+            engine: afd
             enabled: True  # implicit
             description: 'The CPU wait times are high.'
             severity: critical
@@ -138,8 +115,9 @@ Default CPU usage alarms
               window: 120
               periods: 0
               function: avg
+        filter:
           linux_system_cpu:
-            engine: afd_alarm
+            engine: afd
             notifications: False
             alerting: True
             trigger:
@@ -147,14 +125,14 @@ Default CPU usage alarms
               - linux_system_cpu_warning # will not render if referenced trigger is disabled
               - linux_system_cpu_critical
 
-CPU usage override for compute node
+CPU usage override for compute node, excerpt from `nova/meta/heka.yml`.
 
 .. code-block:: yaml
 
       metric_collector:
-        filter:
+        trigger:
           nova_compute_cpu_critical:
-            engine: afd_trigger
+            engine: afd
             enabled: True  # implicit
             description: 'The CPU wait times are too high.'
             severity: critical
@@ -177,11 +155,11 @@ Alarm override option 1 - override:
 .. code-block:: yaml
 
       metric_collector:
-        filter:
-          ...
+        trigger:
           # Trigger can be disable
-          linux_cpu_critical:
+          linux_system_cpu_critical:
             enabled: False
+        filter:
           #Alarm can be overriden
           linux_system_cpu:
             trigger:
@@ -212,15 +190,15 @@ Alarm override option 2 - reinitialize:
 Remote collector service
 ------------------------
 
-Remote api check example
+Remote API check example, excerpt from `nova/meta/heka.yml`.
 
 .. code-block:: yaml
 
     heka:
       remote_collector:
-        filter:
+        trigger:
           nova_control_api_fail:
-            engine: afd_trigger
+            engine: afd
             description: 'Endpoint check for nova-api failed.'
             severity: critical
             alerting: True
@@ -236,39 +214,32 @@ Remote api check example
               periods: 0
               function: last
               service: 'nova-api'
+        filter:
           nova_control_api:
-            engine: afd_alarm
+            engine: afd
             notifications: False
             alerting: True
             trigger:
               vip:
               - nova_control_api_fail
 
-Corresponding clusters and alarms
+Corresponding clusters and alarms, excerpt from `nova/meta/heka.yml`.
 
 .. code-block:: yaml
 
     heka:
       aggregator:
         filter:
-          nova_control_service:
-            engine: gse_cluster
+          nova_compute: # the service_role format
+            engine: gse
             policy: highest_severity
             group_by: member
             members:
-            - backends
-            - http_errors
-          nova_control_api:
-            policy: highest_severity
-            group_by: member
-            members:
-              - vip
-          nova_control_endpoint:
-            policy: majority_of_members
-            group_by: hostname
-            members:
-              - endpoint
-
+            - nova_control_api
+            - nova_control_endpoint
+            hints:
+             - neutron_control # or contrail_vrouter for contrail nodes
+             - keystone_control
 
 
 Read more

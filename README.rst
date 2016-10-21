@@ -33,10 +33,8 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
               dimension:
                 fs: '/var/lib/nova'
           nova_compute_filesystem_critical:
-            enabled: True  # implicit
             description: "The nova instance filesystem's root free space is low."
             severity: warning
-            logical_operator: or # implicit
             rules:
             - metric: fs_space_percent_free
               relational_operator: '<'
@@ -85,7 +83,6 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
             match:
               cluster: nova-compute-plane
 
-
 Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
 
 .. code-block:: yaml
@@ -93,7 +90,6 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
       metric_collector:
         trigger:
           linux_system_cpu_critical:
-            enabled: True  # implicit
             description: 'The CPU usage is too high.'
             severity: critical
             rules:
@@ -109,7 +105,6 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
               window: 120
               function: avg
           linux_system_cpu_warning:
-            enabled: True  # implicit
             description: 'The CPU wait times are high.'
             severity: critical
             rules:
@@ -140,7 +135,6 @@ CPU usage override for compute node, excerpt from `nova/meta/heka.yml`.
       metric_collector:
         trigger:
           nova_compute_cpu_critical:
-            enabled: True  # implicit
             description: 'The CPU wait times are too high.'
             severity: critical
             rules:
@@ -165,9 +159,8 @@ Alarm override option 1 - override:
         filter:
           #Alarm can be overriden
           linux_system_cpu:
-            trigger:
-              vip:
-              - nova_compute_cpu_critical
+            triggers:
+            - nova_compute_cpu_critical
 
 Alarm override option 2 - reinitialize:
 
@@ -181,7 +174,7 @@ Alarm override option 2 - reinitialize:
             enabled: False
           # new alarm is created
           nova_compute_cpu:
-            engine: afd_alarm
+            engine: afd
             notifications: False
             alerting: True
             triggers:
@@ -213,7 +206,8 @@ Remote API check example, excerpt from `nova/meta/heka.yml`.
               window: 60
               periods: 0
               function: last
-              service: 'nova-api'
+              dimension:
+                service: 'nova-api'
         filter:
           nova_control_api:
             engine: afd
@@ -233,28 +227,26 @@ Corresponding clusters and alarms, excerpt from `nova/meta/heka.yml`.
     heka:
       aggregator:
         filter:
-          nova_control_service: # the service_role format
+          nova_control_service:
             engine: gse
             policy: highest_severity
             group_by: member
             match:
               node_role: control
             dimension:
-              cluster: nova-control-plane
+              cluster: openstack-control-plane
             members:
             - nova_control_api
             - nova_control_endpoint
             hints:
              - neutron_control # or contrail_vrouter for contrail nodes
              - keystone_control
-          nova_control_plane: # the service_role format
+          openstack_control_plane:
             engine: gse
             policy: highest_severity
             group_by: member
             match:
-              cluster: nova-control-plane
-
-
+              cluster: openstack-control-plane
 
 Read more
 =========

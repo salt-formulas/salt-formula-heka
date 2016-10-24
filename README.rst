@@ -44,23 +44,18 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
               function: min
               dimension:
                 fs: '/var/lib/nova'
-        filter:
-          nova_compute_service:
-            engine: afd
+        alarm:
+          nova_compute_filesystem:
             notifications: False
             alerting: True
             dimension:
-              hostname: '$match_by.hostname'
               node_role: controller
-            match_by:
-            - hostname
             triggers:
             - nova_compute_filesystem_warning
             - nova_compute_filesystem_critical
       aggregator:
-        filter:
+        alarm_cluster:
           nova_compute_service: # the service_role format
-            engine: gse
             policy: highest_severity
             group_by: member
             match:
@@ -69,7 +64,7 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
               cluster: nova-compute-plane
             members:
             - nova_compute_logs
-            - nova_compute_service
+            - nova_compute_filesystem
             - nova_compute_instances
             - nova_compute_libvirt
             - nova_compute_free_cpu
@@ -114,18 +109,15 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
               window: 120
               periods: 0
               function: avg
-        filter:
+        alarm:
           linux_system_cpu:
-            engine: afd
             notifications: False
             alerting: True
             triggers:
             - linux_system_cpu_warning # will not render if referenced trigger is disabled
             - linux_system_cpu_critical
             dimension:
-              hostname: '$match_by.hostname'
               node_role: controller
-            match_by: ['hostname']
 
 
 CPU usage override for compute node, excerpt from `nova/meta/heka.yml`.
@@ -156,7 +148,7 @@ Alarm override option 1 - override:
           # Trigger can be disable
           linux_system_cpu_critical:
             enabled: False
-        filter:
+        alarm:
           #Alarm can be overriden
           linux_system_cpu:
             triggers:
@@ -167,7 +159,7 @@ Alarm override option 2 - reinitialize:
 .. code-block:: yaml
 
       metric_collector:
-        filter:
+        alarm:
           ...
           # Alarm is disabled
           linux_system_cpu:
@@ -181,9 +173,7 @@ Alarm override option 2 - reinitialize:
             - linux_system_cpu_warning # will not render if referenced trigger is disabled
             - nova_compute_cpu_critical
             dimension:
-              hostname: '$match_by.hostname'
               node_role: controller
-            match_by: ['hostname']
 
 
 Remote collector service
@@ -208,15 +198,12 @@ Remote API check example, excerpt from `nova/meta/heka.yml`.
               function: last
               dimension:
                 service: 'nova-api'
-        filter:
+        alarm:
           nova_control_api:
-            engine: afd
             notifications: False
             alerting: True
             dimension:
-              hostname: '$match_by.hostname'
               node_role: controller
-            match_by: ['hostname']
             triggers:
             - nova_control_api_fail
 
@@ -226,9 +213,8 @@ Corresponding clusters and alarms, excerpt from `nova/meta/heka.yml`.
 
     heka:
       aggregator:
-        filter:
+        alarm_cluster:
           nova_control_service:
-            engine: gse
             policy: highest_severity
             group_by: member
             match:

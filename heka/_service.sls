@@ -76,6 +76,9 @@ heka_{{ service_name }}_service:
   'log_collector': {
     'decoder': {},
     'input': {},
+    'trigger': {},
+    'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -84,6 +87,9 @@ heka_{{ service_name }}_service:
   'metric_collector': {
     'decoder': {},
     'input': {},
+    'trigger': {},
+    'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -92,6 +98,9 @@ heka_{{ service_name }}_service:
   'remote_collector': {
     'decoder': {},
     'input': {},
+    'trigger': {},
+    'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -100,6 +109,9 @@ heka_{{ service_name }}_service:
   'aggregator': {
     'decoder': {},
     'input': {},
+    'trigger': {},
+    'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -130,7 +142,7 @@ heka_{{ service_name }}_service:
 
 {# Loading the other services' support metadata from salt-mine #}
 
-{%- if service_name in ['remote_collector', 'aggregator'] %}
+{%- if service_name in ['remote_collector'] %}
 
 {%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
 {%- if node_grains.heka is defined %}
@@ -143,7 +155,7 @@ heka_{{ service_name }}_service:
 {%- endif %}
 
 
-{# Overriding aggregated metadata from user-space pillar data #}
+{# Replacing aggregated metadata from user-space pillar data #}
 
 {%- for service_grain_name, service_grain in service_grains.iteritems() %}
 {% if salt['pillar.get']('heka:'+service_grain_name) %}
@@ -151,9 +163,6 @@ heka_{{ service_name }}_service:
 {%- for service_action_name, service_action in service_grain.iteritems() %}
 {%- if salt['pillar.get']('heka:'+service_grain_name).get(service_action_name, False) is mapping %}
 {%- set grain_action_meta = salt['pillar.get']('heka:'+service_grain_name+':'+service_action_name) %}
-{#
-{%- set service_grains.get(service_grain_name).get(service_action_name) = salt['grains.filter_by']({'default': service_grains}, merge=grain_action_meta) %}
-#}
 {%- endif %}
 {%- endfor %}
 
@@ -228,6 +237,42 @@ heka_{{ service_name }}_grain:
   - defaults:
       input_name: {{ input_name }}
       input: {{ input|yaml }}
+
+{%- endfor %}
+
+{%- for alarm_name, alarm in service_metadata.get('alarm', {}).iteritems() %}
+
+/etc/{{ service_name }}/filter_afd_{{ alarm_name }}.toml:
+  file.managed:
+  - source: salt://heka/files/toml/filter/afd_alarm.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: heka_{{ service_name }}_conf_dir
+  - require_in:
+    - file: heka_{{ service_name }}_conf_dir_clean
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+      alarm_name: {{ alarm_name }}
+      alarm: {{ alarm|yaml }}
+
+/usr/share/lma_collector_modules/lma_{{ alarm_name }}.lua:
+  file.managed:
+  - source: salt://heka/files/toml/filter/lma_alarm.lua
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: heka_{{ service_name }}_conf_dir
+  - require_in:
+    - file: heka_{{ service_name }}_conf_dir_clean
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+      alarm_name: {{ alarm_name }}
+      alarm: {{ alarm|yaml }}
 
 {%- endfor %}
 

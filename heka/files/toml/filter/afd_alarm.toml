@@ -1,0 +1,21 @@
+[afd_{{ alarm_name }}_filter]
+type = "SandboxFilter"
+filename = "/usr/share/lma_collector/filters/afd.lua"
+{%- if alarm.preserve_data is defined %}
+preserve_data = {{ alarm.preserve_data|lower }}
+{%- else %}
+preserve_data = false
+{%- endif %}
+message_matcher = "(Type == 'metric' || Type == 'heka.sandbox.metric') && (Fields[name] == 'openstack_check_api')"
+module_directory = "/usr/share/lma_collector_modules;/usr/share/heka/lua_modules"
+
+ticker_interval = 10
+
+[afd_{{ alarm_name }}_filter.config]
+hostname = '{{ grains.host }}'
+afd_type = 'service'
+afd_file = 'lma_{{ alarm_name }}'
+afd_cluster_name = 'cinder-api-check'
+afd_logical_name = 'vip'
+activate_alerting = true
+enable_notification = false

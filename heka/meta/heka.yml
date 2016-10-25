@@ -95,10 +95,3 @@ remote_collector:
       host: 127.0.0.1
       port: 4354
       ticker_interval: 30 
-aggregator:
-  decoder: {}
-  input: {}
-  filter: {}
-  output: {}
-  splitter: {}
-  encoder: {}

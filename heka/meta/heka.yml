@@ -68,6 +68,16 @@ metric_collector:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       preserve_data: false
       message_matcher: "Type == 'heka.all-report'"
+    influxdb_accumulator:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "Fields[aggregator] == NIL && Type =~ /metric$/"
+      ticker_interval: 1
+      config:
+        tag_fields: "deployment_id environment_label tenant_id user_id"
+        time_precision: "ms"
   encoder:
     influxdb:
       engine: payload

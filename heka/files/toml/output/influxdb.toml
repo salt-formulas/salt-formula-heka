@@ -2,9 +2,11 @@
 type = "HttpOutput"
 message_matcher = "Fields[payload_type] == 'txt' && Fields[payload_name] == 'influxdb'"
 encoder = "influxdb_encoder"
-address = "http://{{ output.host }}:8086/write?db=lma&precision=ms"
-username = "influxdb"
-password = "influxdbpass"
+address = "http://{{ output.host }}:{{ output.port }}/write?db={{ output.database }}&precision=ms"
+{%- if output.username and output.password %}
+username = "{{ output.username }}"
+password = "{{ output.password }}"
+{%- endif %}
 http_timeout = 5000
 method = "POST"
 use_buffering = true

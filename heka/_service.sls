@@ -149,17 +149,16 @@ heka_{{ service_name }}_service:
 {% if salt['pillar.get']('heka:'+service_grain_name) %}
 
 {%- for service_action_name, service_action in service_grain.iteritems() %}
-{%- if salt['pillar.get']('heka:'+service_grain_name).get(service_action_name, False) is mapping %}
+{%- if salt['pillar.get']('heka:'+service_grain_name).get(service_action_name, None) is mapping %}
+
 {%- set grain_action_meta = salt['pillar.get']('heka:'+service_grain_name+':'+service_action_name) %}
-{#
-{%- set service_grains.get(service_grain_name).get(service_action_name) = salt['grains.filter_by']({'default': service_grains}, merge=grain_action_meta) %}
-#}
-{%- endif %}
-{%- endfor %}
+{%- do service_grains.get(service_grain_name).get(service_action_name).update(grain_action_meta) %}
 
 {%- endif %}
 {%- endfor %}
 
+{%- endif %}
+{%- endfor %}
 
 heka_{{ service_name }}_grain:
   file.managed:

@@ -49,7 +49,7 @@ Local alarm definition for nova compute role, excerpt from `nova/meta/heka.yml`.
             notifications: False
             alerting: True
             dimension:
-              node_role: controller
+              node_role: control
             triggers:
             - nova_compute_filesystem_warning
             - nova_compute_filesystem_critical
@@ -117,63 +117,7 @@ Default CPU usage alarms, excerpt from `linux/meta/heka.yml`.
             - linux_system_cpu_warning # will not render if referenced trigger is disabled
             - linux_system_cpu_critical
             dimension:
-              node_role: controller
-
-
-CPU usage override for compute node, excerpt from `nova/meta/heka.yml`.
-
-.. code-block:: yaml
-
-      metric_collector:
-        trigger:
-          nova_compute_cpu_critical:
-            description: 'The CPU wait times are too high.'
-            severity: critical
-            rules:
-            - metric: cpu_wait
-              relational_operator: >=
-              threshold: 35
-              window: 120
-              periods: 0
-              function: avg
-
-.. code-block:: yaml
-
-Alarm override option 1 - override:
-
-.. code-block:: yaml
-
-      metric_collector:
-        trigger:
-          # Trigger can be disable
-          linux_system_cpu_critical:
-            enabled: False
-        alarm:
-          #Alarm can be overriden
-          linux_system_cpu:
-            triggers:
-            - nova_compute_cpu_critical
-
-Alarm override option 2 - reinitialize:
-
-.. code-block:: yaml
-
-      metric_collector:
-        alarm:
-          ...
-          # Alarm is disabled
-          linux_system_cpu:
-            enabled: False
-          # new alarm is created
-          nova_compute_cpu:
-            engine: afd
-            notifications: False
-            alerting: True
-            triggers:
-            - linux_system_cpu_warning # will not render if referenced trigger is disabled
-            - nova_compute_cpu_critical
-            dimension:
-              node_role: controller
+              node_role: control
 
 
 Remote collector service
@@ -203,7 +147,7 @@ Remote API check example, excerpt from `nova/meta/heka.yml`.
             notifications: False
             alerting: True
             dimension:
-              node_role: controller
+              service: nova-control
             triggers:
             - nova_control_api_fail
 
@@ -218,7 +162,7 @@ Corresponding clusters and alarms, excerpt from `nova/meta/heka.yml`.
             policy: highest_severity
             group_by: member
             match:
-              node_role: control
+              service: nova-control
             dimension:
               cluster: openstack-control-plane
             members:

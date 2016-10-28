@@ -13,6 +13,17 @@ log_collector:
         bulk_size: 523
         percentile: 90
         grace_time: 5
+    log_counter:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/logs_counter.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      preserve_data: true
+      message_matcher: "Type == 'log' && Logger =~ /^openstack\\\\./"
+      ticker_interval: 1
+      config:
+        hostname: '{{ grains.host }}'
+        interval: 60
+        grace_interval: 30
   encoder:
     elasticsearch:
       engine: elasticsearch

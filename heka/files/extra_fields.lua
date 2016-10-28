@@ -15,6 +15,10 @@ local M = {}
 setfenv(1, M) -- Remove external access to contain everything in the module
 
 -- list of fields that are added to Heka messages by the collector
-tags = {}
+tags = {
+{%- for key, value in extra_fields.iteritems() %}
+  ['{{ key | replace ("'", "\\'") }}'] = '{{ value | replace ("'", "\\'") }}',
+{%- endfor %}
+}
 
 return M

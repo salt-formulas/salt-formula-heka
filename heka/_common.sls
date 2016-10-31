@@ -8,6 +8,15 @@ heka_packages:
   file.recurse:
   - source: salt://heka/files/lua
 
+/usr/share/lma_collector/common/extra_fields.lua:
+  file.managed:
+  - source: salt://heka/files/extra_fields.lua
+  - user: root
+  - mode: 644
+  - defaults:
+      extra_fields: {{ server.extra_fields }}
+  - template: jinja
+
 heka_user:
   user.present:
   - name: heka

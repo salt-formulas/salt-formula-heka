@@ -14,6 +14,8 @@ Debian:
   splitter: {}
   encoder: {}
   decoder: {}
+  extra_fields:
+    environment_label: {{ grains.domain }}
 RedHat:
   groups:
   - adm

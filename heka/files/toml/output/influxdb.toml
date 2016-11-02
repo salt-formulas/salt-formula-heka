@@ -1,8 +1,10 @@
+{%- from "heka/map.jinja" import server with context %}
+
 [{{ output_name }}_output]
 type = "HttpOutput"
 message_matcher = "Fields[payload_type] == 'txt' && Fields[payload_name] == 'influxdb'"
 encoder = "influxdb_encoder"
-address = "http://{{ output.host }}:{{ output.port }}/write?db={{ output.database }}&precision={{ output.time_precision }}"
+address = "http://{{ output.host }}:{{ output.port }}/write?db={{ output.database }}&precision={{ server.influxdb_time_precision }}"
 {%- if output.username and output.password %}
 username = "{{ output.username }}"
 password = "{{ output.password }}"

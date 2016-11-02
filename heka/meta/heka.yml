@@ -28,14 +28,6 @@ log_collector:
     elasticsearch:
       engine: elasticsearch
   output:
-    elasticsearch:
-      engine: elasticsearch
-      message_matcher: "Type == 'log' || Type  == 'notification'"
-      encoder: elasticsearch_encoder
-      host: mon
-      port: 9200
-      flush_interval: 5000
-      flush_count: 100
     metric_collector:
       engine: tcp
       host: 127.0.0.1

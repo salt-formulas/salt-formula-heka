@@ -1,10 +1,10 @@
 [{{ output_name }}_output]
 type = "ElasticSearchOutput"
-message_matcher = "{{ output.message_matcher }}"
-encoder = "{{ output.encoder }}"
+message_matcher = "Type == 'log' || Type == 'notification'"
+encoder = "elasticsearch_encoder"
 server = "http://{{ output.host }}:{{ output.port }}"
-flush_interval = {{ output.flush_interval }}
-flush_count = {{ output.flush_count }}
+flush_interval = 5000
+flush_count = 100
 use_buffering = true
 
 [{{ output_name }}_output.buffering]

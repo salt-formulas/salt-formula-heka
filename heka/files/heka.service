@@ -9,6 +9,7 @@ ConditionPathExists=!/etc/{{ service_name }}_not_to_be_run
 EnvironmentFile=-/etc/default/{{ service_name }}
 User=heka
 Group=heka
+LimitNOFILE=102400
 ExecStart=/usr/bin/hekad -config=/etc/{{ service_name }}
 # NOT SURE HEKA doesn't support reloading by signal
 # ExecReload=/bin/kill -HUP $MAINPID

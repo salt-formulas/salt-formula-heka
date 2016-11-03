@@ -1,0 +1,14 @@
+[afd_{{ alarm_name }}_filter]
+type = "SandboxFilter"
+filename = "/usr/share/lma_collector/filters/afd.lua"
+preserve_data = {{ alarm.preserve_data|default(False)|lower }}
+message_matcher = "(Type == 'metric' || Type == 'heka.sandbox.metric') && ({{ salt['heka_alarming.message_matcher'](alarm, trigger) }})"
+module_directory = "/usr/share/lma_collector/common;/usr/share/heka/lua_modules"
+ticker_interval = 10
+
+[afd_{{ alarm_name }}_filter.config]
+afd_file = "lma_{{ alarm_name|replace('-', '_') }}"
+afd_name = "{{ alarm_name }}"
+hostname = "{{ grains.host }}"
+dimensions = '{{ salt['heka_alarming.dimensions'](alarm)|json }}'
+activate_alerting = {{ alarm.alerting|default(True)|lower }}

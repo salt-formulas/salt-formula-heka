@@ -129,8 +129,7 @@ function reset_alarms()
 end
 
 -- inject an AFD event into the Heka pipeline
-function inject_afd_metric(msg_type, msg_tag_name, msg_tag_value, metric_name,
-                           value, hostname, interval, source, to_alerting)
+function inject_afd_metric(value, hostname, afd_name, to_alerting)
     local payload
 
     if #alarms > 0 then
@@ -150,30 +149,20 @@ function inject_afd_metric(msg_type, msg_tag_name, msg_tag_value, metric_name,
     end
 
     local msg = {
-        Type = msg_type,
+        Type = 'afd_metric',
         Payload = payload,
         Fields = {
-            name=metric_name,
+            name='status',
             value=value,
             hostname=hostname,
-            interval=interval,
-            source=source,
-            tag_fields={msg_tag_name, 'source', 'hostname'},
-            no_alerting = no_alerting,
+            member=afd_name,
+            tag_fields={'hostname', 'member'},
+            no_alerting=no_alerting,
         }
     }
-    msg.Fields[msg_tag_name] = msg_tag_value,
+
     lma.inject_tags(msg)
     lma.safe_inject_message(msg)
-end
-
--- inject an AFD service event into the Heka pipeline
-function inject_afd_service_metric(service, value, hostname, interval, source)
-    inject_afd_metric('afd_service_metric',
-                      'service',
-                      service,
-                      'service_status',
-                      value, hostname, interval, source)
 end
 
 MATCH = 1

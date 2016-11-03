@@ -1,0 +1,30 @@
+{# Find the metrics involved in this alarm and build the list of message matchers #}
+{%- set _matchers = [] %}
+{%- for _trigger_name in alarm.triggers %}
+    {%- set _trigger = trigger.get(_trigger_name, {}) %}
+    {%- if _trigger.get('enabled', True) %}
+        {%- for _rule in _trigger.get('rules', []) %}
+            {%- set _matcher = "Fields[name] == '%s'" % _rule.metric %}
+            {%- if not _matcher in _matchers %}
+                {%- do _matchers.append("Fields[name] == '%s'" % _rule.metric) %}
+            {%- endif %}
+        {%- endfor %}
+    {%- endif %}
+{%- endfor -%}
+
+[afd_{{ alarm_name }}_filter]
+type = "SandboxFilter"
+filename = "/usr/share/lma_collector/filters/afd.lua"
+{%- if alarm.preserve_data is defined %}
+preserve_data = {{ alarm.preserve_data|lower }}
+{%- else %}
+preserve_data = false
+{%- endif %}
+message_matcher = "(Type == 'metric' || Type == 'heka.sandbox.metric') && ({{ _matchers|join(' || ') }})"
+module_directory = "/usr/share/lma_collector/common;/usr/share/heka/lua_modules"
+ticker_interval = 10
+
+[afd_{{ alarm_name }}_filter.config]
+afd_file = 'lma_{{ alarm_name }}'
+afd_name = '{{ alarm_name }}'
+hostname = '{{ grains.host }}'

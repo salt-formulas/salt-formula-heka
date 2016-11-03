@@ -76,42 +76,34 @@ heka_{{ service_name }}_service:
   'log_collector': {
     'decoder': {},
     'input': {},
-    'trigger': {},
-    'alarm': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
-    'output': {},
+    'output': {}
   },
   'metric_collector': {
     'decoder': {},
     'input': {},
-    'trigger': {},
-    'alarm': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
-    'output': {},
+    'output': {}
   },
   'remote_collector': {
     'decoder': {},
     'input': {},
-    'trigger': {},
-    'alarm': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
-    'output': {},
+    'output': {}
   },
   'aggregator': {
     'decoder': {},
     'input': {},
-    'trigger': {},
-    'alarm': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
-    'output': {},
+    'output': {}
   }
 } %}
 
@@ -235,44 +227,6 @@ heka_{{ service_name }}_grain:
   - defaults:
       input_name: {{ input_name }}
       input: {{ input|yaml }}
-
-{%- endfor %}
-
-{%- for alarm_name, alarm in service_metadata.get('alarm', {}).iteritems() %}
-
-/etc/{{ service_name }}/filter_afd_{{ alarm_name }}.toml:
-  file.managed:
-  - source: salt://heka/files/toml/filter/afd_alarm.toml
-  - template: jinja
-  - mode: 640
-  - group: heka
-  - require:
-    - file: heka_{{ service_name }}_conf_dir
-  - require_in:
-    - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
-  - defaults:
-      alarm_name: {{ alarm_name }}
-      alarm: {{ alarm|yaml }}
-      trigger: {{ service_metadata.get('trigger', {})|yaml }}
-
-/usr/share/lma_collector/common/lma_{{ alarm_name }}.lua:
-  file.managed:
-  - source: salt://heka/files/toml/filter/lma_alarm.lua
-  - template: jinja
-  - mode: 640
-  - group: heka
-  - require:
-    - file: heka_{{ service_name }}_conf_dir
-  - require_in:
-    - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
-  - defaults:
-      alarm_name: {{ alarm_name }}
-      alarm: {{ alarm|yaml }}
-      trigger: {{ service_metadata.get('trigger', {})|yaml }}
 
 {%- endfor %}
 

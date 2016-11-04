@@ -147,7 +147,7 @@ heka_{{ service_name }}_service:
 
 {%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
 {%- if node_grains.heka is defined %}
-{%- do service_grains.update(node_grains.heka) %}
+{%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=node_grains.heka) %}
 {%- endif %}
 {%- endfor %}
 

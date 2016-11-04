@@ -103,11 +103,6 @@ metric_collector:
       append_newlines: false
       prefix_ts: false
   output:
-    aggregator:
-      engine: tcp
-      host: 127.0.0.1
-      port: 5565
-      message_matcher: "Fields[aggregator] == NIL && Type =~ /^heka\\\\.sandbox\\\\.afd.*metric$/"
     metric_dashboard:
       engine: dashboard
       host: 127.0.0.1

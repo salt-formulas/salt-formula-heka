@@ -108,7 +108,6 @@ heka_{{ service_name }}_service:
 } %}
 
 
-
 {# Loading the other services' support metadata for local roles #}
 
 {%- if service_name in ['log_collector', 'metric_collector'] %}

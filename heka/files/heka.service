@@ -39,7 +39,7 @@ end script
 script
     # https://bugs.launchpad.net/lma-toolchain/+bug/1543289
     ulimit -n 102400
-    exec start-stop-daemon --start  --chuid heka --exec /usr/local/bin/{{ service_name }}_wrapper 2>>/var/log/{{ service_name }}.log
+    exec start-stop-daemon --start  --chuid heka --exec /usr/local/bin/{{ service_name }}_wrapper >> /var/log/{{ service_name }}.log 2>&1
 end script
 
 {%- endif %}

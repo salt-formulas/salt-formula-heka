@@ -299,6 +299,22 @@ heka_{{ service_name }}_grain:
 
 {%- for alarm_cluster_name, alarm_cluster in service_metadata.get('alarm_cluster', {}).iteritems() %}
 
+/etc/{{ service_name }}/filter_gse_{{ alarm_cluster_name }}.toml:
+  file.managed:
+  - source: salt://heka/files/toml/filter/gse_alarm_cluster.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: heka_{{ service_name }}_conf_dir
+  - require_in:
+    - file: heka_{{ service_name }}_conf_dir_clean
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+      alarm_cluster_name: {{ alarm_cluster_name }}
+      alarm_cluster: {{ alarm_cluster|yaml }}
+
 /usr/share/lma_collector/common/gse_{{ alarm_cluster_name|replace('-', '_') }}_topology.lua:
   file.managed:
   - source: salt://heka/files/gse_topology.lua

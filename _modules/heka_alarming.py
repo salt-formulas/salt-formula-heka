@@ -7,7 +7,7 @@ _disallowed_dimensions = ('name', 'value', 'hostname', 'member',
                           'no_alerting', 'tag_fields')
 
 
-def message_matcher(alarm, triggers):
+def alarm_message_matcher(alarm, triggers):
     """
     Return an Heka message matcher expression for a given alarm and a
     dict of triggers.
@@ -24,6 +24,26 @@ def message_matcher(alarm, triggers):
                 matcher = "Fields[name] == '{}'".format(rule['metric'])
                 matchers.add(matcher)
     return ' || '.join(matchers)
+
+
+def alarm_cluster_message_matcher(alarm_cluster):
+    """
+    Return an Heka message matcher expression for a given alarm cluster.
+
+    For example the function may return this:
+
+        Fields[service] == 'rabbitmq-cluster'
+    """
+    matchers = set()
+    match_items = alarm_cluster.get('match', {}).items()
+    for match_name, match_value in match_items:
+        matcher = "Fields[{}] == '{}'".format(match_name, match_value)
+        matchers.add(matcher)
+    match_items = alarm_cluster.get('match_re', {}).items()
+    for match_name, match_value in match_items:
+        matcher = "Fields[{}] =~ /{}/".format(match_name, match_value)
+        matchers.add(matcher)
+    return ' && '.join(matchers)
 
 
 def dimensions(alarm):

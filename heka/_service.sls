@@ -277,6 +277,22 @@ heka_{{ service_name }}_grain:
 
 {%- endfor %}
 
+{%- set policy = service_metadata.get('policy') %}
+{%- if policy %}
+/usr/share/lma_collector/common/gse_policies.lua:
+  file.managed:
+  - source: salt://heka/files/gse_policies.lua
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /usr/share/lma_collector
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+    policy: {{ policy|yaml }}
+{%- endif %}
+
 {%- for filter_name, filter in service_metadata.get('filter', {}).iteritems() %}
 
 /etc/{{ service_name }}/filter_{{ filter_name }}.toml:

@@ -17,15 +17,11 @@ local cjson = require 'cjson'
 local afd = require 'afd'
 local gse = require 'gse'
 local lma = require 'lma_utils'
+local policies = require('gse_policies')
 
-local output_message_type = read_config('output_message_type') or error('output_message_type must be specified!')
-local cluster_field = read_config('cluster_field')
-local member_field = read_config('member_field') or error('member_field must be specified!')
-local output_metric_name = read_config('output_metric_name') or error('output_metric_name must be specified!')
-local source = read_config('source') or error('source must be specified!')
+local cluster_field = read_config('cluster_field')  -- FIXME(elemoine) remove??
 local topology_file = read_config('topology_file') or error('topology_file must be specified!')
-local policies_file = read_config('policies_file') or error('policies_file must be specified!')
-local interval = (read_config('interval') or error('interval must be specified!')) + 0
+local interval = (read_config('interval') or 10) + 0
 local interval_in_ns = interval * 1e9
 local max_inject = (read_config('max_inject') or 10) + 0
 local warm_up_period = ((read_config('warm_up_period') or 0) + 0) * 1e9
@@ -37,14 +33,14 @@ local last_tick = 0
 local last_index = nil
 
 local topology = require(topology_file)
-local policies = require(policies_file)
 
 for cluster_name, attributes in pairs(topology.clusters) do
     local policy = policies.find(attributes.policy)
     if not policy then
         error('Cannot find ' .. attributes.policy .. ' policy!')
     end
-    gse.add_cluster(cluster_name, attributes.members, attributes.hints, attributes.group_by, policy)
+    gse.add_cluster(cluster_name, attributes.members, attributes.hints or {},
+        attributes.group_by, policy)
 end
 
 function process_message()
@@ -63,7 +59,7 @@ function process_message()
         return 0
     end
 
-    local member_id = afd.get_entity_name(member_field)
+    local member_id = afd.get_entity_name('member')
     if not member_id then
         return -1, "Cannot find entity's name in the AFD/GSE message"
     end
@@ -79,7 +75,7 @@ function process_message()
     end
 
     local cluster_ids
-    if cluster_field then
+    if cluster_field then   -- FIXME(elemoine) Remove??
         local cluster_id = afd.get_entity_name(cluster_field)
         if not cluster_id then
             return -1, "Cannot find the cluster's name in the AFD/GSE message"
@@ -118,14 +114,7 @@ function timer_event(ns)
     local injected = 0
     for i, cluster_name in ipairs(gse.get_ordered_clusters()) do
         if last_index == nil or i > last_index then
-            gse.inject_cluster_metric(
-                output_message_type,
-                cluster_name,
-                output_metric_name,
-                interval,
-                source,
-                activate_alerting
-            )
+            gse.inject_cluster_metric(cluster_name, activate_alerting)
             last_index = i
             injected = injected + 1
 

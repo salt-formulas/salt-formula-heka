@@ -134,6 +134,43 @@ remote_collector:
       port: 4354
       ticker_interval: 30
 aggregator:
+  policy:
+    # A policy defining that the cluster's status depends on the member with
+    # the highest severity, typically used for a cluster of services.
+    highest_severity:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ down ]
+          relational_operator: '>'
+          threshold: 0
+    - status: critical
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ critical ]
+          relational_operator: '>'
+          threshold: 0
+    - status: warning
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ warning ]
+          relational_operator: '>'
+          threshold: 0
+    - status: okay
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '>'
+          threshold: 0
+    - status: unknown
   input:
     heka_metric:
       engine: tcp

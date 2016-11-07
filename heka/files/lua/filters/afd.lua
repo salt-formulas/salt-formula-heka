@@ -12,42 +12,27 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
+local table = require 'table'
 local string = require 'string'
+local cjson = require 'cjson'
 
 local utils = require 'lma_utils'
 local afd = require 'afd'
 
--- node or service
-local afd_type = read_config('afd_type') or error('afd_type must be specified!')
-local activate_alerting = read_config('activate_alerting') or true
-local msg_type
-local msg_field_name
-local afd_entity
-
-if afd_type == 'node' then
-    msg_type = 'afd_node_metric'
-    msg_field_name = 'node_status'
-    afd_entity = 'node_role'
-elseif afd_type == 'service' then
-    msg_type = 'afd_service_metric'
-    msg_field_name = 'service_status'
-    afd_entity = 'service'
-else
-    error('invalid afd_type value')
-end
-
--- ie: controller for node AFD / rabbitmq for service AFD
-local afd_entity_value = read_config('afd_cluster_name') or error('afd_cluster_name must be specified!')
-
--- ie: cpu for node AFD / queue for service AFD
-local msg_field_source = read_config('afd_logical_name') or error('afd_logical_name must be specified!')
-
-local hostname = read_config('hostname') or error('hostname must be specified')
-
 local afd_file = read_config('afd_file') or error('afd_file must be specified')
+local afd_name = read_config('afd_name') or error('afd_name must be specified')
+local hostname = read_config('hostname') or error('hostname must be specified')
+local dimensions_json = read_config('dimensions') or ''
+local activate_alerting = read_config('activate_alerting') or true
+
 local all_alarms = require(afd_file)
 local A = require 'afd_alarms'
 A.load_alarms(all_alarms)
+
+local ok, dimensions = pcall(cjson.decode, dimensions_json)
+if not ok then
+    error(string.format('dimensions JSON is invalid (%s)', dimensions_json))
+end
 
 function process_message()
 
@@ -90,8 +75,8 @@ function timer_event(ns)
                     alarm.alert.message)
             end
 
-            afd.inject_afd_metric(msg_type, afd_entity, afd_entity_value, msg_field_name,
-                state, hostname, interval, msg_field_source, activate_alerting)
+            afd.inject_afd_metric(state, hostname, afd_name, dimensions,
+                activate_alerting)
         end
     else
         A.set_start_time(ns)

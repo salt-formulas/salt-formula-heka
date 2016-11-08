@@ -17,6 +17,9 @@ Debian:
   extra_fields:
     environment_label: {{ grains.domain }}
   influxdb_time_precision: ms
+  {%- if pillar.get('linux', {}).get('system', {}).timezone is defined %}
+  timezone: "{{ pillar.linux.system.timezone }}"
+  {%- endif %}
 RedHat:
   groups:
   - adm

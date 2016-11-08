@@ -24,6 +24,7 @@ local interval = (read_config('interval') or 10) + 0
 local interval_in_ns = interval * 1e9
 local max_inject = (read_config('max_inject') or 10) + 0
 local warm_up_period = ((read_config('warm_up_period') or 0) + 0) * 1e9
+local dimensions_json = read_config('dimensions') or ''
 local activate_alerting = read_config('activate_alerting') or true
 
 local is_active = false
@@ -40,6 +41,11 @@ for cluster_name, attributes in pairs(topology.clusters) do
     end
     gse.add_cluster(cluster_name, attributes.members, attributes.hints or {},
         attributes.group_by, policy)
+end
+
+local ok, dimensions = pcall(cjson.decode, dimensions_json)
+if not ok then
+    error(string.format('dimensions JSON is invalid (%s)', dimensions_json))
 end
 
 function process_message()
@@ -101,7 +107,7 @@ function timer_event(ns)
     local injected = 0
     for i, cluster_name in ipairs(gse.get_ordered_clusters()) do
         if last_index == nil or i > last_index then
-            gse.inject_cluster_metric(cluster_name, activate_alerting)
+            gse.inject_cluster_metric(cluster_name, dimensions, activate_alerting)
             last_index = i
             injected = injected + 1
 

@@ -46,14 +46,14 @@ def alarm_cluster_message_matcher(alarm_cluster):
     return ' && '.join(matchers)
 
 
-def dimensions(alarm):
+def dimensions(alarm_or_alarm_cluster):
     """
     Return a dict alarm dimensions. Each dimension is validated, and an
     Exception is raised if a dimension is invalid.
 
     Valid characters are a-z, 0-9, _, - and /.
     """
-    dimensions = alarm.get('dimension', {})
+    dimensions = alarm_or_alarm_cluster.get('dimension', {})
     for name, value in dimensions.items():
         if name in _disallowed_dimensions:
             raise Exception(

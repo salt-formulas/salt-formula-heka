@@ -8,6 +8,7 @@ ticker_interval = 1
 
 [gse_{{ alarm_cluster_name }}_filter.config]
 topology_file = "gse_{{ alarm_cluster_name|replace('-', '_') }}_topology"
+dimensions = '{{ salt['heka_alarming.dimensions'](alarm_cluster)|json }}'
 activate_alerting = {{ alarm_cluster.alerting|default(True)|lower }}
 {%- if alarm_cluster.interval is defined %}
 interval = {{ alarm_cluster.interval }}

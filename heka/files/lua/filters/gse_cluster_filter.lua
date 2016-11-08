@@ -19,7 +19,6 @@ local gse = require 'gse'
 local lma = require 'lma_utils'
 local policies = require('gse_policies')
 
-local cluster_field = read_config('cluster_field')  -- FIXME(elemoine) remove??
 local topology_file = read_config('topology_file') or error('topology_file must be specified!')
 local interval = (read_config('interval') or 10) + 0
 local interval_in_ns = interval * 1e9
@@ -74,19 +73,7 @@ function process_message()
         return -1, "Cannot find alarms in the AFD/GSE message"
     end
 
-    local cluster_ids
-    if cluster_field then   -- FIXME(elemoine) Remove??
-        local cluster_id = afd.get_entity_name(cluster_field)
-        if not cluster_id then
-            return -1, "Cannot find the cluster's name in the AFD/GSE message"
-        elseif not gse.cluster_exists(cluster_id) then
-            -- Just ignore AFD/GSE messages which aren't part of a cluster's definition
-            return 0
-        end
-        cluster_ids = { cluster_id }
-    else
-        cluster_ids = gse.find_cluster_memberships(member_id)
-    end
+    local cluster_ids = gse.find_cluster_memberships(member_id)
 
     -- update all clusters that depend on this entity
     for _, cluster_id in ipairs(cluster_ids) do

@@ -12,6 +12,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
+EXPORT_ASSERT_TO_GLOBALS=true
 require('luaunit')
 package.path = package.path .. ";../heka/files/lua/common/?.lua;lua/mocks/?.lua"
 

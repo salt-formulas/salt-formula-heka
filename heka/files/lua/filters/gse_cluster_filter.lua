@@ -27,7 +27,6 @@ local warm_up_period = ((read_config('warm_up_period') or 0) + 0) * 1e9
 local dimensions_json = read_config('dimensions') or ''
 local activate_alerting = read_config('activate_alerting') or true
 
-local is_active = false
 local first_tick
 local last_tick = 0
 local last_index = nil
@@ -49,20 +48,6 @@ if not ok then
 end
 
 function process_message()
-    local name = read_message('Fields[name]')
-    local hostname = read_message('Fields[hostname]')
-    if name and name == 'pacemaker_local_resource_active' and read_message("Fields[resource]") == 'vip__management' then
-        -- Skip pacemaker_local_resource_active metrics that don't
-        -- concern the local node
-        if read_message('Hostname') == hostname then
-            if read_message('Fields[value]') == 1 then
-                is_active = true
-            else
-                is_active = false
-            end
-        end
-        return 0
-    end
 
     local member_id = afd.get_entity_name('member')
     if not member_id then
@@ -89,10 +74,7 @@ function process_message()
 end
 
 function timer_event(ns)
-    if not is_active then
-        -- not running as the aggregator
-        return
-    elseif not first_tick then
+    if not first_tick then
         first_tick = ns
         return
     elseif ns - first_tick <= warm_up_period then

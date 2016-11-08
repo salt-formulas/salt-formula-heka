@@ -1,8 +1,12 @@
 [{{ output_name }}_output]
 type="TcpOutput"
+{% block address %}
 address = "{{ output.host }}:{{ output.port }}"
+{% endblock %}
 encoder = "ProtobufEncoder"
+{% block message_matcher %}
 message_matcher = "{{ output.message_matcher }}"
+{% endblock %}
 use_buffering = true
 
 [{{ output_name }}_output.buffering]

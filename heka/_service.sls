@@ -1,3 +1,4 @@
+{%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
 
 {%- set server = salt['pillar.get']('heka:'+service_name) %}
 
@@ -124,8 +125,6 @@ heka_{{ service_name }}_service:
 {%- for service_name, service in pillar.iteritems() %}
 {%- if service.get('_support', {}).get('heka', {}).get('enabled', False) %}
 
-{%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
-
 {%- set grains_fragment_file = service_name+'/meta/heka.yml' %}
 {%- set grains_yaml = load_grains_file(grains_fragment_file)|load_yaml %}
 {%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=grains_yaml) %}
@@ -136,15 +135,19 @@ heka_{{ service_name }}_service:
 {%- endif %}
 
 
-{# Loading the other services' support metadata from salt-mine #}
-
 {%- if service_name in ['remote_collector', 'aggregator'] %}
+
+{# Load the support metadata from heka/meta/heka.yml #}
+
+{%- set grains_fragment_file = 'heka/meta/heka.yml' %}
+{%- set grains_yaml = load_grains_file(grains_fragment_file)|load_yaml %}
+{%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=grains_yaml) %}
+
+{# Load the other services' support metadata from salt-mine #}
 
 {%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
 {%- if node_grains.heka is defined %}
-
-{%- do service_grains.update(node_grains.heka) %}
-
+{%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=node_grains.heka) %}
 {%- endif %}
 {%- endfor %}
 

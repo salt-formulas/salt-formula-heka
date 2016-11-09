@@ -171,6 +171,40 @@ aggregator:
           relational_operator: '>'
           threshold: 0
     - status: unknown
+    # A policy which is typically used for clusters managed by Pacemaker
+    # with the no-quorum-policy set to 'stop'.
+    majority_of_members:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ down ]
+          relational_operator: '>'
+          threshold: 50
+    - status: critical
+      trigger:
+        logical_operator: and
+        rules:
+        - function: percent
+          arguments: [ down, critical ]
+          relational_operator: '>'
+          threshold: 20
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '<'
+          threshold: 50
+          function: percent
+    - status: warning
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '<'
+          threshold: 50
+          function: percent
+    - status: okay
   input:
     heka_metric:
       engine: tcp

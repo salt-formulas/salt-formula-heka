@@ -79,6 +79,7 @@ heka_{{ service_name }}_service:
     'input': {},
     'trigger': {},
     'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -89,6 +90,7 @@ heka_{{ service_name }}_service:
     'input': {},
     'trigger': {},
     'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -99,6 +101,7 @@ heka_{{ service_name }}_service:
     'input': {},
     'trigger': {},
     'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -109,6 +112,7 @@ heka_{{ service_name }}_service:
     'input': {},
     'trigger': {},
     'alarm': {},
+    'alarm_cluster': {},
     'filter': {},
     'splitter': {},
     'encoder': {},
@@ -274,6 +278,56 @@ heka_{{ service_name }}_grain:
       alarm_name: {{ alarm_name }}
       alarm: {{ alarm|yaml }}
       trigger: {{ service_metadata.get('trigger', {})|yaml }}
+
+{%- endfor %}
+
+{%- set policy = service_metadata.get('policy') %}
+{%- if policy %}
+/usr/share/lma_collector/common/gse_policies.lua:
+  file.managed:
+  - source: salt://heka/files/gse_policies.lua
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /usr/share/lma_collector
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+    policy: {{ policy|yaml }}
+{%- endif %}
+
+{%- for alarm_cluster_name, alarm_cluster in service_metadata.get('alarm_cluster', {}).iteritems() %}
+
+/etc/{{ service_name }}/filter_gse_{{ alarm_cluster_name }}.toml:
+  file.managed:
+  - source: salt://heka/files/toml/filter/gse_alarm_cluster.toml
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: heka_{{ service_name }}_conf_dir
+  - require_in:
+    - file: heka_{{ service_name }}_conf_dir_clean
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+      alarm_cluster_name: {{ alarm_cluster_name }}
+      alarm_cluster: {{ alarm_cluster|yaml }}
+
+/usr/share/lma_collector/common/gse_{{ alarm_cluster_name|replace('-', '_') }}_topology.lua:
+  file.managed:
+  - source: salt://heka/files/gse_topology.lua
+  - template: jinja
+  - mode: 640
+  - group: heka
+  - require:
+    - file: /usr/share/lma_collector
+  - watch_in:
+    - service: heka_{{ service_name }}_service
+  - defaults:
+      alarm_cluster_name: {{ alarm_cluster_name }}
+      alarm_cluster: {{ alarm_cluster|yaml }}
 
 {%- endfor %}
 

@@ -184,54 +184,36 @@ TestGse = {}
     end
 
     function TestGse:test_inject_cluster_metric_for_nova()
-        gse.inject_cluster_metric(
-            'gse_service_cluster_metric',
-            'nova',
-            'service_cluster_status',
-            10,
-            'gse_service_cluster_plugin'
-        )
+        gse.inject_cluster_metric('nova', {key = "val"}, true)
         local metric = last_injected_msg
-        assertEquals(metric.Type, 'gse_service_cluster_metric')
-        assertEquals(metric.Fields.cluster_name, 'nova')
-        assertEquals(metric.Fields.name, 'service_cluster_status')
+        assertEquals(metric.Type, 'gse_metric')
+        assertEquals(metric.Fields.member, 'nova')
+        assertEquals(metric.Fields.name, 'cluster_status')
         assertEquals(metric.Fields.value, consts.OKAY)
-        assertEquals(metric.Fields.interval, 10)
+        assertEquals(metric.Fields.key, 'val')
         assertEquals(metric.Payload, '{"alarms":[]}')
     end
 
     function TestGse:test_inject_cluster_metric_for_glance()
-        gse.inject_cluster_metric(
-            'gse_service_cluster_metric',
-            'glance',
-            'service_cluster_status',
-            10,
-            'gse_service_cluster_plugin'
-        )
+        gse.inject_cluster_metric('glance', {key = "val"}, true)
         local metric = last_injected_msg
-        assertEquals(metric.Type, 'gse_service_cluster_metric')
-        assertEquals(metric.Fields.cluster_name, 'glance')
-        assertEquals(metric.Fields.name, 'service_cluster_status')
+        assertEquals(metric.Type, 'gse_metric')
+        assertEquals(metric.Fields.member, 'glance')
+        assertEquals(metric.Fields.name, 'cluster_status')
         assertEquals(metric.Fields.value, consts.DOWN)
-        assertEquals(metric.Fields.interval, 10)
+        assertEquals(metric.Fields.key, 'val')
         assert(metric.Payload:match("glance%-registry endpoints are down"))
         assert(metric.Payload:match("glance%-api endpoint is down on node%-1"))
     end
 
     function TestGse:test_inject_cluster_metric_for_heat()
-        gse.inject_cluster_metric(
-            'gse_service_cluster_metric',
-            'heat',
-            'service_cluster_status',
-            10,
-            'gse_service_cluster_plugin'
-        )
+        gse.inject_cluster_metric('heat', {key = "val"}, true)
         local metric = last_injected_msg
-        assertEquals(metric.Type, 'gse_service_cluster_metric')
-        assertEquals(metric.Fields.cluster_name, 'heat')
-        assertEquals(metric.Fields.name, 'service_cluster_status')
+        assertEquals(metric.Type, 'gse_metric')
+        assertEquals(metric.Fields.member, 'heat')
+        assertEquals(metric.Fields.name, 'cluster_status')
         assertEquals(metric.Fields.value, consts.WARN)
-        assertEquals(metric.Fields.interval, 10)
+        assertEquals(metric.Fields.key, 'val')
         assert(metric.Payload:match("5xx errors detected"))
         assert(metric.Payload:match("1 RabbitMQ node out of 3 is down"))
     end

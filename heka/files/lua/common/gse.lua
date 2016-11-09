@@ -125,7 +125,7 @@ end
 
 -- compute the cluster metric and inject it into the Heka pipeline
 -- the metric's value is computed using the status of its members
-function inject_cluster_metric(msg_type, cluster_name, metric_name, interval, source, to_alerting)
+function inject_cluster_metric(cluster_name, dimensions, to_alerting)
     local payload
     local status, alarms = resolve_status(cluster_name)
 
@@ -145,18 +145,22 @@ function inject_cluster_metric(msg_type, cluster_name, metric_name, interval, so
     end
 
     local msg = {
-        Type = msg_type,
+        Type = 'gse_metric',
         Payload = payload,
         Fields = {
-            name=metric_name,
-            value=status,
-            cluster_name=cluster_name,
-            tag_fields={'cluster_name'},
-            interval=interval,
-            source=source,
-            no_alerting=no_alerting,
+            name = 'cluster_status',
+            value = status,
+            member = cluster_name,
+            tag_fields = {'member'},
+            no_alerting = no_alerting,
         }
     }
+
+    for name, value in pairs(dimensions) do
+        table.insert(msg.Fields.tag_fields, name)
+        msg.Fields[name] = value
+    end
+
     lma.inject_tags(msg)
     lma.safe_inject_message(msg)
 end

@@ -134,6 +134,116 @@ remote_collector:
       port: 4354
       ticker_interval: 30
 aggregator:
+  policy:
+    # A policy defining that the cluster's status depends on the member with
+    # the highest severity, typically used for a cluster of services.
+    highest_severity:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ down ]
+          relational_operator: '>'
+          threshold: 0
+    - status: critical
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ critical ]
+          relational_operator: '>'
+          threshold: 0
+    - status: warning
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ warning ]
+          relational_operator: '>'
+          threshold: 0
+    - status: okay
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '>'
+          threshold: 0
+    - status: unknown
+    # A policy which is typically used for clusters managed by Pacemaker
+    # with the no-quorum-policy set to 'stop'.
+    majority_of_members:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ down ]
+          relational_operator: '>'
+          threshold: 50
+    - status: critical
+      trigger:
+        logical_operator: and
+        rules:
+        - function: percent
+          arguments: [ down, critical ]
+          relational_operator: '>'
+          threshold: 20
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '<'
+          threshold: 50
+          function: percent
+    - status: warning
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '<'
+          threshold: 50
+          function: percent
+    - status: okay
+    # A policy which is typically used for stateless clusters
+    availability_of_members:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 0
+    - status: critical
+      trigger:
+        logical_operator: and
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 1
+        - function: count
+          arguments: [ critical, down ]
+          relational_operator: '>'
+          threshold: 1
+    - status: warning
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '<'
+          threshold: 100
+    - status: okay
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 100
+    - status: unknown
   input:
     heka_metric:
       engine: tcp

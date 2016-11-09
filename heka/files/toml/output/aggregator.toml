@@ -1,7 +1,0 @@
-{%- extends "heka/files/toml/output/tcp.toml" %}
-{%- block address -%}
-address = "{{ output.host }}:5565"
-{%- endblock %}
-{%- block message_matcher -%}
-message_matcher = "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric'"
-{%- endblock %}

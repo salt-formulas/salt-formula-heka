@@ -1,0 +1,20 @@
+[{{ output_name }}_output]
+type = "HttpOutput"
+message_matcher = "{{ output.message_matcher }}"
+encoder = "{{ output.encoder }}"
+address = "{{ output.address }}"
+{%- if output.username and output.password %}
+username = "{{ output.username }}"
+password = "{{ output.password }}"
+{%- endif %}
+http_timeout = {{ output.timeout }}
+method = "POST"
+use_buffering = true
+
+[{{ output_name }}_output.buffering]
+max_buffer_size = 1610612736
+max_file_size = 134217728
+full_action = "drop"
+
+[{{ output_name }}_output.headers]
+Content-Type = ["application/x-www-form-urlencoded"]

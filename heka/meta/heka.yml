@@ -50,7 +50,7 @@ log_collector:
       engine: elasticsearch
       server: "http://{{ log_collector.elasticsearch_host }}:{{ log_collector.elasticsearch_port }}"
       encoder: elasticsearch_encoder
-      message_matcher: "Type == 'log' || Type == 'notification'"
+      message_matcher: "Type == 'log'"
 {%- endif %}
 metric_collector:
   decoder:
@@ -139,6 +139,14 @@ remote_collector:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
         hostname: '{{ grains.host }}'
+{%- if remote_collector.amqp_host is defined %}
+    notification:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/decoders/notification.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        include_full_notification: false
+{%- endif %}
   input:
     heka_collectd:
       engine: http
@@ -146,6 +154,26 @@ remote_collector:
       port: 8326
       decoder: collectd_decoder
       splitter: NullSplitter
+{%- if remote_collector.amqp_host is defined %}
+{%- for notification_level in ('info', 'warn', 'error') %}
+    amqp_notification_{{ notification_level }}:
+      engine: amqp
+      host: {{ remote_collector.amqp_host }}
+      port: {{ remote_collector.amqp_port }}
+      user: {{ remote_collector.amqp_user }}
+      password: {{ remote_collector.amqp_password }}
+      vhost: {{ remote_collector.get('amqp_vhost', '') }}
+      exchange: {{ remote_collector.get('amqp_exchange', 'nova') }}
+      exchange_type: topic
+      exchange_durability: false
+      exchange_auto_delete: false
+      queue_auto_delete: false
+      queue: "{{ remote_collector.amqp_notification_topic }}.{{ notification_level }}"
+      routing_key: "{{ remote_collector.amqp_notification_topic }}.{{ notification_level }}"
+      can_exit: false
+      decoder: notification_decoder
+{%- endfor %}
+{%- endif %}
 {%- if remote_collector.influxdb_host is defined %}
   filter:
     influxdb_accumulator:
@@ -159,12 +187,18 @@ remote_collector:
         tag_fields: "deployment_id environment_label tenant_id user_id"
         time_precision: "{{ remote_collector.influxdb_time_precision }}"
 {%- endif %}
-{%- if remote_collector.influxdb_host is defined %}
+{%- if remote_collector.influxdb_host is defined or remote_collector.elasticsearch_host is defined %}
   encoder:
+{%- if remote_collector.influxdb_host is defined %}
     influxdb:
       engine: payload
       append_newlines: false
       prefix_ts: false
+{%- endif %}
+{%- if remote_collector.elasticsearch_host is defined %}
+    elasticsearch:
+      engine: elasticsearch
+{%- endif %}
 {%- endif %}
   output:
     remote_collector_dashboard:
@@ -190,6 +224,13 @@ remote_collector:
       host: "{{ remote_collector.aggregator_host }}"
       port: "{{ remote_collector.aggregator_port }}"
       message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric'"
+{%- endif %}
+{%- if remote_collector.elasticsearch_host is defined %}
+    elasticsearch:
+      engine: elasticsearch
+      server: "http://{{ remote_collector.elasticsearch_host }}:{{ remote_collector.elasticsearch_port }}"
+      encoder: elasticsearch_encoder
+      message_matcher: "Type == 'notification'"
 {%- endif %}
 aggregator:
   policy:

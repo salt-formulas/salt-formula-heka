@@ -205,6 +205,45 @@ aggregator:
           threshold: 50
           function: percent
     - status: okay
+    # A policy which is typically used for stateless clusters
+    availability_of_members:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 0
+    - status: critical
+      trigger:
+        logical_operator: and
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 1
+        - function: count
+          arguments: [ critical, down ]
+          relational_operator: '>'
+          threshold: 1
+    - status: warning
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '<'
+          threshold: 100
+    - status: okay
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 100
+    - status: unknown
   input:
     heka_metric:
       engine: tcp

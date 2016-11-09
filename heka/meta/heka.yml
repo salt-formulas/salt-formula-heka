@@ -106,6 +106,12 @@ metric_collector:
       append_newlines: false
       prefix_ts: false
 {%- endif %}
+{%- if metric_collector.nagios_host is defined %}
+    nagios:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/encoders/status_nagios.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+{%- endif %}
   output:
     metric_dashboard:
       engine: dashboard
@@ -130,6 +136,20 @@ metric_collector:
       host: "{{ metric_collector.aggregator_host }}"
       port: "{{ metric_collector.aggregator_port }}"
       message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric'"
+{%- endif %}
+{%- if metric_collector.nagios_host is defined %}
+    nagios_alarm:
+      engine: http
+      address: "http://{{ metric_collector.nagios_host }}:{{metric_collector.nagios_port }}/status"
+      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric' && Fields[no_alerting] == NIL"
+      encoder: nagios_encoder
+      {%- if metric_collector.nagios_username is defined and metric_collector.nagios_password is defined %}
+      username: {{ metric_collector.get('nagios_username') }}
+      password: {{ metric_collector.get('nagios_password') }}
+      {%- endif %}
+      max_buffer_size: 1048576
+      max_file_size: 524288
+      full_action: drop
 {%- endif %}
 remote_collector:
   decoder:

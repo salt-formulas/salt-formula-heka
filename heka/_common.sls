@@ -31,9 +31,12 @@ heka_acl_log:
   - name: "setfacl -R -m g:adm:rx /var/log; setfacl -R -d -m g:adm:rx /var/log"
   - unless: "getfacl /var/log/|grep default:group:adm"
 
-heka_service:
-  service.dead:
-  - name: heka
+hekad_process:
+  process.absent:
+  - name: 'hekad -config=/etc/heka'
+
+/etc/init.d/heka:
+  file.absent
 
 heka_grains_dir:
   file.directory:

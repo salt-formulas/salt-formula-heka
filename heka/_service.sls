@@ -267,9 +267,7 @@ heka_{{ service_name }}_grain:
   - mode: 640
   - group: heka
   - require:
-    - file: heka_{{ service_name }}_conf_dir
-  - require_in:
-    - file: heka_{{ service_name }}_conf_dir_clean
+    - file: /usr/share/lma_collector
   - watch_in:
     - service: heka_{{ service_name }}_service
   - defaults:

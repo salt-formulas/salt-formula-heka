@@ -16,7 +16,6 @@ Debian:
   decoder: {}
   extra_fields:
     environment_label: {{ grains.domain }}
-  influxdb_time_precision: ms
   {%- if pillar.get('linux', {}).get('system', {}).timezone is defined %}
   timezone: "{{ pillar.linux.system.timezone }}"
   {%- endif %}
@@ -29,5 +28,30 @@ RedHat:
   - acl
   - heka
 {%- endload %}
-
 {%- set server = salt['grains.filter_by'](server_defaults, merge=salt['pillar.get']('heka:server')) %}
+
+{%- load_yaml as elasticsearch_defaults %}
+default:
+  elasticsearch_port: 9200
+{%- endload %}
+{% set log_collector = salt['grains.filter_by'](elasticsearch_defaults, merge=salt['pillar.get']('heka:log_collector')) %}
+
+{%- load_yaml as influxdb_defaults %}
+default:
+  influxdb_port: 8086
+  influxdb_time_precision: ms
+  influxdb_timeout: 5000
+{%- endload %}
+
+{%- load_yaml as metric_collector_defaults %}
+default:
+  aggregator_port: 5565
+{%- endload %}
+{% set metric_collector = salt['grains.filter_by'](
+    metric_collector_defaults,
+    merge=salt['grains.filter_by'](
+        influxdb_defaults,
+        merge=salt['pillar.get']('heka:metric_collector'))) %}
+
+{% set remote_collector = salt['grains.filter_by'](influxdb_defaults, merge=salt['pillar.get']('heka:remote_collector')) %}
+{% set aggregator = salt['grains.filter_by'](influxdb_defaults, merge=salt['pillar.get']('heka:aggregator')) %}

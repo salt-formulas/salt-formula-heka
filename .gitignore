@@ -2,4 +2,8 @@ tests/build/
 *.swp
 *.pyc
 .ropeproject
-
+tests/lua/mocks/inspect.lua
+tests/lua/mocks/anomaly.lua
+tests/lua/mocks/annotation.lua
+tests/lua/mocks/date_time.lua
+tests/circular_buffer.so

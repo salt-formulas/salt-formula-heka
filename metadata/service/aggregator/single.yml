@@ -6,3 +6,4 @@ parameters:
   heka:
     aggregator:
       enabled: true
+      influxdb_time_precision: ms

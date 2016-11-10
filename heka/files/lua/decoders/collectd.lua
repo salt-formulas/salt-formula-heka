@@ -216,6 +216,14 @@ function process_message ()
                 else
                     msg['Fields']['name'] = metric_name
                 end
+            elseif metric_source == 'ntpd' then
+                if sample['type_instance'] == 'error' or sample['type_instance'] == 'loop' then
+                    msg['Fields']['name'] = 'ntp' .. sep .. sample['type'] .. sep .. sample['type_instance']
+                else
+                    msg['Fields']['name'] = 'ntp' .. sep .. sample['type'] .. sep .. 'peer'
+                    msg['Fields']['server'] = sample['type_instance']
+                    table.insert(msg['Fields']['tag_fields'], 'server')
+                end
             elseif metric_source == 'check_openstack_api' then
                 -- For OpenStack API metrics, plugin_instance = <service name>
                 msg['Fields']['name'] = 'openstack_check_api'

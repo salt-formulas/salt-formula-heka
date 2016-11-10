@@ -10,6 +10,10 @@ Debian:
   - syslog
   service:
   - heka
+  filter: {}
+  splitter: {}
+  encoder: {}
+  decoder: {}
   extra_fields:
     environment_label: {{ grains.domain }}
   {%- if pillar.get('linux', {}).get('system', {}).timezone is defined %}

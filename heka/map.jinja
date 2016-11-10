@@ -56,6 +56,7 @@ RedHat:
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
+    'aggregator_port': default_aggregator_port,
   }
 }, merge=salt['pillar.get']('heka:remote_collector')) %}
 

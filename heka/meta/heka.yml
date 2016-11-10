@@ -184,6 +184,13 @@ remote_collector:
       encoder: influxdb_encoder
       timeout: {{ remote_collector.influxdb_timeout }}
 {%- endif %}
+{%- if remote_collector.aggregator_host is defined %}
+    aggregator:
+      engine: tcp
+      host: "{{ remote_collector.aggregator_host }}"
+      port: "{{ remote_collector.aggregator_port }}"
+      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric'"
+{%- endif %}
 aggregator:
   policy:
     # A policy defining that the cluster's status depends on the member with

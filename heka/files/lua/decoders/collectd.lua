@@ -420,7 +420,31 @@ function process_message ()
                 msg['Fields']['service'] = sample['type_instance']
                 table.insert(msg['Fields']['tag_fields'], 'service')
             else
-                msg['Fields']['name'] = replace_dot_by_sep(metric_name)
+                -- generic metric name translation for 3rd-party sources
+                msg['Fields']['name'] = sample['plugin']
+                if sample['plugin_instance'] ~= "" then
+                    msg['Fields']['name'] = msg['Fields']['name'] .. sep .. sample['plugin_instance']
+                end
+                if sample['type'] ~= 'gauge' and sample['type'] ~= 'derive' and
+                   sample['type'] ~= 'counter' and sample['type'] ~= 'absolute' then
+                   -- only for custom DS types
+                    msg['Fields']['name'] = msg['Fields']['name'] .. sep .. sample['type']
+                end
+                if sample['type_instance'] ~= "" then
+                    msg['Fields']['name'] = msg['Fields']['name'] .. sep .. sample['type_instance']
+                end
+                if sample['dsnames'][i] ~= "value" then
+                    msg['Fields']['name'] = msg['Fields']['name'] .. sep .. sample['dsnames'][i]
+                end
+                msg['Fields']['name'] = replace_dot_by_sep(msg['Fields']['name'])
+
+                -- add meta fields as tag_fields
+                for k, v in pairs(sample['meta'] or {}) do
+                    if tostring(k) ~= '0' then
+                        msg['Fields'][k] = v
+                        table.insert(msg['Fields']['tag_fields'], k)
+                   end
+                end
             end
 
             if not skip_it then

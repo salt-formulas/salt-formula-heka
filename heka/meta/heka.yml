@@ -342,15 +342,23 @@ aggregator:
         tag_fields: "deployment_id environment_label tenant_id user_id"
         time_precision: "{{ aggregator.influxdb_time_precision }}"
 {%- endif %}
-{%- if aggregator.influxdb_host is defined %}
   encoder:
+{%- if aggregator.influxdb_host is defined %}
     influxdb:
       engine: payload
       append_newlines: false
       prefix_ts: false
 {%- endif %}
-{%- if aggregator.influxdb_host is defined %}
+{%- if aggregator.nagios_host is defined %}
+    nagios:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/encoders/status_nagios.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        nagios_host: "{{ aggregator.nagios_host_alarm_clusters }}"
+{%- endif %}
   output:
+{%- if aggregator.influxdb_host is defined %}
     influxdb:
       engine: http
       address: "http://{{ aggregator.influxdb_host }}:{{ aggregator.influxdb_port }}/write?db={{ aggregator.influxdb_database }}&precision={{ aggregator.influxdb_time_precision }}"
@@ -361,4 +369,18 @@ aggregator:
       message_matcher: "Fields[payload_type] == 'txt' && Fields[payload_name] == 'influxdb'"
       encoder: influxdb_encoder
       timeout: {{ aggregator.influxdb_timeout }}
+{%- endif %}
+{%- if aggregator.nagios_host is defined %}
+    nagios_alarm_cluster:
+      engine: http
+      address: "http://{{ aggregator.nagios_host }}:{{aggregator.nagios_port }}/status"
+      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.gse_metric' && Fields[no_alerting] == NIL"
+      encoder: nagios_encoder
+      {%- if aggregator.nagios_username is defined and aggregator.nagios_password is defined %}
+      username: {{ aggregator.get('nagios_username') }}
+      password: {{ aggregator.get('nagios_password') }}
+      {%- endif %}
+      max_buffer_size: 1048576
+      max_file_size: 524288
+      full_action: drop
 {%- endif %}

@@ -19,6 +19,7 @@ local consts = require 'gse_constants'
 local lma = require 'lma_utils'
 local interp = require "msg_interpolate"
 
+local host = read_config('nagios_host')
 -- Nagios CGI cannot accept 'plugin_output' parameter greater than 1024 bytes
 -- See bug #1517917 for details.
 -- With the 'cmd.cgi' re-implementation for the command PROCESS_SERVICE_CHECK_RESULT,
@@ -60,7 +61,11 @@ function process_message()
         return -1
     end
 
-    data['host'] = read_message('Fields[hostname]') or read_message('Hostname')
+    if host then
+        data['host'] = host
+    else
+        data['host'] = read_message('Fields[hostname]') or read_message('Hostname')
+    end
     data['service'] = service_name
     data['plugin_state'] = nagios_state_map[status]
 

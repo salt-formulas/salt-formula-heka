@@ -42,11 +42,17 @@ label_to_severity_map = {
     EMERGENCY = 0,
     ALERT = 1,
     CRITICAL = 2,
+    CRIT = 2,
+    SYS_CRIT = 2,
     ERROR = 3,
     WARNING = 4,
+    WARN = 4,
+    SYS_WARN = 4,
     NOTICE = 5,
     NOTE = 5,
+    SYS_NOTICE = 5,
     INFO = 6,
+    SYS_INFO = 6,
     DEBUG = 7,
 }
 

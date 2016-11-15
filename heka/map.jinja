@@ -35,6 +35,8 @@ RedHat:
 {% set default_influxdb_time_precision = 'ms' %}
 {% set default_influxdb_timeout = 5000 %}
 {% set default_aggregator_port = 5565 %}
+{% set default_nagios_port = 8001 %}
+{% set default_nagios_host_alarm_clusters = '00-clusters' %}
 
 {% set log_collector = salt['grains.filter_by']({
   'default': {
@@ -48,6 +50,7 @@ RedHat:
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
     'aggregator_port': default_aggregator_port,
+    'nagios_port': default_nagios_port,
   }
 }, merge=salt['pillar.get']('heka:metric_collector')) %}
 
@@ -65,5 +68,7 @@ RedHat:
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
+    'nagios_port': default_nagios_port,
+    'nagios_host_alarm_clusters': default_nagios_host_alarm_clusters,
   }
 }, merge=salt['pillar.get']('heka:aggregator')) %}

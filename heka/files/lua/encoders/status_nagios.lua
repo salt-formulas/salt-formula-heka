@@ -20,7 +20,6 @@ local lma = require 'lma_utils'
 local interp = require "msg_interpolate"
 
 local host = read_config('nagios_host')
-local service_template = read_config('service_template') or error('service_template is required!')
 -- Nagios CGI cannot accept 'plugin_output' parameter greater than 1024 bytes
 -- See bug #1517917 for details.
 -- With the 'cmd.cgi' re-implementation for the command PROCESS_SERVICE_CHECK_RESULT,
@@ -29,7 +28,6 @@ local truncate_size = (read_config('truncate_size') or 3072) + 0
 local data = {
    cmd_typ = '30',
    cmd_mod = '2',
-   host    = host,
    service = nil,
    plugin_state = nil,
    plugin_output = nil,
@@ -55,7 +53,7 @@ function url_encode(str)
 end
 
 function process_message()
-    local service_name = interp.interpolate_from_msg(service_template)
+    local service_name = read_message('Fields[member]')
     local status = afd.get_status()
     local alarms = afd.alarms_for_human(afd.extract_alarms())
 
@@ -63,6 +61,11 @@ function process_message()
         return -1
     end
 
+    if host then
+        data['host'] = host
+    else
+        data['host'] = read_message('Fields[hostname]') or read_message('Hostname')
+    end
     data['service'] = service_name
     data['plugin_state'] = nagios_state_map[status]
 

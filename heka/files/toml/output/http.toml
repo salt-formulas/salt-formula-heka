@@ -7,14 +7,16 @@ address = "{{ output.address }}"
 username = "{{ output.username }}"
 password = "{{ output.password }}"
 {%- endif %}
-http_timeout = {{ output.timeout }}
-method = "POST"
+http_timeout = {{ output.http_timeout|default(2000) }}
+method = "{{ output.method|default("POST") }}"
+{% if output.get('use_buffering', True) %}
 use_buffering = true
 
 [{{ output_name }}_output.buffering]
-max_buffer_size = 1610612736
-max_file_size = 134217728
-full_action = "drop"
+max_buffer_size = {{ output.max_buffer_size|default(268435456) }}
+max_file_size = {{ output.max_file_size|default(67108864) }}
+full_action = "{{ output.full_action|default("drop") }}"
+{% endif %}
 
 [{{ output_name }}_output.headers]
 Content-Type = ["application/x-www-form-urlencoded"]

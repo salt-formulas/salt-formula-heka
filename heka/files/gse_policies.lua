@@ -29,15 +29,17 @@ local policies = {
                 logical_operator = '{{ _trigger["logical_operator"] }}',
                 rules = {
             {%- for _rule in _trigger["rules"] %}
-                    ['function'] = '{{ _rule["function"] }}',
+                    {
+                        ['function'] = '{{ _rule["function"] }}',
                 {%- set comma = joiner(",") %}
-                    ['arguments'] = {
+                        ['arguments'] = {
                 {%- for _argument in _rule["arguments"]|sort -%}
-                {{ comma() }}'{{ _argument }}'
+                    {{ comma() }}'{{ _argument }}'
                 {%- endfor -%}
+                        },
+                        ['relational_operator'] = '{{ _rule["relational_operator"] }}',
+                        ['threshold'] = {{ _rule["threshold"] }},
                     },
-                    ['relational_operator'] = '{{ _rule["relational_operator"] }}',
-                    ['threshold'] = {{ _rule["threshold"] }},
             {%- endfor %}
                 },
             },

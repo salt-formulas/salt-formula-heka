@@ -179,7 +179,7 @@ heka_{{ service_name }}_grain:
   - mode: 600
   - defaults:
     service_grains:
-      heka: {{ service_grains|yaml }}
+      heka: {{ salt['heka_alarming.grains_for_mine'](service_grains)|yaml }}
   - require:
     - file: heka_grains_dir
 

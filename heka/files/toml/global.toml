@@ -4,7 +4,7 @@
 maxprocs={{ workers }}
 base_dir="/var/cache/{{ service_name }}"
 
-hostname="{{ grains.fqdn.split('.')[0] }}"
+hostname="{{ pillar.get('linux',{}).get('system',{}).name|default(grains.host) }}"
 
 max_message_size = 262144
 max_process_inject = 1

@@ -26,6 +26,14 @@ def alarm_message_matcher(alarm, triggers):
     return ' || '.join(matchers)
 
 
+def alarm_activate_alerting(alerting):
+    return 'true' if alerting in ['enabled', 'enabled_with_notification'] else 'false'
+
+
+def alarm_enable_notification(alerting):
+    return 'true' if alerting == 'enabled_with_notification' else 'false'
+
+
 def alarm_cluster_message_matcher(alarm_cluster):
     """
     Return an Heka message matcher expression for a given alarm cluster.

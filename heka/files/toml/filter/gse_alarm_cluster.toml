@@ -9,7 +9,6 @@ ticker_interval = 1
 [gse_{{ alarm_cluster_name }}_filter.config]
 topology_file = "gse_{{ alarm_cluster_name|replace('-', '_') }}_topology"
 dimensions = '{{ salt['heka_alarming.dimensions'](alarm_cluster)|json }}'
-activate_alerting = {{ alarm_cluster.alerting|default(True)|lower }}
 {%- if alarm_cluster.interval is defined %}
 interval = {{ alarm_cluster.interval }}
 {%- endif %}
@@ -19,3 +18,6 @@ max_inject = {{ alarm_cluster.max_inject }}
 {%- if alarm_cluster.warm_up_period is defined %}
 warm_up_period = {{ alarm_cluster.warm_up_period }}
 {%- endif %}
+{%- set alerting = alarm_cluster.get('alerting', 'enabled_with_notification') %}
+activate_alerting = {{ salt['heka_alarming.alarm_activate_alerting'](alerting) }}
+enable_notification = {{ salt['heka_alarming.alarm_enable_notification'](alerting) }}

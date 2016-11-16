@@ -27,7 +27,8 @@ def alarm_message_matcher(alarm, triggers):
 
 
 def alarm_activate_alerting(alerting):
-    return 'true' if alerting in ['enabled', 'enabled_with_notification'] else 'false'
+    return ('true' if alerting in ['enabled', 'enabled_with_notification']
+            else 'false')
 
 
 def alarm_enable_notification(alerting):
@@ -85,6 +86,13 @@ def grains_for_mine(grains):
         alarm = service_data.get('alarm')
         if alarm:
             filtered_grains[service_name] = {'alarm': alarm}
+        trigger = service_data.get('trigger')
+        if trigger:
+            if service_name in filtered_grains:
+                filtered_grains[service_name].update(
+                    {'trigger': trigger})
+            else:
+                filtered_grains[service_name] = {'trigger': trigger}
         alarm_cluster = service_data.get('alarm_cluster')
         if alarm_cluster:
             if service_name in filtered_grains:

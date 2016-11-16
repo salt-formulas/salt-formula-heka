@@ -3,7 +3,10 @@ applications:
 classes:
 - service.heka.support
 parameters:
+  _param:
+    aggregator_poolsize: 100
   heka:
     aggregator:
       enabled: true
       influxdb_time_precision: ms
+      poolsize: ${_param:aggregator_poolsize}

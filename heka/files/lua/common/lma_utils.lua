@@ -45,7 +45,8 @@ label_to_severity_map = {
     ERROR = 3,
     WARNING = 4,
     NOTICE = 5,
-    INFO= 6,
+    NOTE = 5,
+    INFO = 6,
     DEBUG = 7,
 }
 

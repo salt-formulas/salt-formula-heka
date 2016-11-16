@@ -73,3 +73,24 @@ def dimensions(alarm_or_alarm_cluster):
             raise Exception(
                 'Dimension value {} includes disallowed chars'.format(value))
     return dimensions
+
+
+def grains_for_mine(grains):
+    """
+    Return grains that need to be sent to Salt Mine. Only the alarm
+    and alarm cluster data is to be sent to Mine.
+    """
+    filtered_grains = {}
+    for service_name, service_data in grains.items():
+        alarm = service_data.get('alarm')
+        if alarm:
+            filtered_grains[service_name] = {'alarm': alarm}
+        alarm_cluster = service_data.get('alarm_cluster')
+        if alarm_cluster:
+            if service_name in filtered_grains:
+                filtered_grains[service_name].update(
+                    {'alarm_cluster': alarm_cluster})
+            else:
+                filtered_grains[service_name] = \
+                    {'alarm_cluster': alarm_cluster}
+    return filtered_grains

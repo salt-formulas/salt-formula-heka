@@ -70,6 +70,8 @@ heka_{{ service_name }}_service:
   service.running:
   - name: {{ service_name }}
   - enable: True
+  - watch:
+    - file: /usr/share/lma_collector
 
 {# Setup basic structure for all roles so updates can apply #}
 

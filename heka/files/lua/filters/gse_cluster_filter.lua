@@ -64,6 +64,10 @@ function process_message()
         return -1, "Cannot find alarms in the AFD/GSE message"
     end
 
+    -- "hostname" is nil here when the input message is a GSE message, so nil
+    -- is not an error condition here
+    local hostname = afd.get_entity_name('hostname')
+
     local cluster_ids = gse.find_cluster_memberships(member_id)
 
     -- update all clusters that depend on this entity

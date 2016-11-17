@@ -93,7 +93,7 @@ metric_collector:
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       preserve_data: false
-      message_matcher: "Fields[aggregator] == NIL && Type =~ /metric$/"
+      message_matcher: "Type =~ /metric$/"
       ticker_interval: 1
       config:
         tag_fields: "deployment_id environment_label tenant_id user_id"
@@ -135,13 +135,13 @@ metric_collector:
       engine: tcp
       host: "{{ metric_collector.aggregator_host }}"
       port: "{{ metric_collector.aggregator_port }}"
-      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric'"
+      message_matcher: "Type == 'heka.sandbox.afd_metric'"
 {%- endif %}
 {%- if metric_collector.nagios_host is defined %}
     nagios_alarm:
       engine: http
       address: "http://{{ metric_collector.nagios_host }}:{{metric_collector.nagios_port }}/status"
-      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric' && Fields[no_alerting] == NIL"
+      message_matcher: "Type == 'heka.sandbox.afd_metric' && Fields[no_alerting] == NIL"
       encoder: nagios_encoder
       {%- if metric_collector.nagios_username is defined and metric_collector.nagios_password is defined %}
       username: {{ metric_collector.get('nagios_username') }}
@@ -209,7 +209,7 @@ remote_collector:
       engine: tcp
       host: "{{ remote_collector.aggregator_host }}"
       port: "{{ remote_collector.aggregator_port }}"
-      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.afd_metric'"
+      message_matcher: "Type == 'heka.sandbox.afd_metric'"
 {%- endif %}
 aggregator:
   policy:
@@ -374,7 +374,7 @@ aggregator:
     nagios_alarm_cluster:
       engine: http
       address: "http://{{ aggregator.nagios_host }}:{{aggregator.nagios_port }}/status"
-      message_matcher: "Fields[aggregator] == NIL && Type == 'heka.sandbox.gse_metric' && Fields[no_alerting] == NIL"
+      message_matcher: "Type == 'heka.sandbox.gse_metric' && Fields[no_alerting] == NIL"
       encoder: nagios_encoder
       {%- if aggregator.nagios_username is defined and aggregator.nagios_password is defined %}
       username: {{ aggregator.get('nagios_username') }}

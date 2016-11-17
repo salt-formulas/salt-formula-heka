@@ -3,7 +3,10 @@ applications:
 classes:
 - service.heka.support
 parameters:
+  _param:
+    metric_collector_poolsize: 100
   heka:
     metric_collector:
       enabled: true
       influxdb_time_precision: ms
+      poolsize: ${_param:metric_collector_poolsize}

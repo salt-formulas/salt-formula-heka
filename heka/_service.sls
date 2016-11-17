@@ -1,8 +1,6 @@
 {%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
 
-{%- set server = salt['pillar.get']('heka:'+service_name) %}
-
-{%- if server.enabled %}
+{%- if server.enabled is defined and server.enabled %}
 
 heka_{{ service_name }}_log_file:
   file.managed:
@@ -193,6 +191,7 @@ heka_{{ service_name }}_grain:
   - group: heka
   - defaults:
     service_name: {{ service_name }}
+    poolsize: {{ server.poolsize }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:

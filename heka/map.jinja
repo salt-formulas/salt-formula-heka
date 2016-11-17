@@ -41,6 +41,7 @@ RedHat:
 {% set log_collector = salt['grains.filter_by']({
   'default': {
     'elasticsearch_port': default_elasticsearch_port,
+    'poolsize': 100,
   }
 }, merge=salt['pillar.get']('heka:log_collector')) %}
 
@@ -51,6 +52,7 @@ RedHat:
     'influxdb_timeout': default_influxdb_timeout,
     'aggregator_port': default_aggregator_port,
     'nagios_port': default_nagios_port,
+    'poolsize': 100,
   }
 }, merge=salt['pillar.get']('heka:metric_collector')) %}
 
@@ -60,6 +62,7 @@ RedHat:
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
     'aggregator_port': default_aggregator_port,
+    'poolsize': 100,
   }
 }, merge=salt['pillar.get']('heka:remote_collector')) %}
 
@@ -70,5 +73,6 @@ RedHat:
     'influxdb_timeout': default_influxdb_timeout,
     'nagios_port': default_nagios_port,
     'nagios_host_alarm_clusters': default_nagios_host_alarm_clusters,
+    'poolsize': 100,
   }
 }, merge=salt['pillar.get']('heka:aggregator')) %}

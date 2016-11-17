@@ -72,8 +72,13 @@ function process_message()
 
     -- update all clusters that depend on this entity
     for _, cluster_id in ipairs(cluster_ids) do
-        gse.set_member_status(cluster_id, member_id, status, alarms, hostname)
+        local ok, err = gse.set_member_status(
+            cluster_id, member_id, status, alarms, hostname)
+        if not ok then
+            return -1, err
+        end
     end
+
     return 0
 end
 

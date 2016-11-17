@@ -95,8 +95,16 @@ end
 function set_member_status(cluster_id, member, value, alarms, hostname)
     local cluster = clusters[cluster_id]
     if cluster then
+        if cluster.group_by == 'hostname' and not hostname then
+            local err = string.format(
+                'Cannot update member status of cluster %s; ' ..
+                'group_by is set to "hostname" while input GSE/AFD message ' ..
+                'has no "hostname" field', cluster_id)
+            return false, err
+        end
         cluster:update_fact(member, hostname, value, alarms)
     end
+    return true
 end
 
 -- The cluster status depends on the status of its members.

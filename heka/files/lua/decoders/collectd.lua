@@ -427,6 +427,11 @@ function process_message ()
                 msg['Fields']['name'] = 'openstack_check_local_api'
                 msg['Fields']['service'] = sample['type_instance']
                 table.insert(msg['Fields']['tag_fields'], 'service')
+            elseif metric_source == 'nginx' then
+                msg['Fields']['name'] = 'nginx' .. sep .. string.gsub(sample['type'], '^nginx_', '')
+                if sample['type_instance'] ~= "" then
+                    msg['Fields']['name'] = msg['Fields']['name'] .. sep .. sample['type_instance']
+                end
             else
                 -- generic metric name translation for 3rd-party sources
                 msg['Fields']['name'] = sample['plugin']

@@ -11,21 +11,25 @@
 -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
-require "string"
-require "cjson"
-local utils = require "lma_utils"
-local encoder_module = read_config("encoder") or error("Encoder should be defined")
 
-local encode = require(encoder_module).encode
-if not encode then
-    error("Encoder should implements 'encode' function")
+local table = require 'table'
+local utils = require 'lma_utils'
+local l = require 'lpeg'
+l.locale(l)
+
+local decoder_module = read_config('decoder') or error("Decoder module should be defined")
+
+local inject = utils.safe_inject_message
+
+if decoder_module then
+    inject = require(decoder_module).decode
+    if not inject then
+        error(decoder_module .. " does not provide a decode function")
+    end
 end
 
-function process_message()
-    local code, payload = encode()
-    if code == 0 and payload then
-        return utils.safe_inject_payload('txt', 'elasticsearch', payload)
-    else
-        return code, payload
-    end
+function process_message ()
+    local data = read_message("Payload")
+    local code, msg = inject(data)
+    return code, msg
 end

@@ -38,6 +38,10 @@ RedHat:
 {% set default_nagios_port = 8001 %}
 {% set default_nagios_host_alarm_clusters = '00-clusters' %}
 
+{% set default_rabbit_port = 5672 %}
+{% set default_rabbit_vhost = '/openstack' %}
+{% set default_ceilometer_rabbit_queue = 'metering.sample' %}
+
 {% set log_collector = salt['grains.filter_by']({
   'default': {
     'elasticsearch_port': default_elasticsearch_port,
@@ -76,3 +80,16 @@ RedHat:
     'poolsize': 100,
   }
 }, merge=salt['pillar.get']('heka:aggregator')) %}
+
+{% set ceilometer_collector = salt['grains.filter_by']({
+  'default': {
+    'influxdb_port': default_influxdb_port,
+    'influxdb_timeout': default_influxdb_timeout,
+    'influxdb_time_precision': default_influxdb_time_precision,
+    'elasticsearch_port': default_elasticsearch_port,
+    'rabbit_port': default_rabbit_port,
+    'rabbit_vhost': default_rabbit_vhost,
+    'rabbit_queue': default_ceilometer_rabbit_queue,
+    'resource_decoding': False,
+  }
+}, merge=salt['pillar.get']('heka:ceilometer_collector')) %}

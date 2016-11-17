@@ -9,6 +9,9 @@ include:
 {%- if pillar.heka.remote_collector is defined %}
 - heka.remote_collector
 {%- endif %}
+{%- if pillar.heka.ceilometer_collector is defined %}
+- heka.ceilometer_collector
+{%- endif %}
 {%- if pillar.heka.aggregator is defined %}
 - heka.aggregator
 {%- endif %}

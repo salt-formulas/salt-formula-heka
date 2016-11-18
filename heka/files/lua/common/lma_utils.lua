@@ -40,20 +40,28 @@ severity_to_label_map = {
 
 label_to_severity_map = {
     EMERGENCY = 0,
+    E = 0,
     ALERT = 1,
+    A = 1,
     CRITICAL = 2,
     CRIT = 2,
     SYS_CRIT = 2,
+    C = 2,
     ERROR = 3,
+    E = 3,
     WARNING = 4,
     WARN = 4,
     SYS_WARN = 4,
+    W = 4,
     NOTICE = 5,
     NOTE = 5,
+    N = 5,
     SYS_NOTICE = 5,
     INFO = 6,
     SYS_INFO = 6,
+    I = 6,
     DEBUG = 7,
+    D = 7,
 }
 
 metric_type = {

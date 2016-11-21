@@ -145,8 +145,8 @@ heka_{{ service_name }}_service:
 {# Load the other services' support metadata from salt-mine #}
 
 {%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
-{%- if node_grains.heka is defined %}
-{%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=node_grains.heka) %}
+{%- if node_grains['heka_' + service_name] is defined %}
+{%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=node_grains['heka_' + service_name]) %}
 {%- endif %}
 {%- endfor %}
 
@@ -172,14 +172,14 @@ heka_{{ service_name }}_service:
 
 heka_{{ service_name }}_grain:
   file.managed:
-  - name: /etc/salt/grains.d/heka
+  - name: /etc/salt/grains.d/heka-{{ service_name }}
   - source: salt://heka/files/heka.grain
   - template: jinja
   - user: root
   - mode: 600
   - defaults:
     service_grains:
-      heka: {{ salt['heka_alarming.grains_for_mine'](service_grains)|yaml }}
+      heka_{{ service_name }}: {{ salt['heka_alarming.grains_for_mine'](service_name, service_grains)|yaml }}
   - require:
     - file: heka_grains_dir
 

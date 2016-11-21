@@ -76,29 +76,29 @@ def dimensions(alarm_or_alarm_cluster):
     return dimensions
 
 
-def grains_for_mine(grains):
+def grains_for_mine(service_name, service_grains):
     """
     Return grains that need to be sent to Salt Mine. Only the alarm
     and alarm cluster data is to be sent to Mine.
     """
     filtered_grains = {}
-    for service_name, service_data in grains.items():
-        alarm = service_data.get('alarm')
-        if alarm:
-            filtered_grains[service_name] = {'alarm': alarm}
-        trigger = service_data.get('trigger')
-        if trigger:
-            if service_name in filtered_grains:
-                filtered_grains[service_name].update(
-                    {'trigger': trigger})
-            else:
-                filtered_grains[service_name] = {'trigger': trigger}
-        alarm_cluster = service_data.get('alarm_cluster')
-        if alarm_cluster:
-            if service_name in filtered_grains:
-                filtered_grains[service_name].update(
-                    {'alarm_cluster': alarm_cluster})
-            else:
-                filtered_grains[service_name] = \
-                    {'alarm_cluster': alarm_cluster}
+    service_data = service_grains[service_name]
+    alarm = service_data.get('alarm')
+    if alarm:
+        filtered_grains[service_name] = {'alarm': alarm}
+    trigger = service_data.get('trigger')
+    if trigger:
+        if service_name in filtered_grains:
+            filtered_grains[service_name].update(
+                {'trigger': trigger})
+        else:
+            filtered_grains[service_name] = {'trigger': trigger}
+    alarm_cluster = service_data.get('alarm_cluster')
+    if alarm_cluster:
+        if service_name in filtered_grains:
+            filtered_grains[service_name].update(
+                {'alarm_cluster': alarm_cluster})
+        else:
+            filtered_grains[service_name] = \
+                {'alarm_cluster': alarm_cluster}
     return filtered_grains

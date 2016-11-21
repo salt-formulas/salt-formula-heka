@@ -30,8 +30,8 @@ local alarms = {
           ['function'] = '{{ _rule.function }}',
           {%- if _rule.group_by is defined %}
           ['group_by'] = {
-            {%- for _group_by in rule.group_by %}
-            {{ _group_by }},
+            {%- for _group_by in _rule.group_by %}
+            '{{ _group_by }}',
             {%- endfor %}
           },
           {%- endif %}

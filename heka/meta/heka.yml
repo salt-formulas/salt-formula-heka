@@ -170,7 +170,7 @@ remote_collector:
   input:
     heka_collectd:
       engine: http
-      address: 127.0.0.1
+      address: 0.0.0.0
       port: 8326
       decoder: collectd_decoder
       splitter: NullSplitter
@@ -201,7 +201,7 @@ remote_collector:
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       preserve_data: false
-      message_matcher: "Type == 'heka.sandbox.afd_metric'"
+      message_matcher: "Type =~ /metric$/"
       ticker_interval: 1
       config:
         tag_fields: "deployment_id environment_label tenant_id user_id"

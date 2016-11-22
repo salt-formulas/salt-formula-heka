@@ -29,28 +29,29 @@ heka_{{ service_name }}_conf_dir_clean:
   - clean: true
 
 {%- if grains.get('init', None) == 'systemd' %}
+{%- set systemd_enabled = True %}
+{%- else %}
+{%- set systemd_enabled = False %}
+{%- endif %}
 
 heka_{{ service_name }}_service_file:
   file.managed:
+{%- if systemd_enabled %}
   - name: /etc/systemd/system/{{ service_name }}.service
+{%- else %}
+  - name: /etc/init/{{ service_name }}.conf
+{%- endif %}
   - source: salt://heka/files/heka.service
   - user: root
   - mode: 644
   - defaults:
     service_name: {{ service_name }}
+    systemd_enabled: {{ systemd_enabled|lower }}
+    max_open_files: 102400
+    automatic_starting: {{ server.automatic_starting }}
   - template: jinja
 
-{%- else %}
-
-heka_{{ service_name }}_service_file:
-  file.managed:
-  - name: /etc/init/{{ service_name }}.conf
-  - source: salt://heka/files/heka.service
-  - user: root
-  - mode: 644
-  - defaults:
-      service_name: {{ service_name }}
-  - template: jinja
+{%- if not systemd_enabled %}
 
 heka_{{ service_name }}_service_wrapper:
   file.managed:
@@ -59,17 +60,22 @@ heka_{{ service_name }}_service_wrapper:
   - user: root
   - mode: 755
   - defaults:
-      service_name: {{ service_name }}
+    service_name: {{ service_name }}
   - template: jinja
 
 {%- endif %}
 
 heka_{{ service_name }}_service:
+{%- if server.automatic_starting %}
   service.running:
-  - name: {{ service_name }}
   - enable: True
   - watch:
-    - file: /usr/share/lma_collector
+    - file: /usr/share/lma_collector/*
+    - file: /etc/{{ service_name }}/*
+{%- else %}
+  service.disabled:
+{%- endif %}
+  - name: {{ service_name }}
 
 {# Setup basic structure for all roles so updates can apply #}
 
@@ -190,8 +196,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
 
 {%- set service_metadata = service_grains.get(service_name) %}
 
@@ -207,8 +211,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       decoder_name: {{ decoder_name }}
       decoder: {{ decoder|yaml }}
@@ -227,8 +229,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       input_name: {{ input_name }}
       input: {{ input|yaml }}
@@ -247,8 +247,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       alarm_name: {{ alarm_name }}
       alarm: {{ alarm|yaml }}
@@ -262,8 +260,6 @@ heka_{{ service_name }}_grain:
   - group: heka
   - require:
     - file: /usr/share/lma_collector
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       alarm_name: {{ alarm_name }}
       alarm: {{ alarm|yaml }}
@@ -281,8 +277,6 @@ heka_{{ service_name }}_grain:
   - group: heka
   - require:
     - file: /usr/share/lma_collector
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
     policy: {{ policy|yaml }}
 {%- endif %}
@@ -299,8 +293,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       alarm_cluster_name: {{ alarm_cluster_name }}
       alarm_cluster: {{ alarm_cluster|yaml }}
@@ -313,8 +305,6 @@ heka_{{ service_name }}_grain:
   - group: heka
   - require:
     - file: /usr/share/lma_collector
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       alarm_cluster_name: {{ alarm_cluster_name }}
       alarm_cluster: {{ alarm_cluster|yaml }}
@@ -333,8 +323,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       filter_name: {{ filter_name }}
       filter: {{ filter|yaml }}
@@ -353,8 +341,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       splitter_name: {{ splitter_name }}
       splitter: {{ splitter|yaml }}
@@ -373,8 +359,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       encoder_name: {{ encoder_name }}
       encoder: {{ encoder|yaml }}
@@ -393,8 +377,6 @@ heka_{{ service_name }}_grain:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
     - file: heka_{{ service_name }}_conf_dir_clean
-  - watch_in:
-    - service: heka_{{ service_name }}_service
   - defaults:
       output_name: {{ output_name }}
       output: {{ output|yaml }}

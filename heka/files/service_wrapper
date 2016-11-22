@@ -2,5 +2,4 @@
 
 HEKAD="/usr/bin/hekad"
 
-ulimit -n 102400
 exec $HEKAD -config=/etc/{{ service_name }}

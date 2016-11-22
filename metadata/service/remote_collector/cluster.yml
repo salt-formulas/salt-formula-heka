@@ -7,7 +7,7 @@ parameters:
     remote_collector_poolsize: 100
   heka:
     remote_collector:
-      automatic_starting: true
+      automatic_starting: false
       enabled: true
       influxdb_time_precision: ms
       poolsize: ${_param:remote_collector_poolsize}

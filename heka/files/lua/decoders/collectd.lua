@@ -121,6 +121,10 @@ function process_message ()
             if sample['meta'] and sample['meta']['service_check'] then
                 msg['Fields']['name'] = sample['meta']['service_check'] .. sep .. 'check'
                 msg['Fields']['details'] = sample['meta']['failure']
+            elseif metric_source == 'memory' or metric_source == 'contextswitch' or
+                   metric_source == 'entropy' or metric_source == 'load' or
+                   metric_source == 'swap' or metric_source == 'uptime' then
+                msg['Fields']['name'] = metric_name
             elseif metric_source == 'df' then
                 local entity
                 if sample['type'] == 'df_inodes' then

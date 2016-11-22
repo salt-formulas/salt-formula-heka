@@ -31,4 +31,8 @@ local message   = l.Cg(patt.Message, "Message")
 -- 2016-11-21 06:38:43,081 - INFO  [main:Environment@100] - Server environment:java.io.tmpdir=/tmp
 ZookeeperLogGrammar = l.Ct(patt.JavaTimestamp * patt.sp * patt.dash * patt.sp * patt.JavaSeverity * patt.sp^1 * message)
 
+-- Cassandra
+-- 2016-11-21 08:52:14,070 - DEBUG - run_command: nodetool -h 127.0.0.1 info | grep ID | awk '{print $3}'
+CassandraLogGrammar = l.Ct(patt.JavaTimestamp * patt.sp * patt.dash * patt.sp * patt.JavaSeverity * patt.sp^1 * patt.dash * patt.sp * message)
+
 return M

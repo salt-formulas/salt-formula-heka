@@ -148,7 +148,11 @@ function process_message ()
                 msg['Fields']['fs'] = mount
                 table.insert(msg['Fields']['tag_fields'], 'fs')
             elseif metric_source == 'disk' then
-                msg['Fields']['name'] = metric_name
+                if sample['type'] == 'disk_io_time' then
+                    msg['Fields']['name'] = 'disk' .. sep .. sample['dsnames'][i]
+                else
+                    msg['Fields']['name'] = metric_name
+                end
                 msg['Fields']['device'] = sample['plugin_instance']
                 table.insert(msg['Fields']['tag_fields'], 'device')
             elseif metric_source == 'cpu' then

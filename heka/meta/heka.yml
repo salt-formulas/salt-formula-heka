@@ -396,7 +396,10 @@ aggregator:
       module_file: /usr/share/lma_collector/encoders/status_nagios.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
-        nagios_host: "{{ aggregator.nagios_host_alarm_clusters }}"
+        default_nagios_host: "{{ aggregator.nagios_default_host_alarm_clusters }}"
+        {%- if aggregator.nagios_host_dimension_key is defined %}
+        nagios_host_dimension_key: "{{ aggregator.nagios_host_dimension_key }}"
+        {%- endif %}
 {%- endif %}
   output:
 {%- if aggregator.influxdb_host is defined %}

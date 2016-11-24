@@ -377,11 +377,17 @@ aggregator:
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       preserve_data: false
-      message_matcher: "Type == 'heka.sandbox.gse_metric'"
+      message_matcher: "Type == 'heka.sandbox.gse_metric' || Type == 'heka.sandbox.metric'"
       ticker_interval: 1
       config:
         tag_fields: "deployment_id environment_label tenant_id user_id"
         time_precision: "{{ aggregator.influxdb_time_precision }}"
+    influxdb_annotation:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/influxdb_annotation.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "Type == 'heka.sandbox.gse_metric'"
 {%- endif %}
   encoder:
 {%- if aggregator.influxdb_host is defined %}

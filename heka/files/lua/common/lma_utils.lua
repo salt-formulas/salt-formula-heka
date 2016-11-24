@@ -41,6 +41,7 @@ severity_to_label_map = {
 label_to_severity_map = {
     EMERGENCY = 0,
     E = 0,
+    FATAL = 0,
     ALERT = 1,
     A = 1,
     CRITICAL = 2,
@@ -62,6 +63,7 @@ label_to_severity_map = {
     I = 6,
     DEBUG = 7,
     D = 7,
+    TRACE = 7,
 }
 
 metric_type = {

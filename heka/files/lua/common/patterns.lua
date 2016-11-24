@@ -144,4 +144,13 @@ traceback = l.P'Traceback (most recent call last):'
 -- Pattern used to match a number
 Number = l.P"-"^-1 * l.xdigit^1 * (l.S(".,") * l.xdigit^1 )^-1 / tonumber
 
+-- Java/Log4J Timestamp patterns
+-- 2016-11-21 06:38:43,081 - INFO 
+local time_secfrac = l.Cg(l.P"," * l.digit^1 / tonumber, "sec_frac")
+local ts_grammar = l.Ct(dt.date_fullyear * dash * dt.date_month * dash * dt.date_mday * sp * dt.rfc3339_partial_time * time_secfrac)
+JavaTimestamp = l.Cg(ts_grammar / dt.time_to_ns, "Timestamp")
+
+-- Java Severity
+JavaSeverity = l.Cg(SeverityLabel + l.P"WARN" + l.P"FATAL", "SeverityLabel")
+
 return M

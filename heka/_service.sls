@@ -7,7 +7,7 @@ heka_{{ service_name }}_log_file:
   - name: /var/log/{{ service_name }}.log
   - user: heka
   - mode: 644
-  - replace: False
+  - replace: false
 
 heka_{{ service_name }}_conf_dir:
   file.directory:
@@ -118,6 +118,14 @@ heka_{{ service_name }}_service:
     'splitter': {},
     'encoder': {},
     'output': {},
+  },
+  'ceilometer_collector': {
+    'decoder': {},
+    'input': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
   }
 } %}
 
@@ -134,7 +142,6 @@ heka_{{ service_name }}_service:
 
 {%- endif %}
 {%- endfor %}
-
 
 {%- if service_name in ('remote_collector', 'aggregator') %}
 

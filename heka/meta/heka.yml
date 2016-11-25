@@ -2,6 +2,8 @@
 {%- from "heka/map.jinja" import metric_collector with context %}
 {%- from "heka/map.jinja" import remote_collector with context %}
 {%- from "heka/map.jinja" import aggregator  with context %}
+{%- from "heka/map.jinja" import ceilometer_collector with context %}
+
 
 log_collector:
   filter:
@@ -433,4 +435,86 @@ aggregator:
       max_buffer_size: 1048576
       max_file_size: 524288
       full_action: drop
+{%- endif %}
+ceilometer_collector:
+  decoder:
+    sample:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/decoders/metering.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        decoder: 'ceilometer'
+        decode_resources: {{ ceilometer_collector.resource_decoding|lower }}
+        metadata_fields: "status deleted container_format min_ram updated_at min_disk is_public size checksum created_at disk_format protected instance_host host display_name instance_id instance_type status state user_metadata.stack"
+  input:
+{%- if ceilometer_collector.rabbit_host is defined %}
+    openstack_sample_amqp:
+      engine: amqp
+      user: {{ ceilometer_collector.rabbit_user }}
+      password: {{ ceilometer_collector.rabbit_password }}
+      port: {{ ceilometer_collector.rabbit_port }}
+      host: {{ ceilometer_collector.rabbit_host }}
+      vhost: {{ ceilometer_collector.rabbit_vhost }}
+      queue: {{ ceilometer_collector.rabbit_queue }}
+      routing_key: {{ ceilometer_collector.rabbit_queue }}
+      decoder: sample_decoder
+      splitter: NullSplitter
+      exchange: "ceilometer"
+      exchange_type: "topic"
+      exchange_auto_delete: false
+      queue_auto_delete: false
+{%- endif %}
+  filter:
+{%- if ceilometer_collector.influxdb_host is defined %}
+    ceilometer_influxdb_accumulator:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "Type =~ /ceilometer_samples$/"
+      ticker_interval: 1
+      config:
+        time_precision: "{{ ceilometer_collector.influxdb_time_precision }}"
+        payload_name: 'sample_data'
+        flush_count: 500
+        bulk_metric_type_matcher: 'ceilometer_samples'
+{%- endif %}
+  encoder:
+{%- if ceilometer_collector.influxdb_host is defined %}
+    influxdb:
+      engine: payload
+      append_newlines: false
+      prefix_ts: false
+{%- endif %}
+{%- if ceilometer_collector.elasticsearch_host is defined %}
+    elasticsearch_resource:
+      engine: sandbox
+      module_file:  /usr/share/lma_collector/encoders/es_ceilometer_resources.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        index: "ceilometer_resource"
+        type_name: "source"
+        encoder: "elasticsearch_resources"
+{%- endif %}
+{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
+  output:
+{%- if ceilometer_collector.influxdb_host is defined %}
+    samples_influxdb:
+      engine: http
+      address: "http://{{ ceilometer_collector.influxdb_host }}:{{ ceilometer_collector.influxdb_port }}/write?db={{ ceilometer_collector.influxdb_database }}&precision={{ ceilometer_collector.influxdb_time_precision }}"
+    {%- if ceilometer_collector.influxdb_username and ceilometer_collector.influxdb_password %}
+      username: "{{ ceilometer_collector.influxdb_username }}"
+      password: "{{ ceilometer_collector.influxdb_password }}"
+    {%- endif %}
+      message_matcher: "Fields[payload_type] == 'txt' && Fields[payload_name] == 'sample_data'"
+      encoder: influxdb_encoder
+      timeout: {{ ceilometer_collector.influxdb_timeout }}
+      method: "POST"
+{%- endif %}
+{%- if ceilometer_collector.elasticsearch_host is defined %}
+    elasticsearch_resource:
+      engine: elasticsearch
+      server: "http://{{ ceilometer_collector.elasticsearch_host }}:{{ ceilometer_collector.elasticsearch_port }}"
+      message_matcher: "Type == 'ceilometer_resources'"
+      encoder: elasticsearch_resource_encoder
 {%- endif %}

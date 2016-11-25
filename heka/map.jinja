@@ -37,11 +37,13 @@ RedHat:
 {% set default_aggregator_port = 5565 %}
 {% set default_nagios_port = 8001 %}
 {% set default_nagios_host_alarm_clusters = '00-clusters' %}
+{% set default_automatic_starting = True %}
 
 {% set log_collector = salt['grains.filter_by']({
   'default': {
     'elasticsearch_port': default_elasticsearch_port,
     'poolsize': 100,
+    'automatic_starting': default_automatic_starting,
   }
 }, merge=salt['pillar.get']('heka:log_collector')) %}
 
@@ -53,6 +55,7 @@ RedHat:
     'aggregator_port': default_aggregator_port,
     'nagios_port': default_nagios_port,
     'poolsize': 100,
+    'automatic_starting': default_automatic_starting,
   }
 }, merge=salt['pillar.get']('heka:metric_collector')) %}
 
@@ -63,6 +66,7 @@ RedHat:
     'influxdb_timeout': default_influxdb_timeout,
     'aggregator_port': default_aggregator_port,
     'poolsize': 100,
+    'automatic_starting': default_automatic_starting,
   }
 }, merge=salt['pillar.get']('heka:remote_collector')) %}
 
@@ -74,5 +78,6 @@ RedHat:
     'nagios_port': default_nagios_port,
     'nagios_default_host_alarm_clusters': default_nagios_host_alarm_clusters,
     'poolsize': 100,
+    'automatic_starting': default_automatic_starting,
   }
 }, merge=salt['pillar.get']('heka:aggregator')) %}

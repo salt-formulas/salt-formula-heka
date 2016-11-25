@@ -35,4 +35,8 @@ ZookeeperLogGrammar = l.Ct(patt.JavaTimestamp * patt.sp * patt.dash * patt.sp * 
 -- 2016-11-21 08:52:14,070 - DEBUG - run_command: nodetool -h 127.0.0.1 info | grep ID | awk '{print $3}'
 CassandraLogGrammar = l.Ct(patt.JavaTimestamp * patt.sp * patt.dash * patt.sp * patt.JavaSeverity * patt.sp^1 * patt.dash * patt.sp * message)
 
+-- Ifmap
+-- 2016-11-24 10:11:32,457 - TRACE - [main]  - MetadataTypeRepository: new MetadataType http://www.trustedcomputinggroup.org/2010/IFMAP-METADATA/2:discovered-by - singleValue
+IfmapLogGrammar = CassandraLogGrammar
+
 return M

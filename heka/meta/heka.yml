@@ -496,7 +496,6 @@ ceilometer_collector:
         type_name: "source"
         encoder: "elasticsearch_resources"
 {%- endif %}
-{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
   output:
 {%- if ceilometer_collector.influxdb_host is defined %}
     samples_influxdb:

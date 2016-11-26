@@ -1,5 +1,8 @@
 {%- if pillar.heka is defined %}
 include:
+{%- if pillar.heka.server is defined %}
+- heka.server
+{%- endif %}
 {%- if pillar.heka.log_collector is defined %}
 - heka.log_collector
 {%- endif %}

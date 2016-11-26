@@ -1,0 +1,13 @@
+applications:
+- heka
+classes:
+- service.heka.support
+parameters:
+  _param:
+    remote_collector_poolsize: 100
+  heka:
+    remote_collector:
+      automatic_starting: true
+      enabled: true
+      influxdb_time_precision: ms
+      poolsize: ${_param:remote_collector_poolsize}

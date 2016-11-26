@@ -1,3 +1,0 @@
-[hekad]
-{%- set workers = grains.num_cpus + 1 %}
-maxprocs = {{ workers }}

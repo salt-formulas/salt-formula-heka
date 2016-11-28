@@ -498,7 +498,7 @@ ceilometer_collector:
 {%- endif %}
 {%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
   output:
-  {%- if ceilometer_collector.influxdb_host is defined %}
+{%- if ceilometer_collector.influxdb_host is defined %}
     samples_influxdb:
       engine: http
       address: "http://{{ ceilometer_collector.influxdb_host }}:{{ ceilometer_collector.influxdb_port }}/write?db={{ ceilometer_collector.influxdb_database }}&precision={{ ceilometer_collector.influxdb_time_precision }}"
@@ -510,12 +510,11 @@ ceilometer_collector:
       encoder: influxdb_encoder
       timeout: {{ ceilometer_collector.influxdb_timeout }}
       method: "POST"
-  {%- endif %}
-  {%- if ceilometer_collector.elasticsearch_host is defined %}
+{%- endif %}
+{%- if ceilometer_collector.elasticsearch_host is defined %}
     elasticsearch_resource:
       engine: elasticsearch
       server: "http://{{ ceilometer_collector.elasticsearch_host }}:{{ ceilometer_collector.elasticsearch_port }}"
       message_matcher: "Type == 'ceilometer_resources'"
       encoder: elasticsearch_resource_encoder
-  {%- endif %}
 {%- endif %}

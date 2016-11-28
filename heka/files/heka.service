@@ -1,18 +1,49 @@
+{%- if systemd_enabled %}
+
 [Unit]
-Description=heka - data collector and processor daemon
+Description=heka {{ service_name }} - data collector and processor daemon
 After=network.target auditd.service
-ConditionPathExists=!/etc/heka/hekad_not_to_be_run
+ConditionPathExists=!/etc/{{ service_name }}_not_to_be_run
 
 [Service]
-EnvironmentFile=-/etc/default/heka
+EnvironmentFile=-/etc/default/{{ service_name }}
 User=heka
 Group=heka
-ExecStart=/usr/bin/hekad -config=/etc/heka/conf.d/
-ExecReload=/bin/kill -HUP $MAINPID
+LimitNOFILE={{ max_open_files }}
+ExecStart=/usr/bin/hekad -config=/etc/{{ service_name }}
+# NOT SURE HEKA doesn't support reloading by signal
+# ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
 StandardError=inherit
 
+{%- if automatic_starting %}
 [Install]
 WantedBy=multi-user.target
+{%- endif %}
 
+{%- else %}
+
+# heka {{ service_name }}
+
+description     "{{ service_name }}"
+
+{%- if automatic_starting %}
+start on runlevel [2345]
+stop on runlevel [!2345]
+{%- endif %}
+
+respawn
+
+pre-start script
+    touch /var/log/{{ service_name }}.log
+    chown heka:heka /var/log/{{ service_name }}.log
+end script
+
+script
+    # https://bugs.launchpad.net/lma-toolchain/+bug/1543289
+    ulimit -n {{ max_open_files }}
+    exec start-stop-daemon --start  --chuid heka --exec /usr/local/bin/{{ service_name }}_wrapper >> /var/log/{{ service_name }}.log 2>&1
+end script
+
+{%- endif %}

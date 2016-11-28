@@ -1,0 +1,14 @@
+applications:
+- heka
+classes:
+- service.heka.support
+parameters:
+  _param:
+    metric_collector_poolsize: 100
+    nagios_host_dimension_key: nagios_host
+  heka:
+    metric_collector:
+      enabled: true
+      influxdb_time_precision: ms
+      poolsize: ${_param:metric_collector_poolsize}
+      nagios_host_dimension_key: ${_param:nagios_host_dimension_key}

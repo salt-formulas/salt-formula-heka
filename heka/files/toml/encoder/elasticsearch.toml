@@ -1,0 +1,11 @@
+[{{ encoder_name }}_encoder]
+type = "ESJsonEncoder"
+{%- if encoder.index is defined %}
+index = "{{ encoder.index }}"
+{%- else %}
+{% raw %}
+index = "%{Type}-%{%Y.%m.%d}"
+{%- endraw %}
+{%- endif %}
+es_index_from_timestamp = true
+fields = [ "DynamicFields", "Hostname", "Logger", "Payload", "Pid", "Severity", "Timestamp", "Type" ]

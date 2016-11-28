@@ -1,0 +1,30 @@
+{%- from "heka/map.jinja" import server with context %}
+
+[{{ decoder_name }}_decoder]
+type = "SandboxDecoder"
+filename = "{{ decoder.module_file }}"
+{%- if decoder.module_dir is defined %}
+module_directory = "{{ decoder.module_dir }}"
+{%- endif %}
+{%- if decoder.memory_limit is defined %}
+memory_limit = "{{ decoder.memory_limit }}"
+{%- endif %}
+{%- if decoder.preserve_data is defined %}
+preserve_data = "{{ decoder.preserve_data }}"
+{%- endif %}
+{%- if decoder.instruction_limit is defined %}
+instruction_limit = "{{ decoder.instruction_limit }}"
+{%- endif %}
+{%- if decoder.output_limit is defined %}
+output_limit = "{{ decoder.output_limit }}"
+{%- endif %}
+
+{%- if decoder.config is defined or decoder.get('adjust_timezone', False) %}
+[{{ decoder_name }}_decoder.config]
+{%- for config_param, config_value in decoder.get('config', {}).iteritems() %}
+{{ config_param }} = {% if config_value is string %}"{{ config_value }}"{% elif config_value in [True, False] %}{{ config_value|lower }}{% else %}{{ config_value }}{% endif %}
+{%- endfor %}
+{%- if decoder.get('adjust_timezone') and server.timezone is defined %}
+tz = "{{ server.timezone }}"
+{%- endif %}
+{%- endif %}

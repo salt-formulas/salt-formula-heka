@@ -1,0 +1,5 @@
+[Payloadregex_{{ name }}]
+type = "PayloadRegexDecoder"
+match_regex = "{{ values.match_regex }}"
+timestamp_layout = "{{ values.timestamp_layout }}"
+

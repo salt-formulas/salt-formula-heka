@@ -1,8 +1,0 @@
-applications:
-- heka
-classes:
-- service.heka.support
-parameters:
-  heka:
-    ceilometer_collector:
-      enabled: true

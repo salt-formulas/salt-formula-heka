@@ -1,5 +1,0 @@
-#!/bin/sh
-
-HEKAD="/usr/bin/hekad"
-
-exec $HEKAD -config=/etc/{{ service_name }}

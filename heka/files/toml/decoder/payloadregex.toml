@@ -1,4 +1,0 @@
-[{{ decoder_name }}_decoder]
-type = "PayloadRegexDecoder"
-match_regex = "{{ decoder.match_regex }}"
-timestamp_layout = "{{ decoder.timestamp_layout }}"

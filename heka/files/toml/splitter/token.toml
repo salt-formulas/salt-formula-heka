@@ -1,3 +1,0 @@
-[{{ splitter_name }}_splitter]
-type = "TokenSplitter"
-delimiter = "{{ splitter.delimiter }}"

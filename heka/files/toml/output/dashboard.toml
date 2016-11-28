@@ -1,3 +1,0 @@
-[DashboardOutput]
-address = "{{ output.host }}:{{ output.port }}"
-ticker_interval = {{ output.get('ticker_interval', 30) }}

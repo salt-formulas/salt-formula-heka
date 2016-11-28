@@ -1,4 +1,0 @@
-[{{ splitter_name }}_splitter]
-type = "RegexSplitter"
-delimiter = "{{ splitter.delimiter }}"
-delimiter_eol = {{ splitter.delimiter_eol|lower }}

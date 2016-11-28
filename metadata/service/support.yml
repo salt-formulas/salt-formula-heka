@@ -2,9 +2,9 @@ parameters:
   heka:
     _support:
       collectd:
-        enabled: true
+        enabled: false
       heka:
-        enabled: true
+        enabled: false
       sensu:
         enabled: false
       sphinx:

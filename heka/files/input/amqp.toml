@@ -1,0 +1,39 @@
+[input_{{ name }}]
+type = "AMQPInput"
+url = "amqp{% if values.ssl is defined and values.ssl.get('enabled', True) %}s{% endif %}://{{ values.user }}:{{ values.password }}@{{ values.host }}/{{ values.vhost }}"
+exchange = "{{ values.exchange }}"
+exchange_type = "{{ values.exchange_type }}"
+
+{% if values.prefetch_count is defined -%}
+prefetch_count = {{ values.prefetch_count }}
+{% endif %}
+{%- if values.exchange_durability is defined -%}
+exchange_durability = "{{ values.exchange_durability }}"
+{% endif %}
+{%- if values.exchange_auto_delete is defined -%}
+exchange_auto_delete = "{{ values.exchange_auto_delete }}"
+{% endif %}
+{%- if values.queue_auto_delete is defined -%}
+queue_auto_delete = {{ values.queue_auto_delete }}
+{% endif %}
+{%- if values.queue is defined -%}
+queue = "{{ values.queue }}"
+{% endif %}
+{%- if values.routing_key is defined -%}
+routing_key = "{{ values.routing_key }}"
+{% endif %}
+decoder = "{{ values.decoder }}"
+splitter = "{{ values.splitter }}"
+
+{%- if values.ssl is defined and values.ssl.get('enabled', True) %}
+[input_{{ name }}.tls]
+cert_file = "{{ values.ssl.cert_file }}"
+key_file = "{{ values.ssl.key_file }}"
+{%- if values.ssl.ca_file is defined %}
+root_cafile = "{{ values.ssl.ca_file }}"
+{%- endif %}
+{%- endif %}
+
+{#-
+vim: syntax=jinja
+-#}

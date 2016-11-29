@@ -5,5 +5,32 @@ doc:
   {%- if pillar.heka.server is defined %}
     server:
       name: server
-      param: {}
+      param:
+        version:
+          name: "Version"
+          value: {{ salt['cmd.run']("hekad --version") }}
+  {%- endif %}
+  {%- if pillar.heka.log_collector is defined %}
+    log_collector:
+      name: log collector
+      param:
+        version:
+          name: "Version"
+          value: {{ salt['cmd.run']("hekad --version") }}
+  {%- endif %}
+  {%- if pillar.heka.metric_collector is defined %}
+    metric_collector:
+      name: metric collector
+      param:
+        version:
+          name: "Version"
+          value: {{ salt['cmd.run']("hekad --version") }}
+  {%- endif %}
+  {%- if pillar.heka.aggregator_collector is defined %}
+    aggregator:
+      name: aggregator
+      param:
+        version:
+          name: "Version"
+          value: {{ salt['cmd.run']("hekad --version") }}
   {%- endif %}

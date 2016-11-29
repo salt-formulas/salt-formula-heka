@@ -1,13 +1,13 @@
 
 collectd_client_state_run:
   salt.state:
-    - tgt: 'G@roles:collecd.client'
+    - tgt: 'I@collectd:client'
     - tgt_type: compound
     - sls: collectd.client
 
 heka_client_state_run:
   salt.state:
-    - tgt: 'G@roles:heka.metric_collector'
+    - tgt: 'I@heka:metric_collector'
     - tgt_type: compound
     - sls: heka.log_collector,heka.metric_collector
 
@@ -28,6 +28,6 @@ mine_update:
 
 heka_server_state_run:
   salt.state:
-    - tgt: 'G@roles:heka.aggregator'
+    - tgt: 'I@heka:aggregator'
     - tgt_type: compound
     - sls: heka.aggregator

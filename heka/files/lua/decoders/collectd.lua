@@ -425,7 +425,7 @@ function process_message ()
                 else
                     msg['Fields']['name'] = 'virt' .. sep .. metric_name
                 end
-            elseif metric_source == 'elasticsearch_cluster' or metric_source == 'influxdb' then
+            elseif metric_source == 'influxdb' then
                 msg['Fields']['name'] = metric_source .. sep .. sample['type_instance']
             elseif metric_source == 'http_check' then
                 msg['Fields']['name'] = metric_source

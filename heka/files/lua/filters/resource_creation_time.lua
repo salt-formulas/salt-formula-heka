@@ -30,7 +30,7 @@ local event_type_to_name = {
 function process_message ()
     local metric_name = event_type_to_name[read_message("Fields[event_type]")]
     if not metric_name then
-        return -1
+        return 0
     end
 
     local started_at, completed_at

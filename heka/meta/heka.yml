@@ -218,6 +218,7 @@ remote_collector:
       preserve_data: false
       message_matcher: "Type == 'notification' && Fields[event_type] =~ /create.end$/"
 {%- endif %}
+{%- endif %}
 {%- if remote_collector.influxdb_host is defined or remote_collector.elasticsearch_host is defined %}
   encoder:
 {%- if remote_collector.influxdb_host is defined %}

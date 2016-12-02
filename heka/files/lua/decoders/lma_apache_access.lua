@@ -77,11 +77,11 @@ function process_message ()
     end
     if fields.request_time then
         if fields.request_time.representation == 'us' then
-            fields.http_response_size = fields.request_time.value / 1e6
+            fields.http_response_time = fields.request_time.value / 1e6
         elseif fields.request_time.representation == 'ms' then
-            fields.http_response_size = fields.request_time.value / 1e3
+            fields.http_response_time = fields.request_time.value / 1e3
         else
-            fields.http_response_size = fields.request_time.value
+            fields.http_response_time = fields.request_time.value
         end
         fields.request_time = nil
     end

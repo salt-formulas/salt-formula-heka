@@ -35,6 +35,9 @@ local alarms = {
             {%- endfor %}
           },
           {%- endif %}
+          {%- if _rule.value is defined %}
+          ['value'] = '{{ _rule.value }}',
+          {%- endif %}
         },
         {%- endfor %}
       },

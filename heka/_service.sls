@@ -2,13 +2,6 @@
 
 {%- if server.enabled is defined and server.enabled %}
 
-heka_{{ service_name }}_log_file:
-  file.managed:
-  - name: /var/log/{{ service_name }}.log
-  - user: heka
-  - mode: 644
-  - replace: false
-
 heka_{{ service_name }}_conf_dir:
   file.directory:
   - name: /etc/{{ service_name }}
@@ -52,6 +45,13 @@ heka_{{ service_name }}_service_file:
   - template: jinja
 
 {%- if not systemd_enabled %}
+
+heka_{{ service_name }}_log_file:
+  file.managed:
+  - name: /var/log/{{ service_name }}.log
+  - user: heka
+  - mode: 644
+  - replace: false
 
 heka_{{ service_name }}_service_wrapper:
   file.managed:

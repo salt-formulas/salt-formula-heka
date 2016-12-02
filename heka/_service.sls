@@ -70,6 +70,7 @@ heka_{{ service_name }}_service:
   service.running:
   - enable: True
   - watch:
+    - file: /usr/share/lma_collector
     - file: /usr/share/lma_collector/*
     - file: /etc/{{ service_name }}/*
 {%- else %}

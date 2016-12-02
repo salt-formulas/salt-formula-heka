@@ -53,6 +53,16 @@ heka_{{ service_name }}_log_file:
   - mode: 644
   - replace: false
 
+/etc/logrotate.d/{{ service_name }}:
+  file.managed:
+  - source: salt://heka/files/heka_logrotate.conf
+  - template: jinja
+  - defaults:
+    service_name: {{ service_name }}
+  - user: root
+  - group: root
+  - mode: 644
+
 heka_{{ service_name }}_service_wrapper:
   file.managed:
   - name: /usr/local/bin/{{ service_name }}_wrapper

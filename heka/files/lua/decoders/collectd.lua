@@ -260,6 +260,7 @@ function process_message ()
                 end
             elseif metric_source == 'nova' then
                 if sample['plugin_instance'] == 'nova_services' or
+                   sample['plugin_instance'] == 'nova_services_percent' or
                    sample['plugin_instance'] == 'nova_service'  then
                     msg['Fields']['name'] = 'openstack_' .. sample['plugin_instance']
                     msg['Fields']['service'] = sample['meta']['service']
@@ -276,6 +277,7 @@ function process_message ()
                 end
             elseif metric_source == 'cinder' then
                 if sample['plugin_instance'] == 'cinder_services' or
+                   sample['plugin_instance'] == 'cinder_services_percent' or
                    sample['plugin_instance'] == 'cinder_service' then
                     msg['Fields']['name'] = 'openstack_' .. sample['plugin_instance']
                     msg['Fields']['service'] = sample['meta']['service']
@@ -308,6 +310,7 @@ function process_message ()
                 elseif sample['type_instance'] == 'subnets' then
                     msg['Fields']['name'] = 'openstack'  .. sep .. 'neutron' .. sep .. 'subnets'
                 elseif sample['type_instance'] == 'neutron_agents' or
+                       sample['type_instance'] == 'neutron_agents_percent' or
                        sample['type_instance'] == 'neutron_agent' then
                     msg['Fields']['name'] = 'openstack_' .. sample['type_instance']
                     msg['Fields']['service'] = sample['meta']['service']

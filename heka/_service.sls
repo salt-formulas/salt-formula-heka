@@ -53,6 +53,38 @@ heka_{{ service_name }}_log_file:
   - mode: 644
   - replace: false
 
+{%- set logrotate_conf = "/etc/logrotate_" ~ service_name ~ ".conf" %}
+
+{{ logrotate_conf }}:
+  file.managed:
+  - source: salt://heka/files/heka_logrotate.conf
+  - template: jinja
+  - defaults:
+    service_name: {{ service_name }}
+  - user: root
+  - group: root
+  - mode: 644
+
+{%- set logrotate_command = "/usr/local/bin/" ~ service_name ~ "_logrotate" %}
+
+{{ logrotate_command }}:
+  file.managed:
+  - source: salt://heka/files/heka_logrotate.cron
+  - template: jinja
+  - defaults:
+    service_name: {{ service_name }}
+    logrotate_conf: {{ logrotate_conf }}
+  - user: root
+  - group: root
+  - mode: 755
+  - require:
+    - file: {{ logrotate_conf }}
+  cron.present:
+  - identifier: {{ service_name }}_logrotate_cron
+  - minute: '*/30'
+  - require:
+    - file: {{ logrotate_command }}
+
 heka_{{ service_name }}_service_wrapper:
   file.managed:
   - name: /usr/local/bin/{{ service_name }}_wrapper

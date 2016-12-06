@@ -23,7 +23,7 @@ local msg = {
     Payload     = nil,
     Pid         = nil,
     Fields      = nil,
-    Severity    = nil,
+    Severity    = 6, -- INFO
 }
 
 local syslog_pattern = read_config("syslog_pattern") or error("syslog_pattern configuration must be specified")

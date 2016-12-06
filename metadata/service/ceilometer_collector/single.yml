@@ -3,6 +3,11 @@ applications:
 classes:
 - service.heka.support
 parameters:
+  _param:
+    ceilometer_collector_poolsize: 100
   heka:
     ceilometer_collector:
+      automatic_starting: true
       enabled: true
+      influxdb_time_precision: ms
+      poolsize: ${_param:ceilometer_collector_poolsize}

@@ -96,5 +96,7 @@ RedHat:
     'rabbit_vhost': default_rabbit_vhost,
     'rabbit_queue': default_ceilometer_rabbit_queue,
     'resource_decoding': False,
+    'automatic_starting': default_automatic_starting,
+    'poolsize': 100,
   }
 }, merge=salt['pillar.get']('heka:ceilometer_collector')) %}

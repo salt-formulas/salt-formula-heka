@@ -48,6 +48,8 @@ RedHat:
     'elasticsearch_port': default_elasticsearch_port,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,
+    'metric_collector_host': '127.0.0.1',
+    'metric_collector_port': 5567,
   }
 }, merge=salt['pillar.get']('heka:log_collector')) %}
 

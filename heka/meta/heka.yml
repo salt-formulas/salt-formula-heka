@@ -184,7 +184,7 @@ remote_collector:
       port: {{ remote_collector.amqp_port }}
       user: {{ remote_collector.amqp_user }}
       password: {{ remote_collector.amqp_password }}
-      vhost: {{ remote_collector.get('amqp_vhost', '') }}
+      vhost: {{ remote_collector.amqp_vhost }}
       exchange: {{ remote_collector.get('amqp_exchange', 'nova') }}
       exchange_type: topic
       exchange_durability: false

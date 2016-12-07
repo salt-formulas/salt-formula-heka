@@ -96,6 +96,8 @@ Default values:
 
 * ``aggregator_port: 5565``
 * ``amqp_exchange: nova``
+* ``amqp_port: 5672``
+* ``amqp_vhost: ''``
 * ``automatic_starting: true``
 * ``elastisearch_port: 9200``
 * ``enabled: false``
@@ -160,11 +162,13 @@ Ceilometer service
 
 Default values:
 
+* ``automatic_starting: true``
 * ``elastisearch_port: 9200``
 * ``enabled: false``
 * ``influxdb_port: 8086``
 * ``influxdb_time_precision: ms``
 * ``influxdb_timeout: 5000``
+* ``poolsize: 100``
 * ``rabbit_port: 5672``
 * ``rabbit_vhost: /openstack``
 * ``rabbit_queue: metering.sample``

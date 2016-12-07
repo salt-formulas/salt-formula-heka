@@ -18,6 +18,8 @@ Log collector service
         elasticsearch_host: 172.16.10.253
         elasticsearch_port: 9200
         enabled: true
+        metric_collector_host: 127.0.0.1
+        metric_collector_port: 5567
         poolsize: 100
 
 Default values:
@@ -25,6 +27,8 @@ Default values:
 * ``automatic_starting: true``
 * ``elastisearch_port: 9200``
 * ``enabled: false``
+* ``metric_collector_host: 127.0.0.1``
+* ``metric_collector_port: 5567``
 * ``poolsize: 100``
 
 Local Metric collector service

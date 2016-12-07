@@ -39,8 +39,8 @@ log_collector:
   output:
     metric_collector:
       engine: tcp
-      host: 127.0.0.1
-      port: 5567
+      host: {{ log_collector.metric_collector_host }}
+      port: {{ log_collector.metric_collector_port }}
       message_matcher: "(Type == 'metric' || Type == 'heka.sandbox.metric' || Type == 'heka.sandbox.bulk_metric')"
     log_dashboard:
       engine: dashboard

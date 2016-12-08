@@ -266,8 +266,8 @@ remote_collector:
 {%- endif %}
 aggregator:
   policy:
-    # A policy defining that the cluster's status depends on the member with
-    # the highest severity, typically used for a cluster of services.
+    # A policy that is used to derive cluster status based
+    # on the highest severity status of its members.
     highest_severity:
     - status: down
       trigger:
@@ -302,7 +302,7 @@ aggregator:
           relational_operator: '>'
           threshold: 0
     - status: unknown
-    # A policy which is typically used for clusters managed by Pacemaker
+    # A policy that is typically used for clusters managed by Pacemaker
     # with the no-quorum-policy set to 'stop'.
     majority_of_members:
     - status: down
@@ -336,7 +336,8 @@ aggregator:
           threshold: 50
           function: percent
     - status: okay
-    # A policy which is typically used for stateless clusters
+    # A policy that is used to derive a cluster status based
+    # on the status okay or down status for its members.
     availability_of_members:
     - status: down
       trigger:
@@ -355,16 +356,56 @@ aggregator:
           relational_operator: '=='
           threshold: 1
         - function: count
-          arguments: [ critical, down ]
+          arguments: [ down ]
           relational_operator: '>'
-          threshold: 1
+          threshold: 0
+    - status: warning
+      trigger:
+        logical_operator: and
+        rules:
+        - function: count
+          arguments: [ okay ]
+          relational_operator: '>='
+          threshold: 2
+        - function: count
+          arguments: [ down ]
+          relational_operator: '>'
+          threshold: 0
+    - status: okay
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ okay ]
+          relational_operator: '=='
+          threshold: 100
+    - status: unknown
+    # A policy that is used to derive a cluster status based
+    # on the health status of its members.
+    status_of_members:
+    - status: down
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ down ]
+          relational_operator: '=='
+          threshold: 100
+    - status: critical
+      trigger:
+        logical_operator: or
+        rules:
+        - function: percent
+          arguments: [ critical, down, unknown ]
+          relational_operator: '>='
+          threshold: 50
     - status: warning
       trigger:
         logical_operator: or
         rules:
         - function: percent
           arguments: [ okay ]
-          relational_operator: '<'
+          relational_operator: '!='
           threshold: 100
     - status: okay
       trigger:

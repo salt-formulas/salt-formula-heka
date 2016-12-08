@@ -517,6 +517,7 @@ aggregator:
 {%- endif %}
 ceilometer_collector:
   decoder:
+{%- if ceilometer_collector.amqp_host is defined %}
     sample:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/metering.lua
@@ -525,21 +526,22 @@ ceilometer_collector:
         decoder: 'ceilometer'
         decode_resources: {{ ceilometer_collector.resource_decoding|lower }}
         metadata_fields: "status deleted container_format min_ram updated_at min_disk is_public size checksum created_at disk_format protected instance_host host display_name instance_id instance_type status state user_metadata.stack"
+{%- endif %}
   input:
-{%- if ceilometer_collector.rabbit_host is defined %}
+{%- if ceilometer_collector.amqp_host is defined %}
     openstack_sample_amqp:
       engine: amqp
-      user: {{ ceilometer_collector.rabbit_user }}
-      password: {{ ceilometer_collector.rabbit_password }}
-      port: {{ ceilometer_collector.rabbit_port }}
-      host: {{ ceilometer_collector.rabbit_host }}
-      vhost: {{ ceilometer_collector.rabbit_vhost }}
-      queue: {{ ceilometer_collector.rabbit_queue }}
-      routing_key: {{ ceilometer_collector.rabbit_queue }}
+      user: {{ ceilometer_collector.amqp_user }}
+      password: {{ ceilometer_collector.amqp_password }}
+      port: {{ ceilometer_collector.amqp_port }}
+      host: {{ ceilometer_collector.amqp_host }}
+      vhost: {{ ceilometer_collector.amqp_vhost }}
+      queue: {{ ceilometer_collector.amqp_queue }}
+      routing_key: {{ ceilometer_collector.amqp_queue }}
       decoder: sample_decoder
       splitter: NullSplitter
-      exchange: "ceilometer"
-      exchange_type: "topic"
+      exchange: {{ ceilometer_collector.get('amqp_exchange', 'ceilometer') }}
+      exchange_type: topic
       exchange_auto_delete: false
       queue_auto_delete: false
 {%- endif %}

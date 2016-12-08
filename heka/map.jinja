@@ -39,11 +39,6 @@ RedHat:
 {% set default_nagios_host_alarm_clusters = '00-clusters' %}
 {% set default_automatic_starting = True %}
 {% set default_amqp_port = 5672 %}
-{% set default_amqp_vhost = '' %}
-
-{% set default_rabbit_port = 5672 %}
-{% set default_rabbit_vhost = '/openstack' %}
-{% set default_ceilometer_rabbit_queue = 'metering.sample' %}
 
 {% set log_collector = salt['grains.filter_by']({
   'default': {
@@ -70,7 +65,7 @@ RedHat:
 {% set remote_collector = salt['grains.filter_by']({
   'default': {
     'amqp_port': default_amqp_port,
-    'amqp_vhost': default_amqp_vhost,
+    'amqp_vhost': '',
     'elasticsearch_port': default_elasticsearch_port,
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
@@ -99,9 +94,9 @@ RedHat:
     'influxdb_timeout': default_influxdb_timeout,
     'influxdb_time_precision': default_influxdb_time_precision,
     'elasticsearch_port': default_elasticsearch_port,
-    'rabbit_port': default_rabbit_port,
-    'rabbit_vhost': default_rabbit_vhost,
-    'rabbit_queue': default_ceilometer_rabbit_queue,
+    'amqp_port': default_amqp_port,
+    'amqp_vhost': '/openstack',
+    'amqp_queue': 'metering.sample',
     'resource_decoding': False,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,

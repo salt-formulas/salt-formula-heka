@@ -155,10 +155,11 @@ Ceilometer service
         influxdb_time_precision: ms
         influxdb_username: lma
         resource_decoding: false
-        rabbit_host: 172.16.10.253
-        rabbit_port: 5672
-        rabbit_queue: metering.sample
-        rabbit_vhost: /openstack
+        amqp_exchange: ceilometer
+        amqp_host: 172.16.10.253
+        amqp_port: 5672
+        amqp_queue: metering.sample
+        amqp_vhost: /openstack
 
 Default values:
 
@@ -169,9 +170,10 @@ Default values:
 * ``influxdb_time_precision: ms``
 * ``influxdb_timeout: 5000``
 * ``poolsize: 100``
-* ``rabbit_port: 5672``
-* ``rabbit_vhost: /openstack``
-* ``rabbit_queue: metering.sample``
+* ``amqp_exchange: ceilometer``
+* ``amqp_port: 5672``
+* ``amqp_queue: metering.sample``
+* ``amqp_vhost: /openstack``
 * ``resource_decoding: false``
 
 Read more

@@ -42,11 +42,6 @@ log_collector:
       host: {{ log_collector.metric_collector_host }}
       port: {{ log_collector.metric_collector_port }}
       message_matcher: "(Type == 'metric' || Type == 'heka.sandbox.metric' || Type == 'heka.sandbox.bulk_metric')"
-    log_dashboard:
-      engine: dashboard
-      host: 127.0.0.1
-      port: 4352
-      ticker_interval: 30
 {%- if log_collector.elasticsearch_host is defined %}
     elasticsearch:
       engine: elasticsearch
@@ -83,12 +78,6 @@ metric_collector:
       decoder: metric_decoder
       splitter: HekaFramingSplitter
   filter:
-    heka_metric_collector:
-      engine: sandbox
-      module_file: /usr/share/lma_collector/filters/heka_monitoring.lua
-      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
-      preserve_data: false
-      message_matcher: "Type == 'heka.all-report'"
 {%- if metric_collector.influxdb_host is defined %}
     influxdb_accumulator:
       engine: sandbox
@@ -115,11 +104,6 @@ metric_collector:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
 {%- endif %}
   output:
-    metric_dashboard:
-      engine: dashboard
-      host: 127.0.0.1
-      port: 4353
-      ticker_interval: 30
 {%- if metric_collector.influxdb_host is defined %}
     influxdb:
       engine: http
@@ -233,11 +217,6 @@ remote_collector:
 {%- endif %}
 {%- endif %}
   output:
-    remote_collector_dashboard:
-      engine: dashboard
-      host: 127.0.0.1
-      port: 4354
-      ticker_interval: 30
 {%- if remote_collector.influxdb_host is defined %}
     influxdb:
       engine: http

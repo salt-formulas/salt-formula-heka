@@ -1,5 +1,5 @@
 {%- from "heka/map.jinja" import server with context %}
-{%- if server.enabled %}
+{%- if server.enabled is defined and server.enabled %}
 
 heka_packages:
   pkg.latest:

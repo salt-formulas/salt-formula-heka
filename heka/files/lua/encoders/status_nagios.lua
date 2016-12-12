@@ -19,6 +19,11 @@ local consts = require 'gse_constants'
 local lma = require 'lma_utils'
 local interp = require "msg_interpolate"
 
+local host_suffix_dimension_field
+if read_config('host_suffix_dimension_key') then
+    host_suffix_dimension_field = string.format('Fields[%s]', read_config('host_suffix_dimension_key'))
+end
+
 -- These 2 configurations are used only to encode GSE messages
 local default_host = read_config('default_nagios_host')
 local host_dimension_key = read_config('nagios_host_dimension_key')
@@ -64,11 +69,20 @@ function process_message()
         return -1
     end
 
+    local host
     if host_dimension_key then
-        data['host'] = read_message(string.format('Fields[%s]', host_dimension_key)) or default_host
+        host = read_message(string.format('Fields[%s]', host_dimension_key)) or default_host
     else
-        data['host'] = read_message('Fields[hostname]') or read_message('Hostname')
+        host = read_message('Fields[hostname]') or read_message('Hostname')
     end
+
+    if host_suffix_dimension_field then
+        local suffix = read_message(host_suffix_dimension_field)
+        if suffix then
+            host = host .. '.' .. suffix
+        end
+    end
+    data['host'] = host
 
     data['service'] = service_name
     data['plugin_state'] = nagios_state_map[status]

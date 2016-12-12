@@ -471,8 +471,8 @@ aggregator:
   {%- endif %}
 {%- endif %}
 ceilometer_collector:
-  decoder:
 {%- if ceilometer_collector.amqp_host is defined %}
+  decoder:
     sample:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/metering.lua
@@ -482,8 +482,8 @@ ceilometer_collector:
         decode_resources: {{ ceilometer_collector.resource_decoding|lower }}
         metadata_fields: "status deleted container_format min_ram updated_at min_disk is_public size checksum created_at disk_format protected instance_host host display_name instance_id instance_type status state user_metadata.stack"
 {%- endif %}
-  input:
 {%- if ceilometer_collector.amqp_host is defined %}
+  input:
     openstack_sample_amqp:
       engine: amqp
       user: {{ ceilometer_collector.amqp_user }}
@@ -500,8 +500,8 @@ ceilometer_collector:
       exchange_auto_delete: false
       queue_auto_delete: false
 {%- endif %}
-  filter:
 {%- if ceilometer_collector.influxdb_host is defined %}
+  filter:
     ceilometer_influxdb_accumulator:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
@@ -515,14 +515,15 @@ ceilometer_collector:
         flush_count: 500
         bulk_metric_type_matcher: 'ceilometer_samples'
 {%- endif %}
+{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
   encoder:
-{%- if ceilometer_collector.influxdb_host is defined %}
+  {%- if ceilometer_collector.influxdb_host is defined %}
     influxdb:
       engine: payload
       append_newlines: false
       prefix_ts: false
-{%- endif %}
-{%- if ceilometer_collector.elasticsearch_host is defined %}
+  {%- endif %}
+  {%- if ceilometer_collector.elasticsearch_host is defined %}
     elasticsearch_resource:
       engine: sandbox
       module_file:  /usr/share/lma_collector/encoders/es_ceilometer_resources.lua
@@ -531,6 +532,7 @@ ceilometer_collector:
         index: "ceilometer_resource"
         type_name: "source"
         encoder: "elasticsearch_resources"
+  {%- endif %}
 {%- endif %}
 {%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
   output:

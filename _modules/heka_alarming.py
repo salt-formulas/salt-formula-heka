@@ -83,6 +83,8 @@ def grains_for_mine(grains):
     """
     filtered_grains = {}
     for service_name, service_data in grains.items():
+        if not service_data:
+            continue
         alarm = service_data.get('alarm')
         if alarm:
             filtered_grains[service_name] = {'alarm': alarm}

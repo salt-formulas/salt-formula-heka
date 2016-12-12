@@ -338,12 +338,16 @@ aggregator:
           threshold: 100
     - status: critical
       trigger:
-        logical_operator: or
+        logical_operator: and
         rules:
-        - function: percent
+        - function: count
+          arguments: [ okay, warning ]
+          relational_operator: '<='
+          threshold: 1
+        - function: count
           arguments: [ critical, down, unknown ]
-          relational_operator: '>='
-          threshold: 50
+          relational_operator: '>'
+          threshold: 0
     - status: warning
       trigger:
         logical_operator: or

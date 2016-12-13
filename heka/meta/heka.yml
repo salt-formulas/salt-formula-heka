@@ -397,8 +397,8 @@ aggregator:
           arguments: [ down, critical, warning, unknown ]
           relational_operator: '>'
           threshold: 0
-          function: percent      
-    - status: okay  
+          function: percent
+    - status: okay
   input:
     heka_metric:
       engine: tcp

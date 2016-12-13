@@ -2,7 +2,7 @@
 type = "SandboxFilter"
 filename = "/usr/share/lma_collector/filters/afd.lua"
 preserve_data = {{ alarm.preserve_data|default(False)|lower }}
-message_matcher = "(Type == 'metric' || Type == 'heka.sandbox.metric') && ({{ salt['heka_alarming.alarm_message_matcher'](alarm, trigger) }})"
+message_matcher = "Type =~ /metric$/ && ({{ salt['heka_alarming.alarm_message_matcher'](alarm, trigger) }})"
 module_directory = "/usr/share/lma_collector/common;/usr/share/heka/lua_modules"
 ticker_interval = 10
 

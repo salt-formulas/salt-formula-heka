@@ -91,7 +91,7 @@ function add_to_bulk_metric(name, value, tags)
 end
 
 -- Send the bulk metric message to the Heka pipeline
-function inject_bulk_metric(ts, hostname, source)
+function inject_bulk_metric(ts, hostname, source, metric_type)
     if #bulk_datapoints == 0 then
         return
     end
@@ -113,14 +113,15 @@ function inject_bulk_metric(ts, hostname, source)
         Severity = label_to_severity_map.INFO,
         Fields = {
             hostname = hostname,
-            source = source
+            source = source,
+            type = metric_type
       }
     }
     -- reset the local table storing the datapoints
     bulk_datapoints = {}
 
     inject_tags(msg)
-    safe_inject_message(msg)
+    return safe_inject_message(msg)
 end
 
 -- Encode a Lua variable as JSON without raising an exception if the encoding

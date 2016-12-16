@@ -91,7 +91,7 @@ function add_to_bulk_metric(name, value, tags)
 end
 
 -- Send the bulk metric message to the Heka pipeline
-function inject_bulk_metric(ts, hostname, source, metric_type)
+function inject_bulk_metric(ts, hostname, logger, source, m_type)
     if #bulk_datapoints == 0 then
         return
     end
@@ -106,6 +106,7 @@ function inject_bulk_metric(ts, hostname, source, metric_type)
     end
 
     local msg = {
+        Logger = logger,
         Hostname = hostname,
         Timestamp = ts,
         Payload = payload,
@@ -114,7 +115,7 @@ function inject_bulk_metric(ts, hostname, source, metric_type)
         Fields = {
             hostname = hostname,
             source = source,
-            type = metric_type
+            type = m_type or metric_type['GAUGE']
       }
     }
     -- reset the local table storing the datapoints

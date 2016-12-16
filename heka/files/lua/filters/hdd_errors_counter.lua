@@ -31,6 +31,8 @@ end
 -- grace_interval parameter allows to take into account log messages that are
 -- received in the current interval but emitted before it.
 local grace_interval = (read_config('grace_interval') or 0) + 0
+local metric_logger = read_config('logger')
+local metric_source = read_config('source')
 
 local error_counters = {}
 local enter_at
@@ -82,7 +84,7 @@ function timer_event(ns)
     end
 
     enter_at = ns
-    utils.inject_bulk_metric(ns, hostname, 'hdd_errors_filter')
+    utils.inject_bulk_metric(ns, hostname, metric_logger, metric_source)
 
     return 0
 end

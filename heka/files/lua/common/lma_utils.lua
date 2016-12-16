@@ -322,4 +322,9 @@ function get_values_from_metric()
     return true, value
 end
 
+-- convert a nanosecond value to second
+function convert_to_sec(ns)
+    return math.floor(ns/1e9)
+end
+
 return M

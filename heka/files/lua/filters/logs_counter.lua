@@ -30,10 +30,6 @@ local discovered_services = {}
 local logs_counters = {}
 local last_timer_event = os.time() * 1e9
 
-function convert_to_sec(ns)
-    return math.floor(ns/1e9)
-end
-
 function process_message ()
     local severity = read_message("Fields[severity_label]")
     local logger = read_message("Logger")
@@ -45,7 +41,7 @@ function process_message ()
 
     -- timestamp values should be converted to seconds because log timestamps
     -- have a precision of one second (or millisecond sometimes)
-    if convert_to_sec(read_message('Timestamp')) + grace_interval < convert_to_sec(last_timer_event) then
+    if utils.convert_to_sec(read_message('Timestamp')) + grace_interval < utils.convert_to_sec(last_timer_event) then
         -- skip the the log message if it doesn't fall into the current interval
         return 0
     end

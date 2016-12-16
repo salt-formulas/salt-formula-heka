@@ -36,14 +36,10 @@ local error_counters = {}
 local enter_at
 local start_time = os.time()
 
-local function convert_to_sec(ns)
-    return math.floor(ns/1e9)
-end
-
 function process_message ()
     -- timestamp values should be converted to seconds because log timestamps
     -- have a precision of one second (or millisecond sometimes)
-    if convert_to_sec(read_message('Timestamp')) + grace_interval < math.max(convert_to_sec(enter_at or 0), start_time) then
+    if utils.convert_to_sec(read_message('Timestamp')) + grace_interval < math.max(utils.convert_to_sec(enter_at or 0), start_time) then
         -- skip the log message if it doesn't fall into the current interval
         return 0
     end

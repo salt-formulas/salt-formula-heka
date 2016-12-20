@@ -51,7 +51,7 @@ end
 
 function decode(data)
     local code, msg = inject(samples_decoder:decode(data))
-    if code == 0 and resource_decoder then
+    if resource_decoder then
         code, msg = inject(resource_decoder:decode(data))
     end
     return code, msg

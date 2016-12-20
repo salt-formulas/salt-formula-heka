@@ -173,11 +173,11 @@ end
 function SamplesDecoder:decode (data)
     local ok, message = pcall(cjson.decode, data)
     if not ok then
-        return -2, "Cannot decode Payload"
+        return -1, "Cannot decode Payload"
     end
     local ok, message_body = pcall(cjson.decode, message["oslo.message"])
     if not ok then
-        return -2, "Cannot decode Payload[oslo.message]"
+        return -1, "Cannot decode Payload[oslo.message]"
     end
     local sample_payload = {}
     if message_body['payload'] then
@@ -188,7 +188,7 @@ function SamplesDecoder:decode (data)
         sample_msg.Timestamp = patt.Timestamp:match(message_body.timestamp)
         return 0, sample_msg
     end
-    return -2, "Empty message"
+    return -1, "Empty message"
 end
 
 return SamplesDecoder

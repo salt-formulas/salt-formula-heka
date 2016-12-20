@@ -25,6 +25,7 @@ local hostname = read_config('hostname') or error('hostname must be specified')
 -- the filter will take into account log messages that are at most 10 seconds
 -- older than the current time.
 local grace_interval = (read_config('grace_interval') or 0) + 0
+local logger_matcher = read_config('logger_matcher') or '.*'
 local metric_logger = read_config('logger')
 local metric_source = read_config('source')
 
@@ -36,7 +37,7 @@ function process_message ()
     local severity = read_message("Fields[severity_label]")
     local logger = read_message("Logger")
 
-    local service = string.match(logger, "^openstack%.(%a+)$")
+    local service = string.match(logger, logger_matcher)
     if service == nil then
         return -1, "Cannot match any service from " .. logger
     end

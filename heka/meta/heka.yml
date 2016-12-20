@@ -22,6 +22,8 @@ log_collector:
         grace_time: 5
         logger: aggregated_http_metrics_filter
         source: log_collector
+    # This filter monitors the OpenStack logs and sends the rate of processed
+    # log messages broken down by service and severity every  minute
     log_counter:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/logs_counter.lua
@@ -32,6 +34,7 @@ log_collector:
       config:
         hostname: '{{ grains.host }}'
         grace_interval: 30
+        logger_matcher: '^openstack%.(%a+)$'
         logger: log_counter_filter
         source: log_collector
     hdd_errors:

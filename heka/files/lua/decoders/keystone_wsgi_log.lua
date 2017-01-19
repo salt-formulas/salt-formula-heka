@@ -20,12 +20,8 @@ local patt = require 'patterns'
 local utils  = require 'lma_utils'
 
 local msg = {
-    Timestamp   = nil,
+    Logger      = 'openstack.keystone',
     Type        = 'log',
-    Hostname    = nil,
-    Payload     = nil,
-    Pid         = nil,
-    Fields      = nil,
     Severity    = 6,
 }
 
@@ -33,29 +29,43 @@ local severity_label = utils.severity_to_label_map[msg.Severity]
 
 local apache_log_pattern = read_config("apache_log_pattern") or error(
     "apache_log_pattern configuration must be specificed")
-local apache_grammar = common_log_format.build_apache_grammar(apache_log_pattern)
+local apache_grammar
+if string.match(apache_log_pattern, '%%') then
+    -- don't parse log format if it's a nickname (eg 'vhost_combined')
+    apache_grammar = common_log_format.build_apache_grammar(apache_log_pattern)
+end
 local request_grammar = l.Ct(patt.http_request)
 
 function process_message ()
-
-    -- logger is either "keystone-wsgi-main" or "keystone-wsgi-admin"
     local logger = read_message("Logger")
-
     local log = read_message("Payload")
 
-    local m
+    msg.Fields = {}
+    msg.Payload = log
+    msg.Fields.programname = logger
+    msg.Fields.severity_label = severity_label
 
-    m = apache_grammar:match(log)
+    if not apache_grammar then
+        utils.inject_tags(msg)
+        return utils.safe_inject_message(msg)
+    end
+
+    local m = apache_grammar:match(log)
     if m then
-        msg.Logger = 'openstack.keystone'
-        msg.Payload = log
-        msg.Timestamp = m.time
+        if m.time then
+            msg.Timestamp = m.time
+        end
 
-        msg.Fields = {}
-        msg.Fields.http_status = m.status
-        msg.Fields.http_response_time = m.request_time.value / 1e6 -- us to sec
-        msg.Fields.programname = logger
-        msg.Fields.severity_label = severity_label
+        if m.status then
+            msg.Fields.http_status = m.status
+        end
+        if m.request_time then
+            msg.Fields.http_response_time = m.request_time.value
+            if m.request_time.representation == 'us' then
+                -- convert us to sec, otherwise the value is already in sec
+                msg.Fields.http_response_time = msg.Fields.http_response_time / 1e6
+            end
+        end
 
         local request = m.request
         m = request_grammar:match(request)

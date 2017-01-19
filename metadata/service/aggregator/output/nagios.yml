@@ -1,0 +1,5 @@
+parameters:
+  heka:
+    aggregator:
+      nagios_host_dimension_key: nagios_host
+      nagios_host: ${_param:nagios_host}

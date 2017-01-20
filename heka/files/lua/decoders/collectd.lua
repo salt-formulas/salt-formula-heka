@@ -252,6 +252,14 @@ function process_message ()
                 else
                     msg['Fields']['name'] = msg['Fields']['name'] .. sample['type_instance']
                 end
+                if sample['meta'] and sample['meta']['aggregate'] then
+                    msg['Fields']['aggregate'] = sample['meta']['aggregate']
+                    table.insert(msg['Fields']['tag_fields'], 'aggregate')
+                end
+                if sample['meta'] and sample['meta']['aggregate_id'] then
+                    msg['Fields']['aggregate_id'] = sample['meta']['aggregate_id']
+                    table.insert(msg['Fields']['tag_fields'], 'aggregate_id')
+                end
             elseif metric_source == 'rabbitmq_info' then
                 msg['Fields']['name'] = 'rabbitmq' .. sep .. sample['type_instance']
                 if sample['meta'] and sample['meta']['queue'] then

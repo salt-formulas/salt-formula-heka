@@ -37,7 +37,7 @@ local severity  = l.Cg(pgname, "Severity")
 -- Common patterns
 local modulename =  l.Cg(pgname, "Module")
 local ip_address = l.Cg((l.digit + patt.dot)^1, "ip_address")
-local http_status = l.Cg(patt.Number, "status")
+local http_status = l.Cg(patt.Number / tonumber, "status")
 local http_request_time = l.Cg(patt.Number, "request_time")
 local delim = (patt.sp + patt.dash)^1
 local hostname = l.Cg(patt.programname, "Hostname")

@@ -267,7 +267,7 @@ remote_collector:
       engine: elasticsearch
       server: "http://{{ remote_collector.elasticsearch_host }}:{{ remote_collector.elasticsearch_port }}"
       encoder: elasticsearch_encoder
-      message_matcher: "Type == 'notification'"
+      message_matcher: "Type == 'notification' || Type == 'audit'"
   {%- endif %}
 {%- endif %}
 aggregator:

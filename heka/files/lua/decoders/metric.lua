@@ -68,7 +68,6 @@ function process_message ()
             end
             fields['tag_fields'] = tag_fields
             fields['name'] = metric.name
-            fields['hostname'] = msg.Hostname
 
             new_msg.Type = metric_type
             new_msg.Fields = fields

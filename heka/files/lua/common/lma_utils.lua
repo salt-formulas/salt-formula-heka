@@ -113,7 +113,6 @@ function inject_bulk_metric(ts, hostname, logger, source, m_type)
         Type = 'bulk_metric', -- prepended with 'heka.sandbox'
         Severity = label_to_severity_map.INFO,
         Fields = {
-            hostname = hostname,
             source = source,
             type = m_type or metric_type['GAUGE']
       }

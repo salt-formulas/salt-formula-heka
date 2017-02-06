@@ -1,0 +1,5 @@
+parameters:
+  heka:
+    aggregator:
+      sensu_source_dimension_key: nagios_host
+      sensu_host: 127.0.0.1

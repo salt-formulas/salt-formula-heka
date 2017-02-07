@@ -225,6 +225,17 @@ remote_collector:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       preserve_data: false
       message_matcher: "Type == 'notification' && Fields[event_type] =~ /create.end$/"
+    authentication:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/authentications.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      message_matcher: "Type == 'audit' &&  Fields[action] == 'authenticate'"
+      ticker_interval: 60
+      config:
+        hostname: '{{ grains.host }}'
+        grace_interval: 30
+        logger: authentication_filter
+        source: remote_collector
   {%- endif %}
 {%- endif %}
 {%- if remote_collector.influxdb_host is defined or remote_collector.elasticsearch_host is defined %}

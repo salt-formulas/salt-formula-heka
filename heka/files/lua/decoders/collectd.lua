@@ -463,10 +463,10 @@ function process_message ()
 
                 -- check if the hostname field should be kept or not (eg for
                 -- cluster metrics, discard_hostname == true)
-                if sample['meta']['discard_hostname'] then
+                if sample['meta'] and sample['meta']['discard_hostname'] then
                     msg['Fields']['hostname'] = nil
+                    sample['meta']['discard_hostname'] = nil
                 end
-                sample['meta']['discard_hostname'] = nil
 
                 -- add meta fields as tag_fields
                 for k, v in pairs(sample['meta'] or {}) do

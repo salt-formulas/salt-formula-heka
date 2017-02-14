@@ -31,8 +31,6 @@ function normalize_uuid(uuid)
     return patt.Uuid:match(uuid)
 end
 
-local metadata_fields = {}
-
 local ResourcesDecoder = {}
 ResourcesDecoder.__index = ResourcesDecoder
 
@@ -70,11 +68,26 @@ local resource_msg = {
 function add_resource_to_payload(sample, payload)
     local counter_name, _ = string.gsub(sample.counter_name, "%.", "\\")
 
+    local metadata = sample.resource_metadata
+    local local_metadata = {}
+
+    if type(metadata) == 'table' then
+        for name, value in ipairs(metadata) do
+            local transform = transform_functions[name]
+            if value ~= '' and value ~= nil then
+                if transform ~= nil then
+                    value = transform(value)
+                end
+                local_metadata[name] = value
+            end
+        end
+    end
+
     local resource_data = {
-        timestamp = sample.timestamp,
+        timestamp = utils.format_datetime(sample.timestamp),
         resource_id = sample.resource_id,
         source = sample.source or "",
-        metadata = sample.resource_metadata,
+        metadata = local_metadata,
         user_id = sample.user_id,
         project_id = sample.project_id,
         meter = {

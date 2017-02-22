@@ -15,7 +15,6 @@
 require 'os'
 local utils = require 'lma_utils'
 
-local hostname = read_config('hostname') or error('hostname must be specified')
 -- The filter can receive messages that should be discarded because they are
 -- way too old (Heka cannot guarantee that messages are processed in real-time).
 -- The 'grace_interval' parameter allows to define which messages should be
@@ -23,14 +22,11 @@ local hostname = read_config('hostname') or error('hostname must be specified')
 -- the filter will take into account messages that are at most 10 seconds
 -- older than the current time.
 local grace_interval = (read_config('grace_interval') or 0) + 0
-local metric_logger = read_config('logger')
 local metric_source = read_config('source')
 
 local msg = {
     Type = "multivalue_metric", -- will be prefixed by "heka.sandbox."
-    Hostname = hostname,
     Severity = 6,
-    Logger = read_config('logger') or error('logger must be specified')
 }
 local global_counters = {
     total=0,

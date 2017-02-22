@@ -91,7 +91,7 @@ function add_to_bulk_metric(name, value, tags)
 end
 
 -- Send the bulk metric message to the Heka pipeline
-function inject_bulk_metric(ts, hostname, logger, source, m_type)
+function inject_bulk_metric(ts, hostname, source, m_type)
     if #bulk_datapoints == 0 then
         return
     end
@@ -106,13 +106,12 @@ function inject_bulk_metric(ts, hostname, logger, source, m_type)
     end
 
     local msg = {
-        Logger = logger,
-        Hostname = hostname,
         Timestamp = ts,
         Payload = payload,
         Type = 'bulk_metric', -- prepended with 'heka.sandbox'
         Severity = label_to_severity_map.INFO,
         Fields = {
+            hostname = hostname, -- inject_message() can't set the top-level Hostname
             source = source,
             type = m_type or metric_type['GAUGE']
       }

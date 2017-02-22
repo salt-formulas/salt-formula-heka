@@ -19,7 +19,6 @@ log_collector:
         bulk_size: 523
         percentile: 90
         grace_time: 5
-        logger: aggregated_http_metrics_filter
         source: log_collector
     # This filter monitors the OpenStack logs and sends the rate of processed
     # log messages broken down by service and severity every  minute
@@ -34,7 +33,6 @@ log_collector:
         hostname: '{{ grains.host }}'
         grace_interval: 30
         logger_matcher: '^openstack%.(%a+)$'
-        logger: log_counter_filter
         source: log_collector
     hdd_errors:
       engine: sandbox
@@ -47,7 +45,6 @@ log_collector:
         grace_interval: 10
         patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
         hostname: '{{ grains.host }}'
-        logger: hdd_errors_filter
         source: log_collector
 {%- if log_collector.elasticsearch_host is defined %}
   encoder:
@@ -232,9 +229,7 @@ remote_collector:
       message_matcher: "Type == 'audit' &&  Fields[action] == 'authenticate'"
       ticker_interval: 60
       config:
-        hostname: '{{ grains.host }}'
         grace_interval: 30
-        logger: authentication_filter
         source: remote_collector
   {%- endif %}
 {%- endif %}

@@ -18,19 +18,19 @@ require "string"
 local l = require 'lpeg'
 l.locale(l)
 
-local loggers_pattern = l.Ct( (l.C((l.P(1) - l.space)^1) * l.space^0)^1 * -1)
-local loggers_list = loggers_pattern:match(read_config('deserialize_bulk_metric_for_loggers') or '')
+local split_on_space = l.Ct( (l.C((l.P(1) - l.space)^1) * l.space^0)^1 * -1)
+local sources_list = split_on_space:match(read_config('deserialize_for_sources') or '')
 
-local loggers = {}
-for _, logger in ipairs(loggers_list) do
-    loggers[logger] = true
+local sources = {}
+for _, s in ipairs(sources_list) do
+    sources[s] = true
 end
 
 local utils = require 'lma_utils'
 
 function process_message ()
     local msg = decode_message(read_message("raw"))
-    if string.match(msg.Type, 'bulk_metric$') and loggers[msg.Logger] ~= nil then
+    if string.match(msg.Type, 'bulk_metric$') and sources[msg.Fields.source] then
 
         local ok, metrics = pcall(cjson.decode, msg.Payload)
         if not ok then

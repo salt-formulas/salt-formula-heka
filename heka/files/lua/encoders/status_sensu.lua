@@ -23,6 +23,8 @@ if read_config('sensu_source_dimension_key') then
     source_dimension_field = string.format('Fields[%s]', read_config('sensu_source_dimension_key'))
 end
 
+local sensu_ttl = (read_config('sensu_ttl') + 0) or 0
+
 -- mapping GSE statuses to Sensu states
 local sensu_state_map = {
     [consts.OKAY]=0,
@@ -34,36 +36,46 @@ local sensu_state_map = {
 
 function process_message()
 
-    local data = {
-	source = nil,
-	name = nil,
-	status = nil,
-	output = nil,
-    }
-
-    local service_name = read_message('Fields[member]')
-    local status = afd.get_status()
-    local alarms = afd.alarms_for_human(afd.extract_alarms())
-    local msgtype = read_message("Type")
-
-    if not service_name or not sensu_state_map[status] or not alarms or not msgtype then
-	return -1
-    end
-
+    local data = {}
     local source
-    if msgtype == "heka.sandbox.gse_metric" then
-        if source_dimension_field then
-            source = read_message(source_dimension_field) or "Unknown Source" 
-        else
-            source = "Unknown source"
-        end
-    elseif msgtype == "heka.sandbox.afd_metric" then
+    local service_name
+    local status = 0
+    local alarms = {}
+    local msgtype = read_message('Type')
+
+    if msgtype == "heka.sandbox.watchdog" then
+        service_name = "watchdog_" .. (read_message('Payload') or 'unknown')
         source = read_message('Fields[hostname]') or read_message('Hostname')
     else
-        -- Should not happen since we track only AFD and GSE plugins.
-        return -1    
+        service_name = read_message('Fields[member]')
+        if not service_name then
+            return -1, "Service name is missing in Fields[member]"
+        end
+
+        status = afd.get_status()
+        if not sensu_state_map[status] then
+            return -1, "Status <" .. status .. "> is not mapping any Sensu state"
+        end
+
+        alarms = afd.alarms_for_human(afd.extract_alarms())
+
+        if msgtype == "heka.sandbox.gse_metric" then
+            if source_dimension_field then
+                source = read_message(source_dimension_field) or "Unknown source " .. source_dimension_field
+            else
+                source = "Unknown source"
+            end
+        elseif msgtype == "heka.sandbox.afd_metric" then
+            source = read_message('Fields[hostname]') or read_message('Hostname')
+        else
+            -- Should not happen since we track only watchdog, AFD and GSE plugins.
+            return -1, "message type <" .. msgtype .. "> is not tracked"
+        end
     end
 
+    if sensu_ttl > 0 then
+        data['ttl'] = sensu_ttl
+    end
     data['source'] = source
     data['name'] = service_name
     data['status'] = sensu_state_map[status]
@@ -80,12 +92,12 @@ function process_message()
       end
     end
 
-    data['output'] = details 
+    data['output'] = details
 
     local payload = lma.safe_json_encode(data)
 
     if not payload then
-       return -1
+       return -1, "Payload failed to be encoded in JSON"
     end
 
     return lma.safe_inject_payload('json', 'sensu', payload)

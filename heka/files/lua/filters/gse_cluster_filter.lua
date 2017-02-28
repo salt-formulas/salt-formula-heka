@@ -26,6 +26,8 @@ local max_inject = (read_config('max_inject') or 10) + 0
 local warm_up_period = ((read_config('warm_up_period') or 0) + 0) * 1e9
 local dimensions_json = read_config('dimensions') or ''
 local activate_alerting = read_config('activate_alerting') or true
+local enable_notification = read_config('enable_notification') or false
+local notification_handler = read_config('notification_handler')
 
 local first_tick
 local last_tick = 0
@@ -98,7 +100,8 @@ function timer_event(ns)
     local injected = 0
     for i, cluster_name in ipairs(gse.get_ordered_clusters()) do
         if last_index == nil or i > last_index then
-            gse.inject_cluster_metric(cluster_name, dimensions, activate_alerting)
+            gse.inject_cluster_metric(cluster_name, dimensions,
+                activate_alerting, enable_notification, notification_handler)
             last_index = i
             injected = injected + 1
 

@@ -21,3 +21,6 @@ warm_up_period = {{ alarm_cluster.warm_up_period }}
 {%- set alerting = alarm_cluster.get('alerting', 'enabled_with_notification') %}
 activate_alerting = {{ salt['heka_alarming.alarm_activate_alerting'](alerting) }}
 enable_notification = {{ salt['heka_alarming.alarm_enable_notification'](alerting) }}
+{%- if alarm_cluster.handler is defined %}
+notification_handler = "{{ alarm_cluster.handler }}"
+{%- endif %}

@@ -24,6 +24,8 @@ local afd_name = read_config('afd_name') or error('afd_name must be specified')
 local hostname = read_config('hostname') or error('hostname must be specified')
 local dimensions_json = read_config('dimensions') or ''
 local activate_alerting = read_config('activate_alerting') or true
+local enable_notification = read_config('enable_notification') or false
+local notification_handler = read_config('notification_handler')
 
 local all_alarms = require(afd_file)
 local A = require 'afd_alarms'
@@ -76,7 +78,7 @@ function timer_event(ns)
             end
 
             afd.inject_afd_metric(state, hostname, afd_name, dimensions,
-                activate_alerting)
+                activate_alerting, enable_notification, notification_handler)
         end
     else
         A.set_start_time(ns)

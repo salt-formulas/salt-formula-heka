@@ -47,19 +47,20 @@ TestAfd = {}
     end
 
     function TestAfd:test_inject_afd_metric_without_alarms()
-        afd.inject_afd_metric(consts.OKAY, 'node-1', 'foo', {}, false)
+        afd.inject_afd_metric(consts.OKAY, 'node-1', 'foo', {}, false, false, nil)
 
         local alarms = afd.get_alarms()
         assertEquals(#alarms, 0)
         assertEquals(last_injected_msg.Type, 'afd_metric')
         assertEquals(last_injected_msg.Fields.value, consts.OKAY)
         assertEquals(last_injected_msg.Fields.hostname, 'node-1')
+        assertEquals(last_injected_msg.Fields.notification_handler, 'mail')
         assertEquals(last_injected_msg.Payload, '{"alarms":[]}')
     end
 
     function TestAfd:test_inject_afd_metric_with_alarms()
         afd.add_to_alarms(consts.CRIT, 'last', 'metric_1', {}, {}, '==', 0, 0, nil, nil, "important message")
-        afd.inject_afd_metric(consts.CRIT, 'node-1', 'foo', {}, false)
+        afd.inject_afd_metric(consts.CRIT, 'node-1', 'foo', {}, true, true, 'mail')
 
         local alarms = afd.get_alarms()
         assertEquals(#alarms, 0)
@@ -67,6 +68,7 @@ TestAfd = {}
         assertEquals(last_injected_msg.Fields.value, consts.CRIT)
         assertEquals(last_injected_msg.Fields.hostname, 'node-1')
         assertEquals(last_injected_msg.Fields.environment_id, extra.environment_id)
+        assertEquals(last_injected_msg.Fields.notification_handler, 'mail')
         assert(last_injected_msg.Payload:match('"message":"important message"'))
         assert(last_injected_msg.Payload:match('"severity":"CRITICAL"'))
     end

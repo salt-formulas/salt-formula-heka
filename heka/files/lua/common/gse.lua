@@ -133,7 +133,8 @@ end
 
 -- compute the cluster metric and inject it into the Heka pipeline
 -- the metric's value is computed using the status of its members
-function inject_cluster_metric(cluster_name, dimensions, alerting_enabled)
+function inject_cluster_metric(cluster_name, dimensions, alerting_enabled,
+                               notification_enabled, notification_handler)
     local payload
     local status, alarms = resolve_status(cluster_name)
 
@@ -155,6 +156,8 @@ function inject_cluster_metric(cluster_name, dimensions, alerting_enabled)
             value = status,
             member = cluster_name,
             alerting_enabled = alerting_enabled,
+            notification_enabled = notification_enabled,
+            notification_handler = notification_handler,
             tag_fields = {'member'},
         }
     }

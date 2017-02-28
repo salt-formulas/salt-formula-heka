@@ -129,7 +129,9 @@ function reset_alarms()
 end
 
 -- inject an AFD event into the Heka pipeline
-function inject_afd_metric(value, hostname, afd_name, dimensions, alerting_enabled)
+function inject_afd_metric(value, hostname, afd_name, dimensions,
+                           alerting_enabled, notification_enabled,
+                           notification_handler)
     local payload
 
     if #alarms > 0 then
@@ -152,6 +154,8 @@ function inject_afd_metric(value, hostname, afd_name, dimensions, alerting_enabl
             hostname = hostname,
             member = afd_name,
             alerting_enabled = alerting_enabled,
+            notification_enabled = notification_enabled,
+            notification_handler = notification_handler,
             tag_fields = {'hostname', 'member'}
         }
     }

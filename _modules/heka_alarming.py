@@ -4,7 +4,8 @@ import re
 
 _valid_dimension_re = re.compile(r'^[a-z0-9_/-]+$')
 _disallowed_dimensions = ('name', 'value', 'hostname', 'member',
-                          'alerting_enabled', 'tag_fields')
+                          'alerting_enabled', 'notification_enabled',
+                          'notification_handler', 'tag_fields')
 
 
 def alarm_message_matcher(alarm, triggers):

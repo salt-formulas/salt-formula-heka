@@ -14,3 +14,6 @@ dimensions = '{{ salt['heka_alarming.dimensions'](alarm)|json }}'
 {%- set alerting = alarm.get('alerting', 'enabled') %}
 activate_alerting = {{ salt['heka_alarming.alarm_activate_alerting'](alerting) }}
 enable_notification = {{ salt['heka_alarming.alarm_enable_notification'](alerting) }}
+{%- if alarm.handler is defined %}
+notification_handler = "{{ alarm.handler }}"
+{%- endif %}

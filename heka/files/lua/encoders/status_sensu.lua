@@ -22,8 +22,12 @@ local source_dimension_field
 if read_config('sensu_source_dimension_key') then
     source_dimension_field = string.format('Fields[%s]', read_config('sensu_source_dimension_key'))
 end
-
-local sensu_ttl = (read_config('sensu_ttl') + 0) or 0
+local notification_handler = read_config('notification_handler')
+local noop_handler = read_config('noop_handler')
+local watchdog_ttl = read_config('watchdog_ttl')
+if watchdog_ttl then
+    watchdog_ttl = 0 + watchdog_ttl
+end
 
 -- mapping GSE statuses to Sensu states
 local sensu_state_map = {
@@ -41,11 +45,13 @@ function process_message()
     local service_name
     local status = 0
     local alarms = {}
+    local handler = nil
     local msgtype = read_message('Type')
 
     if msgtype == "heka.sandbox.watchdog" then
         service_name = "watchdog_" .. (read_message('Payload') or 'unknown')
-        source = read_message('Fields[hostname]') or read_message('Hostname')
+        source = read_message('Hostname')
+        data['ttl'] = watchdog_ttl
     else
         service_name = read_message('Fields[member]')
         if not service_name then
@@ -58,6 +64,14 @@ function process_message()
         end
 
         alarms = afd.alarms_for_human(afd.extract_alarms())
+
+        if read_message('Fields[alerting_enabled]') then
+            if read_message('Fields[notification_enabled]') then
+                handler = read_message('Fields[notification_handler]') or notification_handler
+            else
+                handler = noop_handler
+            end
+        end
 
         if msgtype == "heka.sandbox.gse_metric" then
             if source_dimension_field then
@@ -73,12 +87,10 @@ function process_message()
         end
     end
 
-    if sensu_ttl > 0 then
-        data['ttl'] = sensu_ttl
-    end
     data['source'] = source
     data['name'] = service_name
     data['status'] = sensu_state_map[status]
+    data['handler'] = handler
 
     local details = string.format('%s: ', consts.status_label(status))
 

@@ -57,8 +57,8 @@ Uuid = uuid_nodash + uuid_dash
 --   offset_min (number, can be nil)
 --
 -- The datetime string can be formatted as
--- 'YYYY-MM-DD( |T)HH:MM:SS(.ssssss)?(offset indicator)?'
-TimestampTable = l.Ct(dt.rfc3339_full_date * (sp + l.P"T") * dt.rfc3339_partial_time * (dt.rfc3339_time_offset + dt.timezone_offset)^-1)
+-- 'YYYY-MM-DD( |T|_)HH:MM:SS(.ssssss)?(offset indicator)?'
+TimestampTable = l.Ct(dt.rfc3339_full_date * (sp + l.P"T" + l.P"_") * dt.rfc3339_partial_time * (dt.rfc3339_time_offset + dt.timezone_offset)^-1)
 
 -- Returns the parsed datetime converted to nanosec
 Timestamp = TimestampTable / dt.time_to_ns

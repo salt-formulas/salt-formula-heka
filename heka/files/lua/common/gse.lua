@@ -133,7 +133,7 @@ end
 
 -- compute the cluster metric and inject it into the Heka pipeline
 -- the metric's value is computed using the status of its members
-function inject_cluster_metric(cluster_name, dimensions, to_alerting)
+function inject_cluster_metric(cluster_name, dimensions, alerting_enabled)
     local payload
     local status, alarms = resolve_status(cluster_name)
 
@@ -147,11 +147,6 @@ function inject_cluster_metric(cluster_name, dimensions, to_alerting)
         payload = '{"alarms":[]}'
     end
 
-    local no_alerting
-    if to_alerting ~= nil and to_alerting == false then
-        no_alerting = true
-    end
-
     local msg = {
         Type = 'gse_metric',
         Payload = payload,
@@ -159,8 +154,8 @@ function inject_cluster_metric(cluster_name, dimensions, to_alerting)
             name = 'cluster_status',
             value = status,
             member = cluster_name,
+            alerting_enabled = alerting_enabled,
             tag_fields = {'member'},
-            no_alerting = no_alerting,
         }
     }
 

@@ -1,7 +1,7 @@
 {%- from "heka/map.jinja" import log_collector with context %}
 {%- from "heka/map.jinja" import metric_collector with context %}
 {%- from "heka/map.jinja" import remote_collector with context %}
-{%- from "heka/map.jinja" import aggregator  with context %}
+{%- from "heka/map.jinja" import aggregator with context %}
 {%- from "heka/map.jinja" import ceilometer_collector with context %}
 
 log_collector:
@@ -46,10 +46,31 @@ log_collector:
         patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
         hostname: '{{ grains.host }}'
         source: log_collector
-{%- if log_collector.elasticsearch_host is defined %}
+{%- if log_collector.sensu_host is defined %}
+    watchdog:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/watchdog.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      message_matcher: "FALSE"
+      preserve_data: false
+      ticker_interval: 60
+      config:
+        service_name: "log_collector"
+{%- endif %}
+{%- if log_collector.elasticsearch_host is defined or log_collector.sensu_host is defined %}
   encoder:
+{%- if log_collector.elasticsearch_host %}
     elasticsearch:
       engine: elasticsearch
+{%- endif %}
+{%- if log_collector.sensu_host is defined %}
+    sensu:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/encoders/status_sensu.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        sensu_ttl: 120
+{%- endif %}
 {%- endif %}
   output:
     metric_collector:
@@ -57,6 +78,15 @@ log_collector:
       host: {{ log_collector.metric_collector_host }}
       port: {{ log_collector.metric_collector_port }}
       message_matcher: "(Type == 'metric' || Type == 'heka.sandbox.metric' || Type == 'heka.sandbox.bulk_metric')"
+{%- if log_collector.sensu_host is defined %}
+    sensu_watchdog:
+      engine: udp
+      host: "{{ log_collector.sensu_host }}"
+      port: "{{ log_collector.sensu_port }}"
+      message_matcher: "Type == 'heka.sandbox.watchdog'"
+      encoder: sensu_encoder
+      use_buffering: false
+{%- endif %}
 {%- if log_collector.elasticsearch_host is defined %}
     elasticsearch:
       engine: elasticsearch
@@ -92,8 +122,20 @@ metric_collector:
       port: 5567
       decoder: metric_decoder
       splitter: HekaFramingSplitter
-{%- if metric_collector.influxdb_host is defined %}
+{%- if metric_collector.influxdb_host is defined or metic_collector.sensu_host is defined %}
   filter:
+{%- if metric_collector.sensu_host is defined %}
+    watchdog:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/watchdog.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      message_matcher: "FALSE"
+      preserve_data: false
+      ticker_interval: 60
+      config:
+        service_name: "metric_collector"
+{%- endif %}
+{%- if metric_collector.influxdb_host is defined %}
     influxdb_accumulator:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
@@ -105,8 +147,17 @@ metric_collector:
         tag_fields: "deployment_id environment_label tenant_id user_id"
         time_precision: "{{ metric_collector.influxdb_time_precision }}"
 {%- endif %}
-{%- if metric_collector.influxdb_host is defined or metric_collector.nagios_host is defined %}
+{%- endif %}
+{%- if metric_collector.influxdb_host is defined or metric_collector.nagios_host is defined or metric_collector.sensu_host is defined %}
   encoder:
+  {%- if metric_collector.sensu_host is defined %}
+    sensu:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/encoders/status_sensu.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        sensu_ttl: 120
+  {%- endif %}
   {%- if metric_collector.influxdb_host is defined %}
     influxdb:
       engine: payload
@@ -122,8 +173,17 @@ metric_collector:
         host_suffix_dimension_key: environment_label
    {%- endif %}
 {%- endif %}
-{%- if metric_collector.influxdb_host is defined or metric_collector.aggregator_host is defined or metric_collector.nagios_host is defined %}
+{%- if metric_collector.influxdb_host is defined or metric_collector.aggregator_host is defined or metric_collector.nagios_host is defined or metric_collector.sensu_host is defined %}
   output:
+  {%- if metric_collector.sensu_host is defined %}
+    sensu_watchdog:
+      engine: udp
+      host: "{{ metric_collector.sensu_host }}"
+      port: "{{ metric_collector.sensu_port }}"
+      message_matcher: "Type == 'heka.sandbox.watchdog'"
+      encoder: sensu_encoder
+      use_buffering: false
+  {%- endif %}
   {%- if metric_collector.influxdb_host is defined %}
     influxdb:
       engine: http
@@ -201,8 +261,19 @@ remote_collector:
       decoder: notification_decoder
 {%- endfor %}
 {%- endif %}
-{%- if remote_collector.influxdb_host is defined or remote_collector.amqp_host is defined %}
+{%- if remote_collector.influxdb_host is defined or remote_collector.amqp_host is defined or remote_collector.sensu_host is defined %}
   filter:
+  {%- if remote_collector.sensu_host is defined %}
+    watchdog:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/watchdog.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      message_matcher: "FALSE"
+      preserve_data: false
+      ticker_interval: 60
+      config:
+        service_name: "remote_collector"
+  {%- endif %}
   {%- if remote_collector.influxdb_host is defined %}
     influxdb_accumulator:
       engine: sandbox
@@ -233,8 +304,16 @@ remote_collector:
         source: remote_collector
   {%- endif %}
 {%- endif %}
-{%- if remote_collector.influxdb_host is defined or remote_collector.elasticsearch_host is defined %}
+{%- if remote_collector.influxdb_host is defined or remote_collector.elasticsearch_host is defined or remote_collector.sensu_host is defined %}
   encoder:
+  {%- if remote_collector.sensu_host is defined %}
+    sensu:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/encoders/status_sensu.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        sensu_ttl: 120
+  {%- endif %}
   {%- if remote_collector.influxdb_host is defined %}
     influxdb:
       engine: payload
@@ -246,8 +325,17 @@ remote_collector:
       engine: elasticsearch
   {%- endif %}
 {%- endif %}
-{%- if remote_collector.influxdb_host is defined or remote_collector.aggregator_host is defined or remote_collector.elasticsearch_host is defined %}
+{%- if remote_collector.influxdb_host is defined or remote_collector.aggregator_host is defined or remote_collector.elasticsearch_host is defined or remote_collector.sensu_host is defined %}
   output:
+  {%- if remote_collector.sensu_host is defined %}
+    sensu_watchdog:
+      engine: udp
+      host: "{{ remote_collector.sensu_host }}"
+      port: "{{ remote_collector.sensu_port }}"
+      message_matcher: "Type == 'heka.sandbox.watchdog'"
+      encoder: sensu_encoder
+      use_buffering: false
+  {%- endif %}
   {%- if remote_collector.influxdb_host is defined %}
     influxdb:
       engine: http
@@ -432,8 +520,20 @@ aggregator:
       port: 5565
       decoder: ProtobufDecoder
       splitter: HekaFramingSplitter
-{%- if aggregator.influxdb_host is defined %}
+{%- if aggregator.sensu_host is defined or aggregator.influxdb_host is defined %}
   filter:
+{%- if aggregator.sensu_host is defined %}
+    watchdog:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/watchdog.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      message_matcher: "FALSE"
+      preserve_data: false
+      ticker_interval: 60
+      config:
+        service_name: "aggregator"
+{%- endif %}
+{%- if aggregator.influxdb_host is defined %}
     influxdb_accumulator:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
@@ -450,6 +550,7 @@ aggregator:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       preserve_data: false
       message_matcher: "Type == 'heka.sandbox.gse_metric'"
+{%- endif %}
 {%- endif %}
 {%- if aggregator.influxdb_host is defined or aggregator.nagios_host is defined or aggregator.sensu_host is defined %}
   encoder:
@@ -477,6 +578,7 @@ aggregator:
       module_file: /usr/share/lma_collector/encoders/status_sensu.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
+        sensu_ttl: 120
         {%- if aggregator.sensu_source_dimension_key is defined %}
         sensu_source_dimension_key: "{{ aggregator.sensu_source_dimension_key }}"
         {%- endif %}
@@ -514,10 +616,10 @@ aggregator:
     sensu_alarm_cluster:
       engine: udp
       host: "{{ aggregator.sensu_host }}"
-      port: "{{aggregator.sensu_port }}"
-      message_matcher: "(Type == 'heka.sandbox.gse_metric' || Type == 'heka.sandbox.afd_metric') && Fields[no_alerting] == NIL"
+      port: "{{ aggregator.sensu_port|default(3030) }}"
+      message_matcher: "Type == 'heka.sandbox.watchdog' || ((Type == 'heka.sandbox.gse_metric' || Type == 'heka.sandbox.afd_metric') && Fields[no_alerting] == NIL)"
       encoder: sensu_encoder
-      use_buffering: false 
+      use_buffering: false
   {%- endif %}
 {%- endif %}
 ceilometer_collector:
@@ -550,8 +652,9 @@ ceilometer_collector:
       exchange_auto_delete: false
       queue_auto_delete: false
 {%- endif %}
-{%- if ceilometer_collector.influxdb_host is defined %}
+{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.sensu_host is defined %}
   filter:
+  {%- if ceilometer_collector.influxdb_host is defined %}
     ceilometer_influxdb_accumulator:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/influxdb_accumulator.lua
@@ -564,8 +667,20 @@ ceilometer_collector:
         payload_name: 'sample_data'
         flush_count: 500
         bulk_metric_type_matcher: 'ceilometer_samples'
+  {%- endif %}
+  {%- if ceilometer_collector.sensu_host is defined %}
+    watchdog:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/watchdog.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      message_matcher: "FALSE"
+      preserve_data: false
+      ticker_interval: 60
+      config:
+        service_name: "ceilometer_collector"
+  {%- endif %}
 {%- endif %}
-{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
+{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined or ceilometer_collector.sensu_host is defined %}
   encoder:
   {%- if ceilometer_collector.influxdb_host is defined %}
     influxdb:
@@ -583,8 +698,16 @@ ceilometer_collector:
         type_name: "source"
         encoder: "elasticsearch_resources"
   {%- endif %}
+  {%- if ceilometer_collector.sensu_host is defined %}
+    sensu:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/encoders/status_sensu.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      config:
+        sensu_ttl: 120
+  {%- endif %}
 {%- endif %}
-{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined %}
+{%- if ceilometer_collector.influxdb_host is defined or ceilometer_collector.elasticsearch_host is defined or ceilometer_collector.sensu_host is defined %}
   output:
   {%- if ceilometer_collector.influxdb_host is defined %}
     samples_influxdb:
@@ -605,5 +728,14 @@ ceilometer_collector:
       server: "http://{{ ceilometer_collector.elasticsearch_host }}:{{ ceilometer_collector.elasticsearch_port }}"
       message_matcher: "Type == 'ceilometer_resources'"
       encoder: elasticsearch_resource_encoder
+  {%- endif %}
+  {%- if ceilometer_collector.sensu_host is defined %}
+    sensu_watchdog:
+      engine: udp
+      host: "{{ ceilometer_collector.sensu_host }}"
+      port: "{{ ceilometer_collector.sensu_port }}"
+      message_matcher: "Type == 'heka.sandbox.watchdog'"
+      encoder: sensu_encoder
+      use_buffering: false
   {%- endif %}
 {%- endif %}

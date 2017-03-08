@@ -144,7 +144,7 @@ metric_collector:
       message_matcher: "Type =~ /metric$/"
       ticker_interval: 1
       config:
-        tag_fields: "deployment_id environment_label tenant_id user_id"
+        tag_fields: "{{ metric_collector.influxdb_tag_fields|join(' ') }}"
         time_precision: "{{ metric_collector.influxdb_time_precision }}"
 {%- endif %}
 {%- endif %}
@@ -283,7 +283,7 @@ remote_collector:
       message_matcher: "Type =~ /metric$/"
       ticker_interval: 1
       config:
-        tag_fields: "deployment_id environment_label tenant_id user_id"
+        tag_fields: "{{ remote_collector.influxdb_tag_fields|join(' ') }}"
         time_precision: "{{ remote_collector.influxdb_time_precision }}"
   {%- endif %}
   {%- if remote_collector.amqp_host is defined %}
@@ -542,7 +542,7 @@ aggregator:
       message_matcher: "Type == 'heka.sandbox.gse_metric' || Type == 'heka.sandbox.metric'"
       ticker_interval: 1
       config:
-        tag_fields: "deployment_id environment_label tenant_id user_id"
+        tag_fields: "{{ aggregator.influxdb_tag_fields|join(' ') }}"
         time_precision: "{{ aggregator.influxdb_time_precision }}"
     influxdb_annotation:
       engine: sandbox

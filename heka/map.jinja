@@ -39,7 +39,10 @@ RedHat:
 {% set default_nagios_host_alarm_clusters = '00-clusters' %}
 {% set default_automatic_starting = True %}
 {% set default_amqp_port = 5672 %}
+{% set default_sensu_noop_handler = 'default' %}
+{% set default_sensu_notification_handler = 'default' %}
 {% set default_sensu_port = 3030 %}
+{% set default_sensu_watchdog_ttl = 120 %}
 
 {% set log_collector = salt['grains.filter_by']({
   'default': {
@@ -48,7 +51,10 @@ RedHat:
     'automatic_starting': default_automatic_starting,
     'metric_collector_host': '127.0.0.1',
     'metric_collector_port': 5567,
+    'sensu_noop_handler': default_sensu_noop_handler,
+    'sensu_notification_handler': default_sensu_notification_handler,
     'sensu_port': default_sensu_port,
+    'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
   }
 }, merge=salt['pillar.get']('heka:log_collector')) %}
 
@@ -61,7 +67,10 @@ RedHat:
     'nagios_port': default_nagios_port,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,
+    'sensu_noop_handler': default_sensu_noop_handler,
+    'sensu_notification_handler': default_sensu_notification_handler,
     'sensu_port': default_sensu_port,
+    'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
   }
 }, merge=salt['pillar.get']('heka:metric_collector')) %}
 
@@ -76,7 +85,10 @@ RedHat:
     'aggregator_port': default_aggregator_port,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,
+    'sensu_noop_handler': default_sensu_noop_handler,
+    'sensu_notification_handler': default_sensu_notification_handler,
     'sensu_port': default_sensu_port,
+    'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
   }
 }, merge=salt['pillar.get']('heka:remote_collector')) %}
 
@@ -89,7 +101,10 @@ RedHat:
     'nagios_default_host_alarm_clusters': default_nagios_host_alarm_clusters,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,
+    'sensu_noop_handler': default_sensu_noop_handler,
+    'sensu_notification_handler': default_sensu_notification_handler,
     'sensu_port': default_sensu_port,
+    'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
   }
 }, merge=salt['pillar.get']('heka:aggregator')) %}
 
@@ -105,6 +120,9 @@ RedHat:
     'resource_decoding': False,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,
+    'sensu_noop_handler': default_sensu_noop_handler,
+    'sensu_notification_handler': default_sensu_notification_handler,
     'sensu_port': default_sensu_port,
+    'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
   }
 }, merge=salt['pillar.get']('heka:ceilometer_collector')) %}

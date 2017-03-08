@@ -1,3 +1,7 @@
+{%- if pillar.heka.get('log_collector', {}).get('enabled', False) or
+       pillar.heka.get('metric_collector', {}).get('enabled', False) or
+       pillar.heka.get('remote_collector', {}).get('enabled', False) or
+       pillar.heka.get('aggregator', {}).get('enabled', False) %}
 check:
 {%- if pillar.heka.get('log_collector', {}).get('enabled', False) %}
   local_heka_log_collector_proc:
@@ -30,4 +34,5 @@ check:
     occurences: 1
     subscribers:
     - local-heka-aggregator
+{%- endif %}
 {%- endif %}

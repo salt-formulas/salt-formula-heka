@@ -53,7 +53,6 @@ local hostname_free = {
     check_openstack_api = true,
     cinder = true,
     glance = true,
-    http_check = true,
     hypervisor_stats = true,
     keystone = true,
     neutron = true,
@@ -448,10 +447,6 @@ function process_message ()
                 end
             elseif metric_source == 'influxdb' then
                 msg['Fields']['name'] = metric_source .. sep .. sample['type_instance']
-            elseif metric_source == 'http_check' then
-                msg['Fields']['name'] = metric_source
-                msg['Fields']['service'] = sample['type_instance']
-                table.insert(msg['Fields']['tag_fields'], 'service')
             elseif metric_source == 'check_local_endpoint' then
                 msg['Fields']['name'] = 'openstack_check_local_api'
                 msg['Fields']['service'] = sample['type_instance']

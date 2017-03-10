@@ -31,6 +31,20 @@ local processes_map = {
     ps_vm = 'memory_virtual',
 }
 
+-- legacy lma_components process
+local lma_components = {
+    collectd = true,
+    remote_collectd = true,
+    metric_collector = true,
+    log_collector = true,
+    aggregator = true,
+    remote_collector = true,
+    elasticsearch = true,
+    influxd = true,
+    kibana = true,
+    ['grafana-server'] = true,
+}
+
 -- The following table keeps a list of metrics from plugin where the
 -- Fields[hostname] shouldn't be set by default.
 local hostname_free = {
@@ -169,9 +183,14 @@ function process_message ()
             elseif metric_source == 'processes' then
                 if processes_map[sample['type']] then
                     -- metrics related to a specific process
-                    msg['Fields']['service'] = sample['plugin_instance']
+                    local service = sample['plugin_instance']
+                    msg['Fields']['service'] = service
                     table.insert(msg['Fields']['tag_fields'], 'service')
-                    msg['Fields']['name'] = 'lma_components'
+                    if lma_components[service] then
+                        msg['Fields']['name'] = 'lma_components'
+                    else
+                        msg['Fields']['name'] = 'process'
+                    end
                     if processes_map[sample['type']] ~= '' then
                         msg['Fields']['name'] = msg['Fields']['name'] .. sep .. processes_map[sample['type']]
                     end

@@ -33,6 +33,7 @@ RedHat:
 {% set default_elasticsearch_port = 9200 %}
 {% set default_influxdb_port = 8086 %}
 {% set default_influxdb_time_precision = 'ms' %}
+{% set default_influxdb_tag_fields = ['environment_label', 'region', 'tenant_id', 'user_id'] %}
 {% set default_influxdb_timeout = 5000 %}
 {% set default_aggregator_port = 5565 %}
 {% set default_nagios_port = 8001 %}
@@ -63,6 +64,7 @@ RedHat:
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
+    'influxdb_tag_fields': default_influxdb_tag_fields,
     'aggregator_port': default_aggregator_port,
     'nagios_port': default_nagios_port,
     'poolsize': 100,
@@ -82,6 +84,7 @@ RedHat:
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
+    'influxdb_tag_fields': default_influxdb_tag_fields,
     'aggregator_port': default_aggregator_port,
     'poolsize': 100,
     'automatic_starting': default_automatic_starting,
@@ -97,6 +100,7 @@ RedHat:
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
     'influxdb_timeout': default_influxdb_timeout,
+    'influxdb_tag_fields': default_influxdb_tag_fields,
     'nagios_port': default_nagios_port,
     'nagios_default_host_alarm_clusters': default_nagios_host_alarm_clusters,
     'poolsize': 100,

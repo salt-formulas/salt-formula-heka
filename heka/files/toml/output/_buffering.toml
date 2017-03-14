@@ -1,0 +1,9 @@
+{%- if output.get('use_buffering', True) %}
+use_buffering = true
+[{{ output_name }}_output.buffering]
+max_buffer_size = {{ output.buffering_max_buffer_size|default(268435456) }}
+max_file_size = {{ output.buffering_max_file_size|default(67108864) }}
+full_action = "{{ output.buffering_full_action|default('drop') }}"
+{%- else %}
+use_buffering = false
+{%- endif %}

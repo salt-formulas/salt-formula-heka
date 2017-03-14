@@ -4,10 +4,4 @@ address = "{{ output.host }}:{{ output.port }}"
 encoder = "{{ output.encoder }}"
 message_matcher = "{{ output.message_matcher }}"
 
-{%-  if output.get('use_buffering', True) %}
-use_buffering = true
-[{{ output_name }}_output.buffering]
-max_buffer_size = {{  output.buffering_max_buffer_size|default(268435456) }}
-max_file_size = {{ output.buffering_max_file_size|default(67108864) }}
-full_action = "{{ output.output.buffering_full_action|default("drop") }}"
-{%- endif %}
+{%- include 'heka/files/toml/output/_buffering.toml' %}

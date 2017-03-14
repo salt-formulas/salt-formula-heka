@@ -17,6 +17,8 @@ require "cjson"
 local patt = require 'patterns'
 local utils = require 'lma_utils'
 
+local hostname = read_config('hostname')
+
 -- Mapping table from event_type prefixes to notification loggers
 local logger_map = {
     --cinder
@@ -150,7 +152,7 @@ function process_notification(notif, msg)
 end
 
 function process_message()
-    local msg = {Fields={}}
+    local msg = {Hostname=hostname, Fields={}}
     local data = read_message("Payload")
     local ok, notif = pcall(cjson.decode, data)
     if not ok then

@@ -1,9 +1,7 @@
 [{{ encoder_name }}_encoder]
 type = "SandboxEncoder"
-filename = "{{ encoder.module_file }}"
-{%- if encoder.module_dir is defined %}
-module_directory = "{{ encoder.module_dir }}"
-{%- endif %}
+filename = "{{ encoder.module_file|default('/usr/share/lma_collector/encoders/' + encoder_name + '.lua' ) }}"
+module_directory = "{{ encoder.module_dir|default('/usr/share/lma_collector/common;/usr/share/heka/lua_modules') }}"
 
 {%- if encoder.config is mapping %}
 [{{ encoder_name }}_encoder.config]

@@ -1,0 +1,20 @@
+parameters:
+  _param:
+    log_collector_syslog_port: 514
+    # protocol should be either tcp or udp
+    log_collector_syslog_protocol: tcp
+    # set this parameter to false if using udp
+    log_collector_syslog_buffering: true
+  heka:
+    log_collector:
+      encoder:
+        syslog:
+          engine: sandbox
+      output:
+        syslog:
+           engine: ${_param:log_collector_syslog_protocol}
+           host: ${_param:log_collector_syslog_host}
+           port: ${_param:log_collector_syslog_port}
+           message_matcher: "Type == 'log'"
+           encoder: syslog_encoder
+           use_buffering: ${_param:log_collector_syslog_buffering}

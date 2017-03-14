@@ -1,11 +1,7 @@
 [{{ output_name }}_output]
 type="TcpOutput"
 address = "{{ output.host }}:{{ output.port }}"
-encoder = "ProtobufEncoder"
+encoder = "{{ output.encoder|default('ProtobufEncoder') }}"
 message_matcher = "{{ output.message_matcher }}"
-use_buffering = true
 
-[{{ output_name }}_output.buffering]
-max_buffer_size = 268435456
-max_file_size = 67108864
-full_action = "drop"
+{%- include 'heka/files/toml/output/_buffering.toml' %}

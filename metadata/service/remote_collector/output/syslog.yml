@@ -1,0 +1,20 @@
+parameters:
+  _param:
+    remote_collector_syslog_port: 514
+    # protocol should be either tcp or udp
+    remote_collector_syslog_protocol: tcp
+    # set this parameter to false if using udp
+    remote_collector_syslog_buffering: true
+  heka:
+    remote_collector:
+      encoder:
+        syslog:
+          engine: sandbox
+      output:
+        syslog:
+           engine: ${_param:remote_collector_syslog_protocol}
+           host: ${_param:remote_collector_syslog_host}
+           port: ${_param:remote_collector_syslog_port}
+           message_matcher: "Type == 'notification' || Type == 'audit'"
+           encoder: syslog_encoder
+           use_buffering: ${_param:remote_collector_syslog_buffering}

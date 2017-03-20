@@ -68,6 +68,7 @@ function process_message ()
         end
 
         local metric_source = sample['plugin']
+        local meta = sample['meta'] or {}
 
         for i, value in ipairs(sample['values']) do
             local skip_it = false
@@ -95,10 +96,10 @@ function process_message ()
             -- Normalize metric name, unfortunately collectd plugins aren't
             -- always consistent on metric namespaces so we need a few if/else
             -- statements to cover all cases.
-            if sample['meta'] and sample['meta']['service_check'] then
-                msg['Fields']['name'] = sample['meta']['service_check'] .. sep .. 'check'
-                msg['Fields']['details'] = sample['meta']['failure']
-                if sample['meta']['local_check'] then
+            if meta['service_check'] then
+                msg['Fields']['name'] = meta['service_check'] .. sep .. 'check'
+                msg['Fields']['details'] = meta['failure']
+                if meta['local_check'] then
                     -- if the check is local to the node, add the hostname
                     msg['Fields']['hostname'] = sample['host']
                     table.insert(msg['Fields']['tag_fields'], 'hostname')
@@ -246,9 +247,7 @@ function process_message ()
                 msg['Fields']['name'] = 'openstack_check_api'
                 msg['Fields']['service'] = sample['plugin_instance']
                 table.insert(msg['Fields']['tag_fields'], 'service')
-                if sample['meta'] then
-                    msg['Fields']['os_region'] = sample['meta']['region']
-                end
+                msg['Fields']['os_region'] = meta['region']
             elseif metric_source == 'hypervisor_stats' then
                 -- This code is kept for backward compatibility with the old
                 -- collectd plugin. The new collectd plugin sends payload which
@@ -265,24 +264,24 @@ function process_message ()
                 else
                     msg['Fields']['name'] = msg['Fields']['name'] .. sample['type_instance']
                 end
-                if sample['meta'] and sample['meta']['host'] then
-                    msg['Fields']['hostname'] = sample['meta']['host']
+                if meta['host'] then
+                    msg['Fields']['hostname'] = meta['host']
                     table.insert(msg['Fields']['tag_fields'], 'hostname')
                 end
-                if sample['meta'] and sample['meta']['aggregate'] then
-                    msg['Fields']['aggregate'] = sample['meta']['aggregate']
+                if meta['aggregate'] then
+                    msg['Fields']['aggregate'] = meta['aggregate']
                     table.insert(msg['Fields']['tag_fields'], 'aggregate')
                 end
-                if sample['meta'] and sample['meta']['aggregate_id'] then
-                    msg['Fields']['aggregate_id'] = sample['meta']['aggregate_id']
+                if meta['aggregate_id'] then
+                    msg['Fields']['aggregate_id'] = meta['aggregate_id']
                     table.insert(msg['Fields']['tag_fields'], 'aggregate_id')
                 end
             elseif metric_source == 'rabbitmq_info' then
                 msg['Fields']['name'] = 'rabbitmq' .. sep .. sample['type_instance']
                 msg['Fields']['hostname'] = sample['host']
                 table.insert(msg['Fields']['tag_fields'], 'hostname')
-                if sample['meta'] and sample['meta']['queue'] then
-                    msg['Fields']['queue'] = sample['meta']['queue']
+                if meta['queue'] then
+                    msg['Fields']['queue'] = meta['queue']
                     table.insert(msg['Fields']['tag_fields'], 'queue')
                 end
             elseif metric_source == 'nova' then
@@ -293,12 +292,12 @@ function process_message ()
                    sample['plugin_instance'] == 'nova_services_percent' or
                    sample['plugin_instance'] == 'nova_service'  then
                     msg['Fields']['name'] = 'openstack_' .. sample['plugin_instance']
-                    msg['Fields']['service'] = sample['meta']['service']
-                    msg['Fields']['state'] = sample['meta']['state']
+                    msg['Fields']['service'] = meta['service']
+                    msg['Fields']['state'] = meta['state']
                     table.insert(msg['Fields']['tag_fields'], 'service')
                     table.insert(msg['Fields']['tag_fields'], 'state')
                     if sample['plugin_instance'] == 'nova_service'  then
-                        msg['Fields']['hostname'] = sample['meta']['host']
+                        msg['Fields']['hostname'] = meta['host']
                         table.insert(msg['Fields']['tag_fields'], 'hostname')
                     end
                 else
@@ -314,12 +313,12 @@ function process_message ()
                    sample['plugin_instance'] == 'cinder_services_percent' or
                    sample['plugin_instance'] == 'cinder_service' then
                     msg['Fields']['name'] = 'openstack_' .. sample['plugin_instance']
-                    msg['Fields']['service'] = sample['meta']['service']
-                    msg['Fields']['state'] = sample['meta']['state']
+                    msg['Fields']['service'] = meta['service']
+                    msg['Fields']['state'] = meta['state']
                     table.insert(msg['Fields']['tag_fields'], 'service')
                     table.insert(msg['Fields']['tag_fields'], 'state')
                     if sample['plugin_instance'] == 'cinder_service' then
-                        msg['Fields']['hostname'] = sample['meta']['host']
+                        msg['Fields']['hostname'] = meta['host']
                         table.insert(msg['Fields']['tag_fields'], 'hostname')
                     end
                 else
@@ -332,8 +331,8 @@ function process_message ()
                 -- collectd plugin. The new collectd plugin sends payload which
                 -- is compatible with the default decoding.
                 msg['Fields']['name'] = 'openstack'  .. sep .. 'glance' .. sep .. sample['type_instance']
-                msg['Fields']['state'] = sample['meta']['status']
-                msg['Fields']['visibility'] = sample['meta']['visibility']
+                msg['Fields']['state'] = meta['status']
+                msg['Fields']['visibility'] = meta['visibility']
                 table.insert(msg['Fields']['tag_fields'], 'state')
                 table.insert(msg['Fields']['tag_fields'], 'visibility')
             elseif metric_source == 'keystone' then
@@ -341,8 +340,8 @@ function process_message ()
                 -- collectd plugin. The new collectd plugin sends payload which
                 -- is compatible with the default decoding.
                 msg['Fields']['name'] = 'openstack'  .. sep .. 'keystone' .. sep .. sample['type_instance']
-                if sample['meta']['state'] then
-                    msg['Fields']['state'] = sample['meta']['state']
+                if meta['state'] then
+                    msg['Fields']['state'] = meta['state']
                     table.insert(msg['Fields']['tag_fields'], 'state')
                 end
             elseif metric_source == 'neutron' then
@@ -357,12 +356,12 @@ function process_message ()
                        sample['type_instance'] == 'neutron_agents_percent' or
                        sample['type_instance'] == 'neutron_agent' then
                     msg['Fields']['name'] = 'openstack_' .. sample['type_instance']
-                    msg['Fields']['service'] = sample['meta']['service']
-                    msg['Fields']['state'] = sample['meta']['state']
+                    msg['Fields']['service'] = meta['service']
+                    msg['Fields']['state'] = meta['state']
                     table.insert(msg['Fields']['tag_fields'], 'service')
                     table.insert(msg['Fields']['tag_fields'], 'state')
                     if sample['type_instance'] == 'neutron_agent'  then
-                        msg['Fields']['hostname'] = sample['meta']['host']
+                        msg['Fields']['hostname'] = meta['host']
                         table.insert(msg['Fields']['tag_fields'], 'hostname')
                     end
                 elseif string.match(sample['type_instance'], '^ports') then
@@ -384,22 +383,20 @@ function process_message ()
                 table.insert(msg['Fields']['tag_fields'], 'hostname')
             elseif metric_source == 'haproxy' then
                 msg['Fields']['name'] = 'haproxy' .. sep .. sample['type_instance']
-                if sample['meta'] then
-                    if sample['meta']['backend'] then
-                        msg['Fields']['backend'] = sample['meta']['backend']
-                        table.insert(msg['Fields']['tag_fields'], 'backend')
-                        if sample['meta']['state'] then
-                            msg['Fields']['state'] = sample['meta']['state']
-                            table.insert(msg['Fields']['tag_fields'], 'state')
-                        end
-                        if sample['meta']['server'] then
-                            msg['Fields']['server'] = sample['meta']['server']
-                            table.insert(msg['Fields']['tag_fields'], 'server')
-                        end
-                    elseif sample['meta']['frontend'] then
-                        msg['Fields']['frontend'] = sample['meta']['frontend']
-                        table.insert(msg['Fields']['tag_fields'], 'frontend')
+                if meta['backend'] then
+                    msg['Fields']['backend'] = meta['backend']
+                    table.insert(msg['Fields']['tag_fields'], 'backend')
+                    if meta['state'] then
+                        msg['Fields']['state'] = meta['state']
+                        table.insert(msg['Fields']['tag_fields'], 'state')
                     end
+                    if meta['server'] then
+                        msg['Fields']['server'] = meta['server']
+                        table.insert(msg['Fields']['tag_fields'], 'server')
+                    end
+                elseif meta['frontend'] then
+                    msg['Fields']['frontend'] = meta['frontend']
+                    table.insert(msg['Fields']['tag_fields'], 'frontend')
                 end
                 msg['Fields']['hostname'] = sample['host']
                 table.insert(msg['Fields']['tag_fields'], 'hostname')
@@ -441,8 +438,8 @@ function process_message ()
                     end
                 end
             elseif metric_source == 'pacemaker' then
-                if sample['meta'] and sample['meta']['host'] then
-                    msg['Fields']['hostname'] = sample['meta']['host']
+                if meta['host'] then
+                    msg['Fields']['hostname'] = meta['host']
                     table.insert(msg['Fields']['tag_fields'], 'hostname')
                 end
 
@@ -450,8 +447,8 @@ function process_message ()
 
                 -- add dimension fields
                 for _, v in ipairs({'status', 'resource'}) do
-                    if sample['meta'] and sample['meta'][v] then
-                        msg['Fields'][v] = sample['meta'][v]
+                    if meta[v] then
+                        msg['Fields'][v] = meta[v]
                         table.insert(msg['Fields']['tag_fields'], v)
                     end
                 end
@@ -528,23 +525,22 @@ function process_message ()
                 end
                 msg['Fields']['name'] = replace_dot_by_sep(msg['Fields']['name'])
 
-                if sample['meta'] and sample['meta']['unit'] then
+                if meta['unit'] then
                     msg.Fields['value'] = {
                         value = msg.Fields['value'],
-                        representation = sample['meta']['unit']
+                        representation = meta['unit']
                     }
                 end
 
                 -- if not set, check if the 'hostname' field should be added
                 -- (eg for cluster metrics, discard_hostname == true)
-                if msg['Fields']['hostname'] == nil and
-                   sample['meta'] and not sample['meta']['discard_hostname'] then
+                if msg['Fields']['hostname'] == nil and not meta['discard_hostname'] then
                     msg['Fields']['hostname'] = msg['Hostname']
                     table.insert(msg['Fields']['tag_fields'], 'hostname')
                 end
 
                 -- add meta fields as tag_fields
-                for k, v in pairs(sample['meta'] or {}) do
+                for k, v in pairs(meta) do
                     if tostring(k) ~= '0' and k ~= 'unit' and k ~= 'discard_hostname' then
                         msg['Fields'][k] = v
                         table.insert(msg['Fields']['tag_fields'], k)

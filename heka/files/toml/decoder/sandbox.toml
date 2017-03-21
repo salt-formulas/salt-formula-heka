@@ -2,10 +2,8 @@
 
 [{{ decoder_name }}_decoder]
 type = "SandboxDecoder"
-filename = "{{ decoder.module_file }}"
-{%- if decoder.module_dir is defined %}
-module_directory = "{{ decoder.module_dir }}"
-{%- endif %}
+filename = "{{ decoder.module_file|default('/usr/share/lma_collector/decoders/' + decoder_name + '.lua' ) }}"
+module_directory = "{{ decoder.module_dir|default('/usr/share/lma_collector/common;/usr/share/heka/lua_modules') }}"
 {%- if decoder.memory_limit is defined %}
 memory_limit = "{{ decoder.memory_limit }}"
 {%- endif %}

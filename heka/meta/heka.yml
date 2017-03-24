@@ -109,8 +109,6 @@ metric_collector:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/metric.lua
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
-      config:
-        deserialize_for_sources: 'log_collector'
   input:
     heka_collectd:
       engine: http

@@ -54,7 +54,7 @@ TestAfd = {}
         assertEquals(last_injected_msg.Type, 'afd_metric')
         assertEquals(last_injected_msg.Fields.value, consts.OKAY)
         assertEquals(last_injected_msg.Fields.hostname, 'node-1')
-        assertEquals(last_injected_msg.Fields.notification_handler, 'mail')
+        assertEquals(last_injected_msg.Fields.notification_handler, nil)
         assertEquals(last_injected_msg.Payload, '{"alarms":[]}')
     end
 

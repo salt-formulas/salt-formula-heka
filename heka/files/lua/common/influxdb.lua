@@ -26,8 +26,14 @@ InfluxEncoder.__index = InfluxEncoder
 
 setfenv(1, InfluxEncoder) -- Remove external access to contain everything in the module
 
-local function escape_string(str)
-    return tostring(str):gsub("([ ,])", "\\%1")
+local function escape_string(str, preserve_quotes)
+    v = tostring(str)
+    -- single quotes are always forbidden
+    v = v:gsub("'", "")
+    if not preserve_quotes then
+        v = v:gsub('"', "")
+    end
+    return v:gsub("([ ,=])", "\\%1")
 end
 
 local function encode_scalar_value(value)
@@ -40,7 +46,7 @@ local function encode_scalar_value(value)
         -- string values need to be double quoted
         return '"' .. value:gsub('"', '\\"') .. '"'
     elseif type(value) == "boolean" then
-        return '"' .. tostring(value) .. '"'
+        return tostring(value)
     end
 end
 
@@ -50,7 +56,7 @@ local function encode_value(value)
         for k,v in pairs(value) do
             table.insert(
                 values,
-                string.format("%s=%s", escape_string(k), encode_scalar_value(v))
+                string.format("%s=%s", escape_string(k, true), encode_scalar_value(v))
             )
         end
         return table.concat(values, ',')

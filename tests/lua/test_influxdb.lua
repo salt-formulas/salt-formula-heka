@@ -21,11 +21,18 @@ local influxdb = require('influxdb')
 
 TestInfluxDB = {}
 
+    function TestInfluxDB:test_escaping_characters()
+        local encoder = influxdb.new("s")
+        assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 2, {tag1='"tag1"'}), 'foo,tag1=tag1 value=2.000000 1000')
+        assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 2, {tag1=",tag 1="}), 'foo,tag1=\\,tag\\ 1\\= value=2.000000 1000')
+        assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 'b"ar'), 'foo value="b\\"ar" 1000')
+        assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', true), 'foo value=true 1000')
+    end
+
     function TestInfluxDB:test_ms_precision_encoder()
         local encoder = influxdb.new("ms")
         assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 1), 'foo value=1.000000 1000000')
         assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 'bar'), 'foo value="bar" 1000000')
-        assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 'b"ar'), 'foo value="b\\"ar" 1000000')
         assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 1, {tag2="t2",tag1="t1"}), 'foo,tag1=t1,tag2=t2 value=1.000000 1000000')
         assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', {a=1, b=2}), 'foo a=1.000000,b=2.000000 1000000')
     end

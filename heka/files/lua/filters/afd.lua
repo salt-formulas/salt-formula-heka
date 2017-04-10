@@ -21,7 +21,7 @@ local afd = require 'afd'
 
 local afd_file = read_config('afd_file') or error('afd_file must be specified')
 local afd_name = read_config('afd_name') or error('afd_name must be specified')
-local hostname = read_config('hostname') or error('hostname must be specified')
+local hostname = read_config('hostname')
 local dimensions_json = read_config('dimensions') or ''
 local activate_alerting = read_config('activate_alerting') or true
 local enable_notification = read_config('enable_notification') or false

@@ -156,9 +156,12 @@ function inject_afd_metric(value, hostname, afd_name, dimensions,
             alerting_enabled = alerting_enabled,
             notification_enabled = notification_enabled,
             notification_handler = notification_handler,
-            tag_fields = {'hostname', 'member'}
+            tag_fields = {'member'}
         }
     }
+    if hostname then
+        table.insert(msg.Fields.tag_fields, hostname)
+    end
 
     for name, value in pairs(dimensions) do
         table.insert(msg.Fields.tag_fields, name)

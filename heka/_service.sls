@@ -269,6 +269,9 @@ heka_{{ service_name }}_grain:
       alarm_name: {{ alarm_name }}
       alarm: {{ alarm|yaml }}
       trigger: {{ service_metadata.get('trigger', {})|yaml }}
+      {%- if service_name != 'remote_collector' %}
+      hostname: {{ grains.host }}
+      {%- endif %}
 
 /usr/share/lma_collector/common/lma_{{ alarm_name|replace('-', '_') }}.lua:
   file.managed:

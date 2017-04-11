@@ -137,6 +137,8 @@ function process_message ()
             elseif metric_source == 'disk' then
                 if sample['type'] == 'disk_io_time' then
                     msg['Fields']['name'] = 'disk' .. sep .. sample['dsnames'][i]
+                elseif sample['type'] == 'pending_operations' then
+                    msg['Fields']['name'] = 'disk' .. sep .. sample['type']
                 else
                     msg['Fields']['name'] = metric_name
                 end

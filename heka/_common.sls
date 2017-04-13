@@ -7,15 +7,24 @@ heka_packages:
 /usr/share/lma_collector:
   file.recurse:
   - source: salt://heka/files/lua
+  - user: root
+  - group: heka
+  - file_mode: 640
+  - dir_mode: 750
+  - require:
+    - user: heka_user
 
 /usr/share/lma_collector/common/extra_fields.lua:
   file.managed:
   - source: salt://heka/files/extra_fields.lua
   - user: root
-  - mode: 644
+  - group: heka
+  - mode: 640
   - defaults:
       extra_fields: {{ server.extra_fields }}
   - template: jinja
+  - require:
+    - user: heka_user
 
 heka_user:
   user.present:

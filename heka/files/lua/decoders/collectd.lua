@@ -459,7 +459,7 @@ function process_message ()
                 msg['Fields']['name'] = 'logged_users'
                 msg['Fields']['hostname'] = sample['host']
                 table.insert(msg['Fields']['tag_fields'], 'hostname')
-            elseif metric_source ==  'libvirt' then
+            elseif metric_source ==  'libvirt' or metric_source == 'virt' then
                 -- collectd sends the instance's ID in the 'host' field
                 msg['Fields']['instance_id'] = sample['host']
                 table.insert(msg['Fields']['tag_fields'], 'instance_id')

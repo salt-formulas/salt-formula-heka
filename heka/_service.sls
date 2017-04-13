@@ -21,6 +21,8 @@ heka_{{ service_name }}_conf_dir_clean:
   file.directory:
   - name: /etc/{{ service_name }}
   - clean: true
+  - watch_in:
+    - service: heka_{{ service_name }}_service
 
 {%- if grains.get('init', None) == 'systemd' %}
 {%- set systemd_enabled = True %}

@@ -122,7 +122,7 @@ metric_collector:
       port: 5567
       decoder: metric_decoder
       splitter: HekaFramingSplitter
-{%- if metric_collector.influxdb_host is defined or metic_collector.sensu_host is defined %}
+{%- if metric_collector.influxdb_host is defined or metric_collector.sensu_host is defined %}
   filter:
 {%- if metric_collector.sensu_host is defined %}
     watchdog:

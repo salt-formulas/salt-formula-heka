@@ -29,7 +29,7 @@ end
 function process_message()
     local timestamp = os.date("%FT%TZ", read_message('Timestamp') / 1e9)
     local hostname = read_message('Hostname')
-    local msg = read_message('Payload')
+    local msg = string.gsub(read_message('Payload'), "\n", "#")
     local pid = read_message('Pid')
     if pid == nil or pid == 0 then
         pid = '-'

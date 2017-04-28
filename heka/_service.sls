@@ -258,6 +258,7 @@ heka_{{ service_name }}_grain:
 
 {%- for alarm_name, alarm in service_metadata.get('alarm', {}).iteritems() %}
 
+{%- if alarm.get('enabled', True) %}
 /etc/{{ service_name }}/filter_afd_{{ alarm_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/filter/afd_alarm.toml
@@ -288,6 +289,7 @@ heka_{{ service_name }}_grain:
       alarm_name: {{ alarm_name }}
       alarm: {{ alarm|yaml }}
       trigger: {{ service_metadata.get('trigger', {})|yaml }}
+{%- endif %}
 
 {%- endfor %}
 
@@ -307,6 +309,7 @@ heka_{{ service_name }}_grain:
 
 {%- for alarm_cluster_name, alarm_cluster in service_metadata.get('alarm_cluster', {}).iteritems() %}
 
+{%- if alarm_cluster.get('enabled', True) %}
 /etc/{{ service_name }}/filter_gse_{{ alarm_cluster_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/filter/gse_alarm_cluster.toml
@@ -332,6 +335,7 @@ heka_{{ service_name }}_grain:
   - defaults:
       alarm_cluster_name: {{ alarm_cluster_name }}
       alarm_cluster: {{ alarm_cluster|yaml }}
+{%- endif %}
 
 {%- endfor %}
 

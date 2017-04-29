@@ -1,3 +1,4 @@
+{%- from "heka/map.jinja" import service_grains with context %}
 {%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
 
 {%- if server.enabled is defined and server.enabled %}
@@ -91,72 +92,6 @@ heka_{{ service_name }}_service:
 {%- endif %}
   - name: {{ service_name }}
 
-{# Setup basic structure for all roles so updates can apply #}
-
-{%- set service_grains = {
-  'log_collector': {
-    'decoder': {},
-    'input': {},
-    'trigger': {},
-    'filter': {},
-    'splitter': {},
-    'encoder': {},
-    'output': {},
-  },
-  'metric_collector': {
-    'decoder': {},
-    'input': {},
-    'trigger': {},
-    'alarm': {},
-    'filter': {},
-    'splitter': {},
-    'encoder': {},
-    'output': {},
-  },
-  'remote_collector': {
-    'decoder': {},
-    'input': {},
-    'trigger': {},
-    'alarm': {},
-    'filter': {},
-    'splitter': {},
-    'encoder': {},
-    'output': {},
-  },
-  'aggregator': {
-    'decoder': {},
-    'input': {},
-    'trigger': {},
-    'alarm_cluster': {},
-    'filter': {},
-    'splitter': {},
-    'encoder': {},
-    'output': {},
-  },
-  'ceilometer_collector': {
-    'decoder': {},
-    'input': {},
-    'filter': {},
-    'splitter': {},
-    'encoder': {},
-    'output': {},
-  }
-} %}
-
-
-
-{# Loading the other services' support metadata for local roles #}
-
-{%- for service_name, service in pillar.iteritems() %}
-{%- if service.get('_support', {}).get('heka', {}).get('enabled', False) %}
-
-{%- set grains_fragment_file = service_name+'/meta/heka.yml' %}
-{%- set grains_yaml = load_grains_file(grains_fragment_file)|load_yaml %}
-{%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=grains_yaml) %}
-
-{%- endif %}
-{%- endfor %}
-
 {%- if service_name in ('remote_collector', 'aggregator') %}
 
 {# Load the other services' support metadata from salt-mine #}
@@ -190,19 +125,6 @@ heka_{{ service_name }}_service:
 
 {%- endif %}
 {%- endfor %}
-
-heka_{{ service_name }}_grain:
-  file.managed:
-  - name: /etc/salt/grains.d/heka
-  - source: salt://heka/files/heka.grain
-  - template: jinja
-  - user: root
-  - mode: 600
-  - defaults:
-    service_grains:
-      heka: {{ salt['heka_alarming.grains_for_mine'](service_grains)|yaml }}
-  - require:
-    - file: heka_grains_dir
 
 /etc/{{ service_name }}/global.toml:
   file.managed:

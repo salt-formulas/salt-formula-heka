@@ -46,10 +46,3 @@ hekad_process:
 
 /etc/init.d/heka:
   file.absent
-
-heka_grains_dir:
-  file.directory:
-  - name: /etc/salt/grains.d
-  - mode: 700
-  - makedirs: true
-  - user: root

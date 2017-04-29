@@ -130,3 +130,63 @@ RedHat:
     'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
   }
 }, merge=salt['pillar.get']('heka:ceilometer_collector')) %}
+
+{# Setup basic structure for all roles so updates can apply #}
+{%- set service_grains = {
+  'log_collector': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'metric_collector': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'alarm': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'remote_collector': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'alarm': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'aggregator': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'alarm_cluster': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'ceilometer_collector': {
+    'decoder': {},
+    'input': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  }
+} %}
+
+{# Loading the other services' support metadata for local roles #}
+{%- for service_name, service in pillar.iteritems() %}
+  {%- if service.get('_support', {}).get('heka', {}).get('enabled', False) %}
+    {%- set grains_fragment_file = service_name+'/meta/heka.yml' %}
+    {%- set grains_yaml = load_grains_file(grains_fragment_file)|load_yaml %}
+    {%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=grains_yaml) %}
+  {%- endif %}
+{%- endfor %}

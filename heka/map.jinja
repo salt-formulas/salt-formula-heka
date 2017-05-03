@@ -1,3 +1,4 @@
+{%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
 {%- load_yaml as server_defaults %}
 Debian:
   pkgs:

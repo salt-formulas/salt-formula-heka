@@ -1,6 +1,3 @@
-{%- from "heka/map.jinja" import service_grains with context %}
-{%- macro load_grains_file(grains_fragment_file) %}{% include grains_fragment_file ignore missing %}{% endmacro %}
-
 {%- if server.enabled is defined and server.enabled %}
 
 heka_{{ service_name }}_conf_dir:
@@ -110,6 +107,67 @@ heka_{{ service_name }}_service:
 
 
 {# Overriding aggregated metadata from user-space pillar data #}
+
+{# Setup basic structure for all roles so updates can apply #}
+{%- set service_grains = {
+  'log_collector': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'metric_collector': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'alarm': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'remote_collector': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'alarm': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'aggregator': {
+    'decoder': {},
+    'input': {},
+    'trigger': {},
+    'alarm_cluster': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  },
+  'ceilometer_collector': {
+    'decoder': {},
+    'input': {},
+    'filter': {},
+    'splitter': {},
+    'encoder': {},
+    'output': {},
+  }
+} %}
+
+{# Loading the other services' support metadata for local roles #}
+{%- macro load_support_file(support_fragment_file) %}{% include support_fragment_file ignore missing %}{% endmacro %}
+{%- for svc_name, svc in pillar.iteritems() %}
+  {%- if svc.get('_support', {}).get('heka', {}).get('enabled', False) %}
+    {%- set heka_fragment_file = svc_name+'/meta/heka.yml' %}
+    {%- set heka_yaml = load_support_file(heka_fragment_file)|load_yaml %}
+    {%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=heka_yaml) %}
+  {%- endif %}
+{%- endfor %}
 
 {%- for service_grain_name, service_grain in service_grains.iteritems() %}
 {% if salt['pillar.get']('heka:'+service_grain_name) %}

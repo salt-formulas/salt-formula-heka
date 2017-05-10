@@ -4,7 +4,7 @@ classes:
 - service.heka.support
 parameters:
   _param:
-    log_collector_poolsize: 100
+    log_collector_poolsize: 200
   heka:
     log_collector:
       enabled: true

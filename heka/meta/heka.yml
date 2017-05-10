@@ -104,7 +104,11 @@ metric_collector:
       module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
       config:
         hostname: "{{ grains.fqdn.split('.')[0] }}"
+        {%- if 'ps.swap_memory' in salt.keys() %}
         swap_size: {{ salt['ps.swap_memory']()['total'] }}
+        {%- else %}
+        swap_size: 0
+        {%- endif %}
     metric:
       engine: sandbox
       module_file: /usr/share/lma_collector/decoders/metric.lua

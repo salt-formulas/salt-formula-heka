@@ -101,7 +101,7 @@ function process_message ()
         end
     end
 
-    if patt.traceback:match(m.Message) then
+    if patt.anywhere(patt.traceback):match(m.Message) then
         -- Python traceback detected, begin accumulating the lines making
         -- up the traceback.
         traceback_key = key

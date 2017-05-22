@@ -111,9 +111,10 @@ function process_bulk_metric()
                 point.tags[k] = v
             end
         end
+
         accumulator:append(
             encoder:encode_datapoint(
-                msg_timestamp,
+                point["timestamp"] or msg_timestamp,
                 point.name,
                 point.value or point.values,
                 point.tags))

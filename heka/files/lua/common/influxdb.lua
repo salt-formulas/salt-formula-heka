@@ -67,7 +67,7 @@ end
 
 -- Create a new InfluxDB encoder
 --
--- time_precision: "s", "m", "ms", "us" or "ns" (default: "ns")
+-- time_precision: "s", "m", "ms", "u" or "ns" (default: "ns")
 function InfluxEncoder.new(time_precision)
     local e = {}
     setmetatable(e, InfluxEncoder)

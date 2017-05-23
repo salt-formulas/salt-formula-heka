@@ -265,7 +265,7 @@ end
 
 -- Convert a nanosecond timestamp to a lower precision timestamp.
 -- Arguments:
---   timestamp_precision: one of 'us', 'ms', 's', 'm' or 'h'.
+--   timestamp_precision: one of 'u', 'ms', 's', 'm' or 'h'.
 --   timestamp: a timestamp in nanosecond, if not provided the message Timestamp is used.
 function message_timestamp(timestamp_precision, timestamp)
     -- Default is to divide ns to ms
@@ -274,7 +274,7 @@ function message_timestamp(timestamp_precision, timestamp)
     if timestamp_precision == "s" then
         timestamp_divisor = 1e9
     -- Divide ns to us
-    elseif timestamp_precision == "us" then
+    elseif timestamp_precision == "u" then
         timestamp_divisor = 1e3
     -- Divide ns to m
     elseif timestamp_precision == "m" then

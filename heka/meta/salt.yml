@@ -1,5 +1,4 @@
 grain:
-  heka:
     {# Setup basic structure for all roles so updates can apply #}
     {%- set service_grains = {
       'log_collector': {
@@ -60,7 +59,9 @@ grain:
         {%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=heka_yaml) %}
       {%- endif %}
     {%- endfor %}
-    {{ service_grains|yaml(False)|indent(4) }}
+  heka:
+    heka:
+      {{ salt['heka_alarming.grains_for_mine'](service_grains)|yaml(False)|indent(6) }}
 
 {#-
   vim: syntax=jinja

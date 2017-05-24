@@ -168,6 +168,23 @@ heka_{{ service_name }}_service:
   {%- endif %}
 {%- endfor %}
 
+{%- if service_name in ('remote_collector', 'aggregator') %}
+
+{# Load the other services' support metadata from salt-mine #}
+
+{%- for node_name, node_grains in salt['mine.get']('*', 'grains.items').iteritems() %}
+{%- if node_grains.heka is defined %}
+{% for service, data in node_grains.heka.items() %}
+  {%- if service in ('remote_collector', 'aggregator') %}
+    {%- do salt['grains.filter_by']({'default': service_grains[service]}, merge=data) %}
+  {%- endif %}
+{% endfor %}
+{% endif %}
+{%- endfor %}
+
+{%- endif %}
+
+{# Overriding aggregated metadata from user-space pillar data #}
 {%- for service_grain_name, service_grain in service_grains.iteritems() %}
 {% if salt['pillar.get']('heka:'+service_grain_name) %}
 

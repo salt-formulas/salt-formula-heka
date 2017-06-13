@@ -3,7 +3,7 @@ type = "HttpOutput"
 message_matcher = "{{ output.message_matcher }}"
 encoder = "{{ output.encoder }}"
 address = "{{ output.address }}"
-{%- if output.username and output.password %}
+{%- if output.username is defined and output.password is defined %}
 username = "{{ output.username }}"
 password = "{{ output.password }}"
 {%- endif %}

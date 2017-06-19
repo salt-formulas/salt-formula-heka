@@ -2,11 +2,12 @@
 
 heka_{{ service_name }}_conf_dir:
   file.directory:
-  - name: /etc/{{ service_name }}
+  - name: {{ server.prefix_dir }}/etc/{{ service_name }}
   - user: heka
   - mode: 750
   - makedirs: true
 
+{%- if not server.container_mode %}
 heka_{{ service_name }}_cache_dir:
   file.directory:
   - name: /var/cache/{{ service_name }}
@@ -14,13 +15,16 @@ heka_{{ service_name }}_cache_dir:
   - group: heka
   - mode: 750
   - makedirs: true
+{% endif %}
 
 heka_{{ service_name }}_conf_dir_clean:
   file.directory:
-  - name: /etc/{{ service_name }}
+  - name: {{ server.prefix_dir }}/etc/{{ service_name }}
   - clean: true
   - watch_in:
     - service: heka_{{ service_name }}_service
+
+{%- if not server.container_mode %}
 
 {%- if grains.get('init', None) == 'systemd' %}
 {%- set systemd_enabled = True %}
@@ -81,13 +85,20 @@ heka_{{ service_name }}_service:
   service.running:
   - enable: True
   - watch:
-    - file: /usr/share/lma_collector
-    - file: /usr/share/lma_collector/*
-    - file: /etc/{{ service_name }}/*
+    - file: {{ server.prefix_dir }}/usr/share/lma_collector
+    - file: {{ server.prefix_dir }}/usr/share/lma_collector/*
+    - file: {{ server.prefix_dir }}/etc/{{ service_name }}/*
 {%- else %}
   service.disabled:
 {%- endif %}
   - name: {{ service_name }}
+
+{%- else %}
+{# Fake service state to satisfy the requisites #}
+heka_{{ service_name }}_service:
+  test.nop
+
+{%- endif %}
 
 {# Setup basic structure for all roles so updates can apply #}
 {%- set service_grains = {
@@ -200,7 +211,7 @@ heka_{{ service_name }}_service:
 {%- endif %}
 {%- endfor %}
 
-/etc/{{ service_name }}/global.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/global.toml:
   file.managed:
   - source: salt://heka/files/toml/global.toml
   - template: jinja
@@ -218,7 +229,7 @@ heka_{{ service_name }}_service:
 
 {%- for decoder_name, decoder in service_metadata.get('decoder', {}).iteritems() %}
 
-/etc/{{ service_name }}/decoder_{{ decoder_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/decoder_{{ decoder_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/decoder/{{ decoder.engine }}.toml
   - template: jinja
@@ -236,7 +247,7 @@ heka_{{ service_name }}_service:
 
 {%- for input_name, input in service_metadata.get('input', {}).iteritems() %}
 
-/etc/{{ service_name }}/input_{{ input_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/input_{{ input_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/input/{{ input.engine }}.toml
   - template: jinja
@@ -255,7 +266,7 @@ heka_{{ service_name }}_service:
 {%- for alarm_name, alarm in service_metadata.get('alarm', {}).iteritems() %}
 
 {%- if alarm.get('enabled', True) %}
-/etc/{{ service_name }}/filter_afd_{{ alarm_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/filter_afd_{{ alarm_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/filter/afd_alarm.toml
   - template: jinja
@@ -273,14 +284,14 @@ heka_{{ service_name }}_service:
       hostname: {{ grains.host }}
       {%- endif %}
 
-/usr/share/lma_collector/common/lma_{{ alarm_name|replace('-', '_') }}.lua:
+{{ server.prefix_dir }}/usr/share/lma_collector/common/lma_{{ alarm_name|replace('-', '_') }}.lua:
   file.managed:
   - source: salt://heka/files/lma_alarm.lua
   - template: jinja
   - mode: 640
   - group: heka
   - require:
-    - file: /usr/share/lma_collector
+    - file: {{ server.prefix_dir }}/usr/share/lma_collector
   - defaults:
       alarm_name: {{ alarm_name }}
       alarm: {{ alarm|yaml }}
@@ -291,14 +302,14 @@ heka_{{ service_name }}_service:
 
 {%- set policy = service_metadata.get('policy') %}
 {%- if policy %}
-/usr/share/lma_collector/common/gse_policies.lua:
+{{ server.prefix_dir }}/usr/share/lma_collector/common/gse_policies.lua:
   file.managed:
   - source: salt://heka/files/gse_policies.lua
   - template: jinja
   - mode: 640
   - group: heka
   - require:
-    - file: /usr/share/lma_collector
+    - file: {{ server.prefix_dir }}/usr/share/lma_collector
   - defaults:
     policy: {{ policy|yaml }}
 {%- endif %}
@@ -306,7 +317,7 @@ heka_{{ service_name }}_service:
 {%- for alarm_cluster_name, alarm_cluster in service_metadata.get('alarm_cluster', {}).iteritems() %}
 
 {%- if alarm_cluster.get('enabled', True) %}
-/etc/{{ service_name }}/filter_gse_{{ alarm_cluster_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/filter_gse_{{ alarm_cluster_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/filter/gse_alarm_cluster.toml
   - template: jinja
@@ -320,14 +331,14 @@ heka_{{ service_name }}_service:
       alarm_cluster_name: {{ alarm_cluster_name }}
       alarm_cluster: {{ alarm_cluster|yaml }}
 
-/usr/share/lma_collector/common/gse_{{ alarm_cluster_name|replace('-', '_') }}_topology.lua:
+{{ server.prefix_dir }}/usr/share/lma_collector/common/gse_{{ alarm_cluster_name|replace('-', '_') }}_topology.lua:
   file.managed:
   - source: salt://heka/files/gse_topology.lua
   - template: jinja
   - mode: 640
   - group: heka
   - require:
-    - file: /usr/share/lma_collector
+    - file: {{ server.prefix_dir }}/usr/share/lma_collector
   - defaults:
       alarm_cluster_name: {{ alarm_cluster_name }}
       alarm_cluster: {{ alarm_cluster|yaml }}
@@ -337,7 +348,7 @@ heka_{{ service_name }}_service:
 
 {%- for filter_name, filter in service_metadata.get('filter', {}).iteritems() %}
 
-/etc/{{ service_name }}/filter_{{ filter_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/filter_{{ filter_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/filter/{{ filter.engine }}.toml
   - template: jinja
@@ -355,7 +366,7 @@ heka_{{ service_name }}_service:
 
 {%- for splitter_name, splitter in service_metadata.get('splitter', {}).iteritems() %}
 
-/etc/{{ service_name }}/splitter_{{ splitter_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/splitter_{{ splitter_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/splitter/{{ splitter.engine }}.toml
   - template: jinja
@@ -373,7 +384,7 @@ heka_{{ service_name }}_service:
 
 {%- for encoder_name, encoder in service_metadata.get('encoder', {}).iteritems() %}
 
-/etc/{{ service_name }}/encoder_{{ encoder_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/encoder_{{ encoder_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/encoder/{{ encoder.engine }}.toml
   - template: jinja
@@ -391,7 +402,7 @@ heka_{{ service_name }}_service:
 
 {%- for output_name, output in service_metadata.get('output', {}).iteritems() %}
 
-/etc/{{ service_name }}/output_{{ output_name }}.toml:
+{{ server.prefix_dir }}/etc/{{ service_name }}/output_{{ output_name }}.toml:
   file.managed:
   - source: salt://heka/files/toml/output/{{ output.engine }}.toml
   - template: jinja

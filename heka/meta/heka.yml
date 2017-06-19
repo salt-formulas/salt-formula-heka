@@ -374,8 +374,12 @@ remote_collector:
   {%- if remote_collector.influxdb_host is defined %}
     influxdb:
       engine: http
+    {%- if remote_collector.influxdb_database is defined %}
       address: "http://{{ remote_collector.influxdb_host }}:{{ remote_collector.influxdb_port }}/write?db={{ remote_collector.influxdb_database }}&precision={{ remote_collector.influxdb_time_precision }}"
-    {%- if remote_collector.influxdb_username and remote_collector.influxdb_password %}
+    {%- else %}
+      address: "http://{{ remote_collector.influxdb_host }}:{{ remote_collector.influxdb_port }}/write?precision={{ remote_collector.influxdb_time_precision }}"
+    {%- endif %}
+    {%- if remote_collector.influxdb_username is defined and remote_collector.influxdb_password is defined %}
       username: "{{ remote_collector.influxdb_username }}"
       password: "{{ remote_collector.influxdb_password }}"
     {%- endif %}

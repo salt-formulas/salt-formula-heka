@@ -1,0 +1,6 @@
+parameters:
+  heka:
+    remote_collector:
+      influxdb_host: ${_param:remote_collector_telegraf_host}
+      influxdb_port: 8186
+      influxdb_timeout: 2000

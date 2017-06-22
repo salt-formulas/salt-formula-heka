@@ -14,7 +14,7 @@ preserve_data = "{{ decoder.preserve_data }}"
 instruction_limit = "{{ decoder.instruction_limit }}"
 {%- endif %}
 {%- if decoder.output_limit is defined %}
-output_limit = "{{ decoder.output_limit }}"
+output_limit = {{ decoder.output_limit|int }}
 {%- endif %}
 
 {%- if decoder.config is defined or decoder.get('adjust_timezone', False) %}

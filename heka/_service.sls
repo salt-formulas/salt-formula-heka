@@ -263,6 +263,7 @@ heka_{{ service_name }}_service:
 
 {%- endfor %}
 
+{%- if server.alarms_enabled %}
 {%- for alarm_name, alarm in service_metadata.get('alarm', {}).iteritems() %}
 
 {%- if alarm.get('enabled', True) %}
@@ -299,6 +300,7 @@ heka_{{ service_name }}_service:
 {%- endif %}
 
 {%- endfor %}
+{%- endif %}
 
 {%- set policy = service_metadata.get('policy') %}
 {%- if policy %}

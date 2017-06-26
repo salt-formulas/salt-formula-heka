@@ -24,6 +24,7 @@ local hostname = read_config('hostname') or error('hostname must be specified')
 -- older than the current time.
 local grace_interval = (read_config('grace_interval') or 0) + 0
 local metric_source = read_config('source')
+local emit_rates = utils.convert_to_bool(read_config('emit_rates'), true)
 
 local msg = {
     Type = "metric", -- will be prefixed by "heka.sandbox."
@@ -56,14 +57,16 @@ function timer_event(ns)
     msg.Timestamp = ns
     msg.Fields.name = 'failed_logins_total'
     msg.Fields.value = global_counter
-    msg.Fields.type = utils.metric_type['GAUGE']
+    msg.Fields.type = utils.metric_type['COUNTER']
     utils.inject_tags(msg)
     utils.safe_inject_message(msg)
 
-    msg.Fields.name = 'failed_logins_rate'
-    msg.Fields.type = utils.metric_type['DERIVE']
-    msg.Fields.value = ticker_counter / ((ns - last_timer_event) / 1e9)
-    utils.safe_inject_message(msg)
+    if emit_rates then
+        msg.Fields.name = 'failed_logins_rate'
+        msg.Fields.type = utils.metric_type['DERIVE']
+        msg.Fields.value = ticker_counter / ((ns - last_timer_event) / 1e9)
+        utils.safe_inject_message(msg)
+    end
 
     ticker_counter = 0
     last_timer_event = ns

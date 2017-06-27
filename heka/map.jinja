@@ -50,6 +50,7 @@ RedHat:
 {% set log_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'elasticsearch_port': default_elasticsearch_port,
     'poolsize': 100,
@@ -66,6 +67,7 @@ RedHat:
 {% set metric_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
@@ -85,6 +87,7 @@ RedHat:
 {% set remote_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'amqp_port': default_amqp_port,
     'amqp_vhost': '',
@@ -106,6 +109,7 @@ RedHat:
 {% set aggregator = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'influxdb_port': default_influxdb_port,
     'influxdb_time_precision': default_influxdb_time_precision,
@@ -125,6 +129,7 @@ RedHat:
 {% set ceilometer_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'influxdb_port': default_influxdb_port,
     'influxdb_timeout': default_influxdb_timeout,

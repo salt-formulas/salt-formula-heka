@@ -45,6 +45,7 @@ log_collector:
         grace_interval: 30
         logger_matcher: '^openstack%.(%a+)$'
         source: log_collector
+        emit_rates: {{ log_collector.emit_rates }}
     hdd_errors:
       engine: sandbox
       module_file: /usr/share/lma_collector/filters/hdd_errors_counter.lua
@@ -57,6 +58,7 @@ log_collector:
         patterns: "/error%s.+([sv]d[a-z][a-z]?)%d?/ /([sv]d[a-z][a-z]?)%d?.+%serror/"
         hostname: '{{ grains.host }}'
         source: log_collector
+        emit_rates: {{ log_collector.emit_rates }}
 {%- if log_collector.sensu_host is defined %}
     watchdog:
       engine: sandbox
@@ -335,6 +337,7 @@ remote_collector:
       config:
         grace_interval: 30
         source: remote_collector
+        emit_rates: {{ remote_collector.emit_rates }}
   {%- endif %}
 {%- endif %}
 {%- if remote_collector.influxdb_host is defined or remote_collector.elasticsearch_host is defined or remote_collector.sensu_host is defined %}

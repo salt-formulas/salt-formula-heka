@@ -97,6 +97,17 @@ TestLmaUtils = {}
         assertEquals(lma_utils.convert_to_sec(2000000001), 2)
     end
 
+    function TestLmaUtils:test_convert_to_bool()
+        assertEquals(lma_utils.convert_to_bool(true), true)
+        assertEquals(lma_utils.convert_to_bool(0), false)
+        assertEquals(lma_utils.convert_to_bool(1), true)
+        assertEquals(lma_utils.convert_to_bool("false"), false)
+        assertEquals(lma_utils.convert_to_bool("tRue"), true)
+        assertEquals(lma_utils.convert_to_bool(nil), false)
+        assertEquals(lma_utils.convert_to_bool(nil, true), true)
+        assertEquals(lma_utils.convert_to_bool("false", true), false)
+    end
+
 lu = LuaUnit
 lu:setVerbosity( 1 )
 os.exit( lu:run() )

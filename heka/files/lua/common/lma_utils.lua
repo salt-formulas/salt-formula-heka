@@ -326,4 +326,18 @@ function convert_to_sec(ns)
     return math.floor(ns/1e9)
 end
 
+-- convert a number/string value to boolean
+function convert_to_bool(v, default)
+    if type(v) == "boolean" then
+        return v
+    end
+    if type(v) == "number" then
+        return v > 0
+    end
+    if type(v) == "string" then
+        return string.lower(v) == "true"
+    end
+    return not not default
+end
+
 return M

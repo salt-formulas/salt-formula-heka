@@ -18,6 +18,7 @@ require 'string'
 local utils = require 'lma_utils'
 
 local hostname = read_config('hostname') or error('hostname must be specified')
+local emit_rates = utils.convert_to_bool(read_config('emit_rates'), true)
 local patterns_config = read_config('patterns') or error('patterns must be specified')
 local patterns = {}
 for pattern in string.gmatch(patterns_config, "/(%S+)/") do
@@ -32,6 +33,12 @@ end
 -- received in the current interval but emitted before it.
 local grace_interval = (read_config('grace_interval') or 0) + 0
 local metric_source = read_config('source')
+local metric_name = "hdd_errors"
+local metric_type = utils.metric_type['DERIVE']
+if emit_rates then
+    metric_name = "hdd_errors_rate"
+    metric_type = utils.metric_type['COUNTER']
+end
 
 local error_counters = {}
 local enter_at
@@ -76,17 +83,23 @@ function timer_event(ns)
     local delta_sec = (ns - (enter_at or 0)) / 1e9
     for dev, value in pairs(error_counters) do
         -- Don`t send values at the first ticker interval
-        if enter_at ~= nil then
+        if enter_at ~= nil or emit_rates then
+            if emit_rates then
+                value = value / delta_sec
+            end
+
             utils.add_to_bulk_metric(
-                "hdd_errors_rate",
-                value / delta_sec,
+                metric_name,
+                value,
                 {device=dev, hostname=hostname})
         end
-        error_counters[dev] = 0
+        if emit_rates then
+            error_counters[dev] = 0
+        end
     end
 
     enter_at = ns
-    utils.inject_bulk_metric(ns, hostname, metric_source)
+    utils.inject_bulk_metric(ns, hostname, metric_source, metric_type)
 
     return 0
 end

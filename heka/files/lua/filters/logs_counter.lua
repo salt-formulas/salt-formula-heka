@@ -27,6 +27,11 @@ local hostname = read_config('hostname') or error('hostname must be specified')
 local grace_interval = (read_config('grace_interval') or 0) + 0
 local logger_matcher = read_config('logger_matcher') or '.*'
 local metric_source = read_config('source')
+local emit_rates = utils.convert_to_bool(read_config('emit_rates'), true)
+local metric_type = utils.metric_type['COUNTER']
+if emit_rates then
+    metric_type = utils.metric_type['DERIVE']
+end
 
 local discovered_services = {}
 local logs_counters = {}
@@ -66,19 +71,24 @@ function timer_event(ns)
         local delta_sec = (ns - last_timer_event) / 1e9
 
         for level, val in pairs(counters) do
+            if emit_rates then
+                val = val / delta_sec
+            end
             utils.add_to_bulk_metric(
                 'log_messages',
-                val / delta_sec,
+                val,
                 {hostname=hostname, service=service, level=string.lower(level)})
 
             -- reset the counter
-            counters[level] = 0
+            if emit_rates then
+                counters[level] = 0
+            end
         end
     end
 
     last_timer_event = ns
 
-    ok, err = utils.inject_bulk_metric(ns, hostname, metric_source, utils.metric_type['DERIVE'])
+    ok, err = utils.inject_bulk_metric(ns, hostname, metric_source, metric_type)
     if ok ~= 0 then
         return -1, err
     end

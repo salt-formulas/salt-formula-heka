@@ -23,6 +23,7 @@ local utils = require 'lma_utils'
 -- older than the current time.
 local grace_interval = (read_config('grace_interval') or 0) + 0
 local metric_source = read_config('source')
+local emit_rates = utils.convert_to_bool(read_config('emit_rates'), true)
 
 local msg = {
     Type = "multivalue_metric", -- will be prefixed by "heka.sandbox."
@@ -82,24 +83,26 @@ function timer_event(ns)
     msg.Fields.failed = global_counters.failed
     utils.safe_inject_message(msg)
 
-    -- send the rates
-    msg.Fields.name = 'authentications_rate'
-    msg.Fields.type = utils.metric_type['DERIVE']
-    local delta_sec = (ns - last_timer_event) / 1e9
-    msg.Fields.all = ticker_counters.total / delta_sec
-    msg.Fields.success = ticker_counters.success / delta_sec
-    msg.Fields.failed = ticker_counters.failed / delta_sec
-    utils.safe_inject_message(msg)
-
-    -- send the percentages
-    if ticker_counters.total > 0 then
-        msg.Fields.name = 'authentications_percent'
-        msg.Fields.type = utils.metric_type['GAUGE']
-        msg.Fields.value_fields = {'success', 'failed'}
-        msg.Fields.all = nil
-        msg.Fields.success = 100.0 * ticker_counters.success / ticker_counters.total
-        msg.Fields.failed = 100.0 * ticker_counters.failed / ticker_counters.total
+    if emit_rates then
+        -- send the rates
+        msg.Fields.name = 'authentications_rate'
+        msg.Fields.type = utils.metric_type['DERIVE']
+        local delta_sec = (ns - last_timer_event) / 1e9
+        msg.Fields.all = ticker_counters.total / delta_sec
+        msg.Fields.success = ticker_counters.success / delta_sec
+        msg.Fields.failed = ticker_counters.failed / delta_sec
         utils.safe_inject_message(msg)
+
+        -- send the percentages
+        if ticker_counters.total > 0 then
+            msg.Fields.name = 'authentications_percent'
+            msg.Fields.type = utils.metric_type['GAUGE']
+            msg.Fields.value_fields = {'success', 'failed'}
+            msg.Fields.all = nil
+            msg.Fields.success = 100.0 * ticker_counters.success / ticker_counters.total
+            msg.Fields.failed = 100.0 * ticker_counters.failed / ticker_counters.total
+            utils.safe_inject_message(msg)
+        end
     end
 
     -- reset the variables

@@ -43,7 +43,7 @@ TestInfluxDB = {}
     end
 
     function TestInfluxDB:test_us_precision_encoder()
-        local encoder = influxdb.new("us")
+        local encoder = influxdb.new("u")
         assertEquals(encoder:encode_datapoint(1e9 * 1000, 'foo', 1), 'foo value=1.000000 1000000000')
     end
 

@@ -184,7 +184,11 @@ function SamplesDecoder:decode (data)
         for _, sample in ipairs(message_body["payload"]) do
             self:add_sample_to_payload(sample, sample_payload)
         end
-        sample_msg.Payload = cjson.encode(sample_payload)
+        local ok, payload = pcall(cjson.encode, sample_payload)
+        if not ok then
+            return -1, "Cannot encode sample_payload"
+        end
+        sample_msg.Payload = payload
         sample_msg.Timestamp = patt.Timestamp:match(message_body.timestamp)
         return 0, sample_msg
     end

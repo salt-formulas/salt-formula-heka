@@ -124,7 +124,11 @@ function ResourcesDecoder:decode (data)
         for _, sample in ipairs(message_body["payload"]) do
             add_resource_to_payload(sample, resource_payload)
         end
-        resource_msg.Payload = cjson.encode(resource_payload)
+        local ok, payload = pcall(cjson.encode, resource_payload)
+        if not ok then
+            return -1, "Cannot encode resource_payload"
+        end
+        resource_msg.Payload = payload
         resource_msg.Timestamp = patt.Timestamp:match(message_body.timestamp)
         return 0, resource_msg
     end

@@ -708,10 +708,12 @@ ceilometer_collector:
       preserve_data: false
       message_matcher: "Type =~ /ceilometer_samples$/"
       ticker_interval: 1
+      # The default output_limit value (64k) is too low to deal with Ceilometer samples
+      output_limit: 524288
       config:
         time_precision: "{{ ceilometer_collector.influxdb_time_precision }}"
         payload_name: 'sample_data'
-        flush_count: 500
+        flush_count: 200
         bulk_metric_type_matcher: 'ceilometer_samples'
   {%- endif %}
   {%- if ceilometer_collector.sensu_host is defined %}

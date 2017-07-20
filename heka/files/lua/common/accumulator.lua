@@ -47,7 +47,7 @@ end
 -- ns: the current timestamp in nanosecond (optional)
 function Accumulator:flush(ns)
     local now = ns or time() * 1e9
-    if #self.buffer > self.flush_count or now - self.last_flush > self.flush_interval then
+    if #self.buffer > self.flush_count or now - self.last_flush > self.flush_interval * 1e9 then
         self.flush_cb(self.buffer)
         self.buffer = {}
         self.last_flush = now

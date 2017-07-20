@@ -59,9 +59,11 @@ grain:
         {%- set service_grains = salt['grains.filter_by']({'default': service_grains}, merge=heka_yaml) %}
       {%- endif %}
     {%- endfor %}
+  {%- if 'heka_alarming' in salt.keys() %}
   heka:
     heka:
       {{ salt['heka_alarming.grains_for_mine'](service_grains)|yaml(False)|indent(6) }}
+  {%- endif %}
 
 {#-
   vim: syntax=jinja

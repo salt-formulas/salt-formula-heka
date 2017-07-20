@@ -57,8 +57,10 @@ TestAccumulator = {}
             assertEquals(#items, 0)
             sentinel = true
         end
-        local accum = accumulator.new(20, 1, test_cb)
+        local accum = accumulator.new(20, 4, test_cb)
         accum:flush((now + 2) * 1e9)
+        assertEquals(sentinel, false)
+        accum:flush((now + 5) * 1e9)
         assertEquals(sentinel, true)
     end
 

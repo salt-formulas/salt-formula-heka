@@ -14,8 +14,6 @@
 
 local cjson = cjson
 local string = string
-local table = table
-local math = math
 local setmetatable = setmetatable
 local ipairs = ipairs
 local pairs = pairs
@@ -110,15 +108,7 @@ end
 
 -- data: oslo.messaging message with Ceilometer samples
 -- returns ok and resource or error message
-function ResourcesDecoder:decode (data)
-    local ok, message = pcall(cjson.decode, data)
-    if not ok then
-        return -1, "Cannot decode Payload"
-    end
-    local ok, message_body = pcall(cjson.decode, message["oslo.message"])
-    if not ok then
-        return -1, "Cannot decode Payload[oslo.message]"
-    end
+function ResourcesDecoder:decode (message_body)
     local resource_payload = {}
     if message_body['payload'] then
         for _, sample in ipairs(message_body["payload"]) do

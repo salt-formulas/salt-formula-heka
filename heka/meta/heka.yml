@@ -678,6 +678,7 @@ ceilometer_collector:
       config:
         decoder: 'ceilometer'
         decode_resources: {{ ceilometer_collector.resource_decoding|lower }}
+        flush_count = 500
         metadata_fields: "status deleted container_format min_ram updated_at min_disk is_public size checksum created_at disk_format protected instance_host host display_name instance_id instance_type status state user_metadata.stack"
 {%- endif %}
 {%- if ceilometer_collector.amqp_host is defined %}

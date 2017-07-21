@@ -16,6 +16,9 @@ ticker_interval = {{ filter.ticker_interval }}
 {%- if filter.hostname is defined %}
 hostname = "{{ filter.hostname }}"
 {%- endif %}
+{%- if filter.output_limit is defined %}
+output_limit = {{ filter.output_limit|int }}
+{%- endif %}
 
 {%- if filter.config is defined %}
 [{{ filter_name }}_filter.config]

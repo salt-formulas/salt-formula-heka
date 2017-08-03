@@ -46,7 +46,10 @@ local process_info = l.P"[" * "Thread" * sp * l.Cg(l.digit^1, "ThreadId") *
 
 -- Timestamp patterns
 -- 10/31/2016 03:40:47 AM [contrail-alarm-gen]: blabla
-local log_timestamp = l.Cg(dt.build_strftime_grammar("%m/%d/%Y %r") / dt.time_to_ns, "Timestamp")
+local log_num_month_timestamp = l.Cg(dt.build_strftime_grammar("%m/%d/%Y %r") / dt.time_to_ns, "Timestamp")
+local log_short_str_month_timestamp = l.Cg(dt.build_strftime_grammar("%b/%d/%Y %r") / dt.time_to_ns, "Timestamp")
+local log_full_str_month_timestamp = l.Cg(dt.build_strftime_grammar("%B/%d/%Y %r") / dt.time_to_ns, "Timestamp")
+local log_timestamp = l.Ct(log_num_month_timestamp + log_short_str_month_timestamp + log_full_str_month_timestamp)
 
 -- 172.16.10.101 - - [2016-10-31 12:50:36] "POST /subscribe HTTP/1.1" 200 715 0.058196
 local api_timestamp = l.Cg(patt.Timestamp, "Timestamp")
@@ -64,6 +67,11 @@ local control_timestamp = l.Cg(ts_grammar / dt.time_to_ns, "Timestamp")
 -- Complete grammars
 -- 10/31/2016 03:40:47 AM [contrail-alarm-gen]: blabla
 LogGrammar = l.Ct(log_timestamp * patt.sp * "[" * modulename * "]:" * patt.sp * message)
+-- wokeup and found a line
+-- NoSuchProcess: process name:cassandra pid:22192
+-- Exception AssertionError: AssertionError() in <module 'threading' from '/usr/lib/python2.7/threading.pyc'> ignored
+-- ...
+GenericGrammar = l.Ct(message)
 
 -- 172.16.10.101 - - [2016-10-31 12:50:36] "POST /subscribe HTTP/1.1" 200 715 0.058196
 ApiGrammar = l.Ct(ip_address * delim * "["* api_timestamp * "]" * sp * message)

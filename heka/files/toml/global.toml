@@ -6,7 +6,7 @@ base_dir="/var/cache/{{ service_name }}"
 
 hostname="{{ grains.fqdn.split('.')[0] }}"
 
-max_message_size = 262144
+max_message_size = {{ max_message_size }}
 max_process_inject = 1
 max_timer_inject = 10
 poolsize = {{ poolsize }}

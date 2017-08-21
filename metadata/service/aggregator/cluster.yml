@@ -5,9 +5,11 @@ classes:
 parameters:
   _param:
     aggregator_poolsize: 100
+    aggregator_max_message_size: 262144
   heka:
     aggregator:
       automatic_starting: false
       enabled: true
       influxdb_time_precision: ms
       poolsize: ${_param:aggregator_poolsize}
+      max_message_size: ${_param:aggregator_max_message_size}

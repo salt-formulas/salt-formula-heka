@@ -21,6 +21,7 @@ Log collector service
         metric_collector_host: 127.0.0.1
         metric_collector_port: 5567
         poolsize: 100
+        max_message_size: 262144
 
 Default values:
 
@@ -30,6 +31,7 @@ Default values:
 * ``metric_collector_host: 127.0.0.1``
 * ``metric_collector_port: 5567``
 * ``poolsize: 100``
+* ``max_message_size: 262144``
 
 Local Metric collector service
 
@@ -54,6 +56,7 @@ Local Metric collector service
         nagios_port: 5601
         nagios_username: nagiosadmin
         poolsize: 100
+        max_message_size: 262144
 
 Default values:
 
@@ -65,6 +68,7 @@ Default values:
 * ``influxdb_timeout: 5000``
 * ``nagios_port: 8001``
 * ``poolsize: 100``
+* ``max_message_size: 262144``
 
 Remote Metric Collector service
 
@@ -91,6 +95,7 @@ Remote Metric Collector service
         influxdb_time_precision: ms
         influxdb_username: lma
         poolsize: 100
+        max_message_size: 262144
 
 Default values:
 
@@ -105,6 +110,7 @@ Default values:
 * ``influxdb_time_precision: ms``
 * ``influxdb_timeout: 5000``
 * ``poolsize: 100``
+* ``max_message_size: 262144``
 
 Aggregator service
 
@@ -127,6 +133,7 @@ Aggregator service
         nagios_port: 5601
         nagios_username: nagiosadmin
         poolsize: 100
+        max_message_size: 262144
 
 Default values:
 
@@ -138,6 +145,7 @@ Default values:
 * ``nagios_port: 8001``
 * ``nagios_default_host_alarm_clusters: 00-clusters``
 * ``poolsize: 100``
+* ``max_message_size: 262144``
 
 Ceilometer service
 

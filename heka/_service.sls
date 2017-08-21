@@ -220,6 +220,7 @@ heka_{{ service_name }}_service:
   - defaults:
     service_name: {{ service_name }}
     poolsize: {{ server.poolsize }}
+    max_message_size: {{ server.max_message_size }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:

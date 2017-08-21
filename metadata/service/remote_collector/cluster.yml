@@ -5,9 +5,11 @@ classes:
 parameters:
   _param:
     remote_collector_poolsize: 100
+    remote_collector_max_message_size: 262144
   heka:
     remote_collector:
       automatic_starting: false
       enabled: true
       influxdb_time_precision: ms
       poolsize: ${_param:remote_collector_poolsize}
+      max_message_size: ${_param:remote_collector_max_message_size}

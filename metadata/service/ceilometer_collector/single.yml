@@ -5,9 +5,11 @@ classes:
 parameters:
   _param:
     ceilometer_collector_poolsize: 100
+    ceilometer_collector_max_message_size: 262144
   heka:
     ceilometer_collector:
       automatic_starting: true
       enabled: true
       influxdb_time_precision: ms
       poolsize: ${_param:ceilometer_collector_poolsize}
+      max_message_size: ${_param:ceilometer_collector_max_message_size}

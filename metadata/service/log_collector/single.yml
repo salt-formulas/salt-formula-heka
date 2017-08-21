@@ -5,7 +5,9 @@ classes:
 parameters:
   _param:
     log_collector_poolsize: 100
+    log_collector_max_message_size: 262144
   heka:
     log_collector:
       enabled: true
       poolsize: ${_param:log_collector_poolsize}
+      max_message_size: ${_param:log_collector_max_message_size}

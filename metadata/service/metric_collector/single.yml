@@ -5,8 +5,10 @@ classes:
 parameters:
   _param:
     metric_collector_poolsize: 100
+    metric_collector_max_message_size: 262144
   heka:
     metric_collector:
       enabled: true
       influxdb_time_precision: ms
       poolsize: ${_param:metric_collector_poolsize}
+      max_message_size: ${_param:metric_collector_max_message_size}

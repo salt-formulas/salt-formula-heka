@@ -26,6 +26,11 @@ heka_packages:
   - require:
     - user: heka_user
 
+/usr/local/bin/monitor_heka_queues.sh:
+  file.managed:
+  - source: salt://heka/files/monitor_heka_queues.sh
+  - mode: 755
+
 heka_user:
   user.present:
   - name: heka

@@ -1,0 +1,13 @@
+server:
+  alert:
+    HekaOutputQueueStalled:
+      if: >-
+        delta(heka_output_queue_size[1h]) == 0
+      labels:
+        severity: warning
+        service: heka
+      annotations:
+        summary: 'Heka queue stalled'
+{%- raw %}
+        description: 'The {{ $labels.queue }} queue is stalled on node {{ $labels.host }} for more than 1 hour. The corresponding Heka service is either down or stuck.'
+{%- endraw %}

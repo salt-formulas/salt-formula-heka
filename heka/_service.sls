@@ -3,19 +3,17 @@
 heka_{{ service_name }}_conf_dir:
   file.directory:
   - name: {{ server.prefix_dir }}/etc/{{ service_name }}
-  - user: heka
+  - user: {{ server.owner }}
   - mode: 750
   - makedirs: true
 
-{%- if not server.container_mode %}
 heka_{{ service_name }}_cache_dir:
   file.directory:
   - name: /var/cache/{{ service_name }}
-  - user: heka
-  - group: heka
+  - user: {{ server.owner }}
+  - group: {{ server.owner }}
   - mode: 750
   - makedirs: true
-{% endif %}
 
 heka_{{ service_name }}_conf_dir_clean:
   file.directory:
@@ -54,7 +52,7 @@ heka_{{ service_name }}_service_file:
 heka_{{ service_name }}_log_file:
   file.managed:
   - name: /var/log/{{ service_name }}.log
-  - user: heka
+  - user: {{ server.owner }}
   - mode: 644
   - replace: false
 
@@ -216,7 +214,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/global.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - defaults:
     service_name: {{ service_name }}
     poolsize: {{ server.poolsize }}
@@ -235,7 +233,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/decoder/{{ decoder.engine }}.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -253,7 +251,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/input/{{ input.engine }}.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -273,7 +271,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/filter/afd_alarm.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -291,7 +289,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/lma_alarm.lua
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: {{ server.prefix_dir }}/usr/share/lma_collector
   - defaults:
@@ -310,7 +308,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/gse_policies.lua
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: {{ server.prefix_dir }}/usr/share/lma_collector
   - defaults:
@@ -325,7 +323,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/filter/gse_alarm_cluster.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -339,7 +337,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/gse_topology.lua
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: {{ server.prefix_dir }}/usr/share/lma_collector
   - defaults:
@@ -356,7 +354,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/filter/{{ filter.engine }}.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -374,7 +372,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/splitter/{{ splitter.engine }}.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -392,7 +390,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/encoder/{{ encoder.engine }}.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:
@@ -410,7 +408,7 @@ heka_{{ service_name }}_service:
   - source: salt://heka/files/toml/output/{{ output.engine }}.toml
   - template: jinja
   - mode: 640
-  - group: heka
+  - group: {{ server.owner }}
   - require:
     - file: heka_{{ service_name }}_conf_dir
   - require_in:

@@ -50,6 +50,7 @@ RedHat:
 {% set log_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'owner': 'heka',
     'alarms_enabled': True,
     'emit_rates': True,
     'prefix_dir': default_prefix_dir,
@@ -69,6 +70,7 @@ RedHat:
 {% set metric_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'owner': 'heka',
     'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'influxdb_port': default_influxdb_port,
@@ -90,6 +92,7 @@ RedHat:
 {% set remote_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'owner': 'heka',
     'alarms_enabled': True,
     'emit_rates': True,
     'prefix_dir': default_prefix_dir,
@@ -114,6 +117,7 @@ RedHat:
 {% set aggregator = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'owner': 'heka',
     'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'influxdb_port': default_influxdb_port,
@@ -135,6 +139,7 @@ RedHat:
 {% set ceilometer_collector = salt['grains.filter_by']({
   'default': {
     'container_mode': False,
+    'owner': 'heka',
     'alarms_enabled': True,
     'prefix_dir': default_prefix_dir,
     'influxdb_port': default_influxdb_port,

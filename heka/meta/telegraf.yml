@@ -1,0 +1,8 @@
+agent:
+  input:
+    monitor_heka:
+      template: telegraf/files/input/exec.conf
+      commands:
+      - /usr/local/bin/monitor_heka_queues.sh
+      data_format: influx
+      interval: 60s

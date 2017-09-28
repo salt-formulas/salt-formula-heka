@@ -59,6 +59,18 @@ log_collector:
         hostname: '{{ grains.host }}'
         source: log_collector
         emit_rates: {{ log_collector.emit_rates }}
+    out_of_memory:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/filters/out_of_memory.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      preserve_data: false
+      message_matcher: "Type == 'log' && Logger == 'system.kern'"
+      ticker_interval: 10
+      config:
+        grace_interval: 10
+        hostname: '{{ grains.host }}'
+        source: log_collector
+        emit_rates: {{ log_collector.emit_rates }}
 {%- if log_collector.sensu_host is defined %}
     watchdog:
       engine: sandbox

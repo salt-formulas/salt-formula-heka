@@ -7,3 +7,4 @@ parameters:
     remote_collector:
       enabled: true
       container_mode: true
+      owner: root

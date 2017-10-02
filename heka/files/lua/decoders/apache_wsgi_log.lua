@@ -66,6 +66,9 @@ function process_message ()
                 msg.Fields.http_response_time = msg.Fields.http_response_time / 1e6
             end
         end
+        if m.http_x_forwarded_for and patt.ip_address:match(m.http_x_forwarded_for) then
+            msg.Fields.http_client_ip_address = m.http_x_forwarded_for
+        end
 
         local request = m.request
         m = request_grammar:match(request)

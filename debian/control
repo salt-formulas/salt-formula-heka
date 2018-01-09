@@ -10,6 +10,6 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-heka.git
 
 Package: salt-formula-heka
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass
+Depends: ${misc:Depends}
 Description: Heka Salt formula
  Install and configure Heka server and client.

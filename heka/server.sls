@@ -51,7 +51,6 @@ heka_ssl:
 heka_acl_log:
   cmd.run:
   - name: "setfacl -R -m g:adm:rx /var/log; setfacl -R -d -m g:adm:rx /var/log"
-  - unless: "getfacl /var/log/|grep default:group:adm"
 
 heka_service:
   service.running:

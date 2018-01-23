@@ -1,3 +1,5 @@
+{%- from "heka/map.jinja" import log_collector with context %}
+{%- if log_collector.get('enabled', False) %}
 agent:
   input:
     monitor_heka:
@@ -6,3 +8,4 @@ agent:
       - /usr/local/bin/monitor_heka_queues.sh
       data_format: influx
       interval: 60s
+{%- endif %}

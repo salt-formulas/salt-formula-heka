@@ -1,3 +1,5 @@
+{%- from "heka/map.jinja" import log_collector with context %}
+{%- if log_collector.get('enabled', False) %}
 server:
   alert:
     HekaOutputQueueStalled:
@@ -11,3 +13,4 @@ server:
 {%- raw %}
         description: 'The {{ $labels.queue }} queue is stalled on node {{ $labels.host }} for more than 1 hour. The corresponding Heka service is either down or stuck.'
 {%- endraw %}
+{%- endif %}

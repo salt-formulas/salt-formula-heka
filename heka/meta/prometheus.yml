@@ -4,7 +4,7 @@ server:
   alert:
     HekaOutputQueueStalled:
       if: >-
-        delta(heka_output_queue_size[1h]) == 0
+        heka_output_queue_size > {{ log_collector.heka_queue_size_threshold }}
       labels:
         severity: warning
         service: heka

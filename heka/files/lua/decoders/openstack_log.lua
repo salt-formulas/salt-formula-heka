@@ -68,7 +68,12 @@ function process_message ()
 
     m = patt.openstack:match(log)
     if not m then
-        return -1, string.format("Failed to parse %s log: %s", logger, string.sub(log, 1, 64))
+        if traceback_key == nil then
+            return -1, string.format("Failed to parse %s log: %s", logger, string.sub(log, 1, 64))
+        else
+            table.insert(traceback_lines, log)
+            return 0
+        end
     end
 
     local key = {

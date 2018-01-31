@@ -144,6 +144,9 @@ traceback = l.P'Traceback (most recent call last):'
 -- Pattern used to match the Java Exception.
 exception = l.P'exception' + l.P'Exception'
 
+-- Contrail multiline patterns.
+multiline = l.P'ApiServer Message:' + l.P'PollResponse message is:'
+
 -- Pattern used to match a number
 Number = l.P"-"^-1 * l.xdigit^1 * (l.S(".,") * l.xdigit^1 )^-1 / tonumber
 

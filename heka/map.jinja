@@ -64,6 +64,7 @@ RedHat:
     'sensu_notification_handler': default_sensu_notification_handler,
     'sensu_port': default_sensu_port,
     'sensu_watchdog_ttl': default_sensu_watchdog_ttl,
+    'heka_queue_size_threshold': 134217728
   }
 }, merge=salt['pillar.get']('heka:log_collector')) %}
 

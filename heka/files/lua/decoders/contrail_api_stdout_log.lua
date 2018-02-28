@@ -51,6 +51,7 @@ function process_message ()
     msg.Fields = {}
     msg.Fields.severity_label = m.Severity or default_severity
     msg.Fields.programname = m.Module
+    msg.Fields.http_client_ip_address = m.ip_address
 
     m = contrail.RequestGrammar:match(msg.Payload)
     if m then
@@ -60,10 +61,6 @@ function process_message ()
         msg.Fields.http_version = m.http_version
         msg.Fields.http_response_size = m.http_response_size
         msg.Fields.http_response_time = m.http_response_time
-        m = patt.ip_address:match(msg.Payload)
-	if m then
-           msg.Fields.http_client_ip_address = m.ip_address
-	end
     end
 
     utils.inject_tags(msg)

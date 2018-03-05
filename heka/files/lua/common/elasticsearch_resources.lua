@@ -36,26 +36,32 @@ function encode()
             update = {_index = index, _type = type_name, _id = resource_id}
         })
         local body = {
-            script = 'ctx._source.meters += meter;' ..
-            'ctx._source.user_id = user_id;' ..
-            'ctx._source.project_id = project_id;' ..
-            'ctx._source.source = source; ' ..
-            'ctx._source.metadata =  ' ..
-            'ctx._source.last_sample_timestamp <= timestamp ? ' ..
-            'metadata : ctx._source.metadata;' ..
-            'ctx._source.last_sample_timestamp = ' ..
-            'ctx._source.last_sample_timestamp < timestamp ?' ..
-            'timestamp : ctx._source.last_sample_timestamp;' ..
-            'ctx._source.first_sample_timestamp = ' ..
-            'ctx._source.first_sample_timestamp > timestamp ?' ..
-            'timestamp : ctx._source.first_sample_timestamp;',
-            params = {
-                meter = resource.meter,
-                metadata = resource.metadata,
-                timestamp = resource.timestamp,
-                user_id = resource.user_id or '',
-                project_id = resource.project_id or '',
-                source = resource.source or '',
+            script = {
+                source = 'def SDF = new SimpleDateFormat(\"yyyy-MM-dd\'T\'HH:mm:ss.SSSSSSXXX\"); ' ..
+                         'ctx._source.meters.putAll(params.meter); ' ..
+                         'ctx._source.user_id = params.user_id; ' ..
+                         'ctx._source.project_id = params.project_id; ' ..
+                         'ctx._source.source = params.source; ' ..
+                         'ctx._source.metadata = ' ..
+                         'SDF.parse(ctx._source.last_sample_timestamp).getTime() <= ' ..
+                         'SDF.parse(params.timestamp).getTime() ? ' ..
+                         'params.metadata : ctx._source.metadata; ' ..
+                         'ctx._source.last_sample_timestamp = ' ..
+                         'SDF.parse(ctx._source.last_sample_timestamp).getTime() < ' ..
+                         'SDF.parse(params.timestamp).getTime() ? ' ..
+                         'params.timestamp : ctx._source.last_sample_timestamp; ' ..
+                         'ctx._source.first_sample_timestamp = ' ..
+                         'SDF.parse(ctx._source.first_sample_timestamp).getTime() > ' ..
+                         'SDF.parse(params.timestamp).getTime() ?' ..
+                         'params.timestamp : ctx._source.first_sample_timestamp;',
+                params = {
+                    meter = resource.meter,
+                    metadata = resource.metadata,
+                    timestamp = resource.timestamp,
+                    user_id = resource.user_id or '',
+                    project_id = resource.project_id or '',
+                    source = resource.source or '',
+                }
             },
             upsert = {
                 first_sample_timestamp = resource.timestamp,

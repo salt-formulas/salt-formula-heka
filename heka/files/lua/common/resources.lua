@@ -64,7 +64,7 @@ local resource_msg = {
 }
 
 function add_resource_to_payload(sample, payload)
-    local counter_name, _ = string.gsub(sample.counter_name, "%.", "\\")
+    local counter_name, _ = sample.counter_name
 
     local metadata = sample.resource_metadata
     local local_metadata = {}

@@ -37,8 +37,10 @@ local severity  = l.Cg(pgname, "Severity")
 -- Common patterns
 local modulename =  l.Cg(pgname, "Module")
 local ip_address = l.Cg((l.digit + patt.dot)^1, "ip_address")
-local http_status = l.Cg(patt.Number / tonumber, "status")
-local http_request_time = l.Cg(patt.Number, "request_time")
+local http_status = l.Cg(patt.Number / tonumber, "http_status")
+local http_response_size = l.Cg(patt.Number, "http_response_size")
+local http_response_time = l.Cg(patt.Number, "http_response_time")
+
 local delim = (patt.sp + patt.dash)^1
 local hostname = l.Cg(patt.programname, "Hostname")
 local process_info = l.P"[" * "Thread" * sp * l.Cg(l.digit^1, "ThreadId") *
@@ -75,7 +77,7 @@ GenericGrammar = l.Ct(message)
 
 -- 172.16.10.101 - - [2016-10-31 12:50:36] "POST /subscribe HTTP/1.1" 200 715 0.058196
 ApiGrammar = l.Ct(ip_address * delim * "["* api_timestamp * "]" * sp * message)
-RequestGrammar = l.Ct(l.P'"' * patt.http_request * l.P'"' * sp * http_status * sp * patt.Number * sp * http_request_time)
+RequestGrammar = l.Ct(l.P'"' * patt.http_request * l.P'"' * sp * http_status * sp * http_response_size * sp * http_response_time)
 
 -- 2016-10-27 Thu 17:50:37:633.908 CEST  ctl01 [Thread 140024858027968, Pid 23338]: DnsAgent [SYS_INFO]: blabla
 -- 2016-11-01 Tue 05:24:26:590.824 CET  ctl01 [Thread 140310906029824, Pid 18319]: SANDESH: blabla

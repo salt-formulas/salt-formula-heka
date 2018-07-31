@@ -40,9 +40,13 @@ heka_user:
   - require:
     - pkg: heka_packages
 
+heka_acl_log_dirs:
+  cmd.run:
+  - name: "find /var/log -type d -exec setfacl -m g:adm:rx '{}' \\; -exec setfacl -d -m g:adm:rx '{}' \\;"
+
 heka_acl_log:
   cmd.run:
-  - name: "setfacl -R -m g:adm:rx /var/log; setfacl -R -d -m g:adm:rx /var/log"
+  - name: "find /var/log -type f -exec setfacl -m g:adm:r '{}' \\;"
 
 hekad_process:
   process.absent:

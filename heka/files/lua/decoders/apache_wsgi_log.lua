@@ -68,7 +68,7 @@ function process_message ()
         end
         if m.http_x_forwarded_for and patt.ip_address:match(m.http_x_forwarded_for) then
             msg.Fields.http_client_ip_address = m.http_x_forwarded_for
-        else if m.remote_addr then
+        elseif m.remote_addr then
             msg.Fields.http_client_ip_address = m.remote_addr
         end
 
